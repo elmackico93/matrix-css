@@ -41,6 +41,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
   const navRef = useRef<HTMLElement>(null);
   const [logoGlitching, setLogoGlitching] = useState(false);
   const [activeLink, setActiveLink] = useState(propActiveLink || '');
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   // Handle scroll effects
   useEffect(() => {
@@ -63,13 +64,11 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
     }
   }, [propActiveLink]);
 
-  // Initialize active link on page load based on hash only
+  // Initialize active link on page load based on hash
   useEffect(() => {
-    // Only set active link based on URL hash, not homepage default
     const hash = window.location.hash;
     
     if (hash) {
-      // Find link matching the hash
       const matchingLink = links.find(link => link.href === hash);
       if (matchingLink) {
         setActiveLink(matchingLink.text);
@@ -138,7 +137,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, []);
+  }, [disableRainEffect]);
 
   // Handle search input
   const handleSearchFocus = () => {
@@ -186,17 +185,45 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
     const target = e.currentTarget;
     target.classList.add('nav-link-clicked');
     
+    // Random terminal key sound
+    playHackerSound(0.05);
+    
     // Remove the class after animation completes
     setTimeout(() => {
       target.classList.remove('nav-link-clicked');
-    }, 500);
+    }, 300);
+  };
+  
+  // Play hacker-style sound
+  const playHackerSound = (volume = 0.03) => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.type = 'square';
+      oscillator.frequency.value = 100 + Math.random() * 600;
+      gainNode.gain.value = volume;
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start();
+      
+      setTimeout(() => {
+        oscillator.stop();
+        audioContext.close();
+      }, 10 + Math.random() * 20);
+    } catch (e) {
+      // Audio context might not be available
+    }
   };
 
   return (
     <nav
       ref={navRef}
       className={cn(
-        'fixed top-0 left-0 right-0 h-[70px] bg-[rgba(0,10,2,0.95)] border-b border-matrix-border backdrop-filter backdrop-blur-[10px] overflow-hidden transition-all duration-300 z-[1000]',
+        'fixed top-0 left-0 right-0 h-[70px] bg-[rgba(0,10,2,0.92)] border-b border-matrix-border backdrop-filter backdrop-blur-[10px] overflow-hidden transition-all duration-300 z-[1000]',
         isScrolled && 'shadow-[0_0_20px_rgba(0,0,0,0.7)]',
         className
       )}
@@ -216,7 +243,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--m-text-bright)] to-transparent opacity-60 z-[2]"></div>
       
       {/* Background panel for better contrast */}
-      <div className="absolute inset-0 bg-[rgba(0,10,2,0.8)] z-[1]"></div>
+      <div className="absolute inset-0 bg-[rgba(0,10,2,0.85)] z-[1]"></div>
       
       <div className={`nav-container max-w-[1400px] h-full mx-auto px-5 flex justify-between items-center relative z-[5] ${containerFluid ? 'w-full' : ''}`}>
         {/* Logo Section with Digital Animation */}
@@ -235,7 +262,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
           </div>
         </div>
         
-        {/* Cyberpunk Menu Toggle for Mobile */}
+        {/* Menu Toggle for Mobile */}
         <div 
           className="nav-menu-toggle flex cursor-pointer border border-[var(--m-border)] p-[6px] rounded-[var(--m-radius)] bg-transparent transition-all duration-300 z-[1001] md:hidden"
           onClick={() => setIsOpen(!isOpen)}
@@ -248,54 +275,58 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
           <div className="toggle-label text-[0.6rem] text-[var(--m-text-dim)] tracking-[1px] mt-[2px]">MENU</div>
         </div>
         
-        {/* Neural Network Links */}
+        {/* Nav Links Container - Removed the nav-decoration (green vertical line) div */}
         <div className={`nav-links-container flex items-center h-full gap-[30px] relative md:static backdrop-blur-[2px] ${isOpen ? 'fixed top-[70px] left-0 right-0 h-[calc(100vh-70px)] flex-col items-start gap-[15px] py-0 px-5 bg-[rgba(0,10,2,0.95)] border-b border-matrix-border z-[999] overflow-y-auto' : 'hidden md:flex'}`}>
-          <div className="nav-decoration flex flex-col items-center h-[70%] md:block hidden">
-            <span className="decoration-dot w-[6px] h-[6px] bg-[var(--m-text)] rounded-full mb-[5px]"></span>
-            <span className="decoration-line w-[1px] flex-grow bg-gradient-to-b from-[var(--m-text)] to-transparent"></span>
-          </div>
-          
-          {/* Enhanced links container with improved contrast */}
-          <div className="nav-links flex md:flex-row flex-col items-start md:items-center gap-[15px] md:gap-[20px] h-full w-full md:w-auto py-[20px] md:py-0">
+          {/* Enhanced links container */}
+          <div className="nav-links flex md:flex-row flex-col items-start md:items-center gap-[15px] md:gap-[24px] h-full w-full md:w-auto py-[20px] md:py-0">
             {links.map((link, index) => {
               const isLinkActive = link.isActive || activeLink === link.text;
+              const isHovered = hoverIndex === index;
+              
               return (
                 <a 
                   key={index}
                   href={link.href}
                   onClick={(e) => handleLinkClick(link.text, e)}
-                  className={`nav-link flex items-center justify-center no-underline text-[0.9rem] tracking-wider relative h-full py-1 px-[12px] overflow-hidden transition-all duration-250 w-full md:w-auto md:border-none pb-[12px] md:pb-0
-                  ${isLinkActive 
-                    ? 'active-link text-[var(--m-text-bright)] font-medium text-shadow-[0_0_8px_var(--m-glow)]' 
-                    : 'text-[var(--m-text)] hover:text-[var(--m-text-bright)] hover:text-shadow-[0_0_4px_var(--m-glow)]'
-                  }`}
+                  onMouseEnter={() => {
+                    setHoverIndex(index);
+                    playHackerSound(0.02);
+                  }}
+                  onMouseLeave={() => setHoverIndex(null)}
+                  className={`nav-link flex items-center justify-center no-underline text-[0.9rem] tracking-wider relative h-full py-1 px-[12px] overflow-hidden transition-all duration-250 w-full md:w-auto md:border-none ${isOpen ? 'pb-[12px]' : 'pb-0'}`}
                   data-active={isLinkActive}
                 >
-                  {/* Simple vertical indicator for active link */}
+                  {/* Changed the vertical indicator to a bottom glow for active link */}
                   {isLinkActive && (
-                    <span className="absolute left-0 top-0 w-[2px] h-full bg-[var(--m-text-bright)] opacity-90"></span>
+                    <span className="absolute bottom-0 left-[5%] right-[5%] h-[2px] bg-gradient-to-r from-transparent via-[var(--m-text-bright)] to-transparent opacity-90"></span>
                   )}
                   
-                  {/* Central content container */}
-                  <div className="flex items-center justify-center relative z-10">
-                    <span className={`link-number text-[0.7rem] ${isLinkActive ? 'text-[var(--m-text-bright)]' : 'text-[var(--m-text-dim)]'} mr-[6px] transition-colors duration-200`}>
+                  {/* Improved hover highlight with gradient */}
+                  <span className={`absolute bottom-0 left-[5%] right-[5%] h-[2px] bg-gradient-to-r from-transparent via-[var(--m-text)] to-transparent opacity-70 transform origin-center transition-all duration-500 ease-out ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}></span>
+                  
+                  {/* Content container */}
+                  <div className={`flex items-center justify-center relative z-10 transition-all duration-300 ease-out ${isHovered ? 'transform translate-y-[-2px] text-shadow-[0_0_8px_var(--m-glow)]' : ''}`}>
+                    <span className={`link-number text-[0.7rem] ${isLinkActive ? 'text-[var(--m-text-bright)]' : 'text-[var(--m-text-dim)]'} mr-[6px] transition-colors duration-300`}>
                       {link.number}
                     </span>
-                    <span className="link-text">{link.text}</span>
+                    <span className={`link-text transition-all duration-300 ${isLinkActive 
+                      ? 'text-[var(--m-text-bright)] font-medium text-shadow-[0_0_8px_var(--m-glow)]' 
+                      : isHovered 
+                        ? 'text-[var(--m-text-bright)]' 
+                        : 'text-[var(--m-text)]'}`}>
+                      {link.text}
+                      {(isHovered || isLinkActive) && (
+                        <span className="link-cursor ml-[2px] opacity-70 animate-[cursor-blink_0.7s_step-end_infinite]">_</span>
+                      )}
+                    </span>
                     
-                    {/* GitHub icon for the GitHub link */}
+                    {/* GitHub icon */}
                     {link.text === 'GITHUB' && (
-                      <svg className="github-icon ml-[5px] stroke-[var(--m-text)] transition-all duration-200" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg className={`github-icon ml-[5px] transition-all duration-300 ${isLinkActive || isHovered ? 'stroke-[var(--m-text-bright)]' : 'stroke-[var(--m-text)]'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                       </svg>
                     )}
                   </div>
-                  
-                  {/* Signal borders for hover effect */}
-                  <span className="nav-signal-top absolute top-0 left-0 w-full h-[1px] bg-matrix-text opacity-0"></span>
-                  <span className="nav-signal-bottom absolute bottom-0 left-0 w-full h-[1px] bg-matrix-text opacity-0"></span>
-                  <span className="nav-signal-left absolute top-0 left-0 w-[1px] h-full bg-matrix-text opacity-0"></span>
-                  <span className="nav-signal-right absolute top-0 right-0 w-[1px] h-full bg-matrix-text opacity-0"></span>
                 </a>
               );
             })}
@@ -387,85 +418,50 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = ({
           50%      { opacity: 1; }
         }
         
-        /* Refined minimalist hacker-inspired nav effects */
+        /* Improved nav effects with more fluid animations */
         .nav-link {
           position: relative;
           margin: 0 2px;
           border-radius: 0;
-          transition: all 250ms cubic-bezier(0.25, 0.8, 0.25, 1);
+          transition: all 300ms cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
-        /* Click animation - subtle scale effect */
+        /* Smoother click animation */
         .nav-link-clicked {
-          animation: link-click 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+          animation: link-click 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
         }
         
         @keyframes link-click {
           0%, 100% { transform: scale(1); }
-          50% { transform: scale(0.97); }
+          40% { transform: scale(0.97); }
+          60% { transform: scale(1.03); }
+          80% { transform: scale(1); }
         }
         
-        /* Digital signal wave animation - refined and subtle */
-        .nav-link:hover .nav-signal-top {
-          animation: signal-horizontal 1.2s infinite;
-          opacity: 0.6;
+        /* Enhanced data glitch animation on hover */
+        .nav-link:hover::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, 
+            rgba(0, 255, 65, 0) 0%,
+            rgba(0, 255, 65, 0.05) 30%, 
+            rgba(0, 255, 65, 0.05) 70%,
+            rgba(0, 255, 65, 0) 100%
+          );
+          opacity: 0;
+          animation: data-glitch 2s ease-in-out infinite;
+          z-index: -1;
         }
         
-        .nav-link:hover .nav-signal-bottom {
-          animation: signal-horizontal 1.2s infinite 0.15s;
-          opacity: 0.6;
-        }
-        
-        .nav-link:hover .nav-signal-left {
-          animation: signal-vertical 1.2s infinite 0.3s;
-          opacity: 0.6;
-        }
-        
-        .nav-link:hover .nav-signal-right {
-          animation: signal-vertical 1.2s infinite 0.45s;
-          opacity: 0.6;
-        }
-        
-        @keyframes signal-horizontal {
-          0% {
-            opacity: 0.6;
-            transform: scaleX(0);
-            transform-origin: left;
-          }
-          49% {
-            transform: scaleX(1);
-            transform-origin: left;
-          }
-          50% {
-            transform: scaleX(1);
-            transform-origin: right;
-          }
-          100% {
-            opacity: 0;
-            transform: scaleX(0);
-            transform-origin: right;
-          }
-        }
-        
-        @keyframes signal-vertical {
-          0% {
-            opacity: 0.6;
-            transform: scaleY(0);
-            transform-origin: top;
-          }
-          49% {
-            transform: scaleY(1);
-            transform-origin: top;
-          }
-          50% {
-            transform: scaleY(1);
-            transform-origin: bottom;
-          }
-          100% {
-            opacity: 0;
-            transform: scaleY(0);
-            transform-origin: bottom;
-          }
+        @keyframes data-glitch {
+          0% { opacity: 0; transform: translateX(-100%); }
+          40% { opacity: 0.8; }
+          60% { opacity: 0.8; }
+          100% { opacity: 0; transform: translateX(100%); }
         }
       `}</style>
     </nav>
