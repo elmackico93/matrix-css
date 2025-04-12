@@ -43,7 +43,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [logoHovered, setLogoHovered] = useState(false);
   
-  // State for enhanced search experience
+  // Search component state
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const [searchGlitching, setSearchGlitching] = useState(false);
@@ -176,45 +176,45 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
     };
   }, [disableRainEffect]);
 
-  // Enhanced search handlers with glitch effects
+  // Minimalist search handlers
   const handleSearchFocus = useCallback(() => {
     setSearchFocused(true);
     setSearchStatus('READY');
     
-    // Trigger quick glitch effect on focus
+    // Subtle glitch effect on focus
     setSearchGlitching(true);
-    setTimeout(() => setSearchGlitching(false), 150);
+    setTimeout(() => setSearchGlitching(false), 120);
   }, []);
 
   const handleSearchBlur = useCallback(() => {
     setSearchFocused(false);
     
-    // Delay setting status to IDLE for visual effect
+    // Delay setting status to IDLE
     setTimeout(() => {
       if (!searchValue) {
         setSearchStatus('IDLE');
         setSearchActive(false);
       }
-    }, 300);
+    }, 200);
   }, [searchValue]);
 
   const handleSearchInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchValue(value);
     
-    // Set active state for animations
+    // Set active state for minimal animations
     setSearchActive(!!value);
     
-    // Update search status with slight randomized delay for terminal effect
+    // Update search status with slight delay
     if (value.length > 0) {
       setTimeout(() => {
         setSearchStatus('SEARCHING');
-      }, Math.random() * 200 + 100);
+      }, 100);
       
-      // Occasionally trigger glitch effect during typing
-      if (Math.random() > 0.7) {
+      // Occasionally trigger subtle glitch effect
+      if (Math.random() > 0.85) {
         setSearchGlitching(true);
-        setTimeout(() => setSearchGlitching(false), 100);
+        setTimeout(() => setSearchGlitching(false), 80);
       }
     } else {
       setSearchStatus('READY');
@@ -531,85 +531,61 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
             })}
           </div>
           
-          {/* Enhanced Matrix Search Component */}
+          {/* Ultra-Clean Matrix Hacker Search Component */}
           <div className="nav-search ml-0 mb-[20px] md:ml-[15px] md:mb-0 w-full md:w-auto">
             <div className={cn(
-              'search-container relative w-full md:w-[240px] h-[40px] md:h-[34px] border-2 border-matrix-border bg-[rgba(0,10,0,0.75)] overflow-hidden transition-all duration-300',
-              searchFocused ? 'search-container-active shadow-[0_0_15px_rgba(0,255,65,0.3)]' : '',
-              searchGlitching ? 'search-glitching' : '',
-              searchActive ? 'search-active' : ''
+              'matrix-search relative w-full md:w-[240px] h-[34px]',
+              searchGlitching && 'search-glitch'
             )}>
-              {/* Matrix Scanline Effect */}
-              <div className="search-scanline absolute inset-0 pointer-events-none z-0 opacity-20" aria-hidden="true"></div>
-              
-              {/* Animated Corner Accents */}
-              <div className="search-corner-tl absolute top-0 left-0 w-[8px] h-[8px] border-t-2 border-l-2 border-[var(--m-text-bright)] opacity-80" aria-hidden="true"></div>
-              <div className="search-corner-tr absolute top-0 right-0 w-[8px] h-[8px] border-t-2 border-r-2 border-[var(--m-text-bright)] opacity-80" aria-hidden="true"></div>
-              <div className="search-corner-bl absolute bottom-0 left-0 w-[8px] h-[8px] border-b-2 border-l-2 border-[var(--m-text-bright)] opacity-80" aria-hidden="true"></div>
-              <div className="search-corner-br absolute bottom-0 right-0 w-[8px] h-[8px] border-b-2 border-r-2 border-[var(--m-text-bright)] opacity-80" aria-hidden="true"></div>
-              
-              {/* Terminal Prefix */}
-              <div className="search-terminal-prefix absolute left-[10px] top-0 bottom-0 flex items-center text-[var(--m-text-dim)] font-matrix-hacker text-[0.7rem] tracking-wider" aria-hidden="true">
-                <span className="prefix-text">SYS://</span>
-                <span className={cn(
-                  'prefix-path ml-[2px] text-[var(--m-text)]',
-                  searchStatus === 'SEARCHING' ? 'text-[var(--m-text-bright)]' : ''
-                )}>
-                  <span className="path-segment">matrix</span>
-                  <span className="path-separator text-[var(--m-text-dim)]">&gt;</span>
-                  <span className="path-segment">query</span>
-                  <span className="path-separator text-[var(--m-text-dim)]">&gt;</span>
+              {/* Clean search container */}
+              <div className={cn(
+                'search-inner relative w-full h-full border border-matrix-border overflow-hidden transition-all duration-200',
+                searchFocused ? 'border-[var(--m-text)] shadow-[0_0_10px_rgba(0,255,65,0.1)]' : ''
+              )}>
+                {/* Command Prompt */}
+                <span className="search-prompt absolute left-[10px] top-0 bottom-0 flex items-center text-[var(--m-text-dim)] tracking-wider font-matrix-hacker" aria-hidden="true">
+                  &gt;
                 </span>
-              </div>
-              
-              {/* Search Input */}
-              <div className="search-input-wrapper flex items-center h-full pl-[120px] pr-[60px] relative z-10">
-                <input 
-                  type="text" 
-                  className="search-input w-full bg-transparent border-none outline-none text-[var(--m-text-bright)] font-matrix-hacker text-[0.9rem] tracking-wider p-0 caret-[var(--m-text-bright)] placeholder:text-[var(--m-text-dim)] placeholder:opacity-70"
-                  placeholder={searchFocused ? "_" : "EXECUTE QUERY"}
-                  value={searchValue}
-                  onChange={handleSearchInput}
-                  onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
-                  aria-label="Search the Matrix"
-                />
                 
-                {/* Blinking Cursor for Empty State */}
-                {searchFocused && !searchValue && (
-                  <span 
-                    className="empty-cursor absolute left-[120px] h-[16px] w-[8px] bg-[var(--m-text)] opacity-70 animate-[cursor-blink_0.7s_step-end_infinite]" 
-                    aria-hidden="true"
-                  ></span>
-                )}
-              </div>
-              
-              {/* Enhanced Status Display */}
-              <div className={cn(
-                'search-status absolute right-[10px] top-0 bottom-0 flex items-center',
-                'text-[0.7rem] font-matrix-hacker tracking-wider transition-all duration-300',
-                searchStatus !== 'IDLE' ? 'opacity-100 text-[var(--m-text)]' : 'opacity-0'
-              )} aria-live="polite">
-                {searchStatus === 'READY' && (
-                  <span className="status-ready flex items-center gap-[4px]">
-                    <span className="status-indicator w-[6px] h-[6px] rounded-full bg-[var(--m-text-bright)] opacity-70 animate-pulse"></span>
-                    <span>READY</span>
-                  </span>
+                {/* Search input wrapper */}
+                <div className="search-input-container relative z-10 h-full">
+                  <input 
+                    type="text" 
+                    className="search-input w-full h-full bg-transparent border-none outline-none text-[var(--m-text-bright)] font-matrix-hacker text-[0.9rem] py-0 px-[25px] tracking-wide caret-[var(--m-text-bright)] placeholder:text-[var(--m-text-dim)] placeholder:opacity-70"
+                    placeholder={searchFocused ? "_" : "Search the Matrix"}
+                    value={searchValue}
+                    onChange={handleSearchInput}
+                    onFocus={handleSearchFocus}
+                    onBlur={handleSearchBlur}
+                    aria-label="Search command"
+                  />
+                  
+                  {/* Cursor for empty state */}
+                  {searchFocused && !searchValue && (
+                    <span className="empty-cursor absolute left-[25px] top-[10px] h-[14px] w-[7px] bg-[var(--m-text-bright)] opacity-80" aria-hidden="true"></span>
+                  )}
+                </div>
+                
+                {/* Status indicator */}
+                {searchStatus !== 'IDLE' && (
+                  <div className="search-status absolute right-[8px] top-0 bottom-0 flex items-center text-[0.7rem] tracking-wide font-matrix-hacker" aria-live="polite">
+                    {searchStatus === 'READY' && (
+                      <span className="text-[var(--m-text-dim)]">READY</span>
+                    )}
+                    
+                    {searchStatus === 'SEARCHING' && (
+                      <span className="text-[var(--m-text)]">
+                        {`SCANNING${'.'.repeat(Math.floor(Date.now() / 500) % 4)}`}
+                      </span>
+                    )}
+                  </div>
                 )}
                 
-                {searchStatus === 'SEARCHING' && (
-                  <span className="status-searching flex items-center gap-[4px]">
-                    <span className="status-indicator w-[6px] h-[6px] rounded-full bg-[var(--m-text-bright)] opacity-70 animate-[search-pulse_0.5s_alternate_infinite]"></span>
-                    <span className="status-text">{`SCANNING${'.'.repeat(Math.floor(Date.now() / 500) % 4)}`}</span>
-                  </span>
+                {/* Active indicator line */}
+                {searchActive && (
+                  <div className="search-indicator absolute bottom-0 left-0 right-0 h-[1px] bg-[var(--m-text)] opacity-50"></div>
                 )}
               </div>
-              
-              {/* Data Pulse Effect */}
-              <div className={cn(
-                'data-pulse absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--m-text-dim)] transform origin-left scale-x-0 transition-transform duration-300',
-                searchActive ? 'scale-x-100' : ''
-              )} aria-hidden="true"></div>
             </div>
           </div>
         </div>
@@ -627,141 +603,41 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
           background-position: 0 0, 0 0, 0 0, 0 0;
         }
         
-        /* Enhanced Search Styles */
-        .search-container {
-          display: flex;
-          align-items: center;
-          position: relative;
-          clip-path: polygon(
-            0 0, 
-            100% 0, 
-            100% calc(100% - 6px), 
-            calc(100% - 6px) 100%, 
-            0 100%
-          );
-          background-origin: border-box;
-          background-clip: content-box, border-box;
-          backdrop-filter: blur(1px);
-          transform: translateZ(0); /* Force GPU acceleration */
+        /* Ultra clean search styling */
+        .matrix-search {
+          font-family: var(--m-font-hacker);
         }
         
-        .search-container-active {
-          border-color: var(--m-text);
-          background-color: rgba(0, 20, 5, 0.85);
+        .search-inner {
+          background-color: rgba(0, 5, 0, 0.2);
         }
         
-        .search-active .search-corner-tl,
-        .search-active .search-corner-tr,
-        .search-active .search-corner-bl,
-        .search-active .search-corner-br {
-          border-color: var(--m-text-bright);
-          opacity: 1;
+        .search-inner:focus-within {
+          background-color: rgba(0, 10, 0, 0.3);
         }
         
-        .search-glitching {
-          animation: search-glitch 0.15s ease;
+        /* Clean empty cursor blink */
+        .empty-cursor {
+          animation: cursor-blink 0.8s step-end infinite;
+        }
+        
+        @keyframes cursor-blink {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.8; }
+        }
+        
+        /* Ultra subtle glitch effect */
+        .search-glitch {
+          animation: search-glitch 0.12s ease-in-out;
         }
         
         @keyframes search-glitch {
-          0%, 100% { transform: translateX(0); filter: brightness(1); }
-          20% { transform: translateX(-1px); filter: brightness(1.2); }
-          40% { transform: translateX(1px); filter: brightness(0.9); }
-          60% { transform: translateX(-1px); filter: brightness(1.2); }
-          80% { transform: translateX(1px); filter: brightness(1); }
+          0%, 100% { transform: translateX(0); }
+          33% { transform: translateX(-1px); }
+          66% { transform: translateX(1px); }
         }
         
-        .search-corner-tl, 
-        .search-corner-tr,
-        .search-corner-bl,
-        .search-corner-br {
-          transition: all 0.3s ease;
-          opacity: 0.5;
-        }
-        
-        .search-container-active .search-corner-tl {
-          animation: corner-tl 0.5s ease forwards;
-        }
-        
-        .search-container-active .search-corner-tr {
-          animation: corner-tr 0.5s ease forwards;
-        }
-        
-        .search-container-active .search-corner-bl {
-          animation: corner-bl 0.5s ease forwards;
-        }
-        
-        .search-container-active .search-corner-br {
-          animation: corner-br 0.5s ease forwards;
-        }
-        
-        @keyframes corner-tl {
-          0% { width: 8px; height: 8px; opacity: 0.5; }
-          100% { width: 10px; height: 10px; opacity: 1; }
-        }
-        
-        @keyframes corner-tr {
-          0% { width: 8px; height: 8px; opacity: 0.5; }
-          100% { width: 10px; height: 10px; opacity: 1; }
-        }
-        
-        @keyframes corner-bl {
-          0% { width: 8px; height: 8px; opacity: 0.5; }
-          100% { width: 10px; height: 10px; opacity: 1; }
-        }
-        
-        @keyframes corner-br {
-          0% { width: 8px; height: 8px; opacity: 0.5; }
-          100% { width: 10px; height: 10px; opacity: 1; }
-        }
-        
-        .search-scanline {
-          background: repeating-linear-gradient(
-            to bottom,
-            transparent,
-            transparent 2px,
-            rgba(0, 255, 65, 0.05) 2px,
-            rgba(0, 255, 65, 0.05) 4px
-          );
-          opacity: 0.2;
-        }
-        
-        .search-container-active .search-scanline {
-          opacity: 0.3;
-          animation: scan-flicker 2s infinite ease-in-out;
-        }
-        
-        @keyframes scan-flicker {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.4; }
-        }
-        
-        .data-pulse {
-          height: 2px;
-          transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        
-        .search-active .data-pulse {
-          animation: data-flow 1.5s infinite linear;
-          background: linear-gradient(
-            90deg,
-            var(--m-text-dim),
-            var(--m-text-bright),
-            var(--m-text-dim)
-          );
-          background-size: 200% 100%;
-        }
-        
-        @keyframes data-flow {
-          0% { background-position: 100% 0; }
-          100% { background-position: -100% 0; }
-        }
-        
-        @keyframes search-pulse {
-          0% { opacity: 0.5; transform: scale(0.8); }
-          100% { opacity: 1; transform: scale(1.1); }
-        }
-        
-        /* Enhanced logo styling */
+        /* Logo styling */
         .logo-text-container {
           position: relative;
           overflow: hidden;
@@ -773,7 +649,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
           color: var(--m-text-bright);
           position: relative;
           letter-spacing: 1px;
-          transform: translateZ(0); /* Force GPU acceleration */
+          transform: translateZ(0);
         }
         
         /* Enhanced glitch with displacement */
@@ -882,7 +758,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
           background: linear-gradient(to right, transparent, rgba(0, 255, 65, 0.1), transparent);
           transform: skewX(-20deg);
           animation: glitch-line 5s infinite linear;
-          will-change: transform; /* Optimize animation performance */
+          will-change: transform;
         }
 
         @keyframes glitch-line {
@@ -920,15 +796,15 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
           margin: 0 2px;
           border-radius: 0;
           transition: color 300ms cubic-bezier(0.25, 0.8, 0.25, 1);
-          will-change: color, opacity; /* Optimize hover transitions */
+          will-change: color, opacity;
         }
         
         /* Stable text elements */
         .link-text, .link-number {
           position: relative;
           z-index: 2;
-          transform: translateZ(0); /* Force GPU acceleration */
-          will-change: color; /* Optimize color transitions */
+          transform: translateZ(0);
+          will-change: color;
         }
         
         /* Click animation */
@@ -960,7 +836,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
           animation: data-glitch 2s ease-in-out infinite;
           pointer-events: none;
           z-index: -1;
-          will-change: opacity, transform; /* Optimize animation performance */
+          will-change: opacity, transform;
         }
         
         @keyframes data-glitch {
@@ -968,11 +844,6 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
           40% { opacity: 0.8; }
           60% { opacity: 0.8; }
           100% { opacity: 0; transform: translateX(100%); }
-        }
-        
-        /* Empty cursor */
-        .empty-cursor {
-          animation: cursor-blink 0.8s step-end infinite;
         }
       `}</style>
     </nav>
