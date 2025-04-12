@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
+import { RotatingFeatures } from './RotatingFeatures'; // Import our new component
 
 interface MatrixHeroProps {
   className?: string;
@@ -17,6 +18,7 @@ interface MatrixHeroProps {
   showVersion?: boolean;
   version?: string;
   disableRainEffect?: boolean;
+  enableFeatureRotation?: boolean; // New prop to toggle feature rotation
 }
 
 // Custom enhanced matrix glitch text component
@@ -58,6 +60,7 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
   showVersion = true,
   version = 'VERSION 2.0',
   disableRainEffect = false,
+  enableFeatureRotation = true, // Default to true
 }) => {
   const rainCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
@@ -513,9 +516,16 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
           {/* Backdrop blur effect */}
           <div className="absolute inset-0 backdrop-blur-sm rounded bg-gradient-to-b from-[rgba(0,0,0,0.25)] to-[rgba(0,0,0,0.5)] border border-[var(--m-border)]"></div>
           
-          <p className="relative z-1 text-[clamp(1rem,2vw,1.5rem)] max-w-3xl mx-auto mb-12 leading-relaxed text-shadow-[0_0_10px_var(--m-glow)] p-5 rounded">
-            {subtitle}
-          </p>
+          {/* Instead of putting RotatingFeatures inside a p tag, use a div with the same styling */}
+          {enableFeatureRotation ? (
+            <div className="relative z-1 text-[clamp(1rem,2vw,1.5rem)] max-w-3xl mx-auto mb-12 leading-relaxed text-shadow-[0_0_10px_var(--m-glow)] p-5 rounded">
+              <RotatingFeatures baseText={subtitle} />
+            </div>
+          ) : (
+            <p className="relative z-1 text-[clamp(1rem,2vw,1.5rem)] max-w-3xl mx-auto mb-12 leading-relaxed text-shadow-[0_0_10px_var(--m-glow)] p-5 rounded">
+              {subtitle}
+            </p>
+          )}
         </div>
         
         {/* Button container */}

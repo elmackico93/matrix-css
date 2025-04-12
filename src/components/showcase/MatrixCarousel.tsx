@@ -9,15 +9,32 @@ import { Card, CardContent } from '@/components/ui/Card';
 
 interface MatrixCarouselProps {
   className?: string;
+  onEnterMatrix?: () => void;
+  onExploreComponents?: () => void;
+  initialSlide?: number;
 }
 
-export const MatrixCarousel: React.FC<MatrixCarouselProps> = ({ className }) => {
-  const [activeSlide, setActiveSlide] = useState(0);
+export const MatrixCarousel: React.FC<MatrixCarouselProps> = ({ 
+  className, 
+  onEnterMatrix,
+  onExploreComponents,
+  initialSlide = 0
+}) => {
+  const [activeSlide, setActiveSlide] = useState(initialSlide);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [glitchActive, setGlitchActive] = useState(false);
+  const [matrixEntered, setMatrixEntered] = useState(false);
+  const [showTerminal, setShowTerminal] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  
   const carouselRef = useRef<HTMLDivElement>(null);
-  const tracksRef = useRef<HTMLDivElement[]>([]);
+  const terminalRef = useRef<HTMLDivElement>(null);
   const totalSlides = 5;
+
+  // Set initial slide if provided
+  useEffect(() => {
+    setActiveSlide(initialSlide);
+  }, [initialSlide]);
 
   // Terminal commands for installation section
   const terminalCommands = {
@@ -32,6 +49,59 @@ export const MatrixCarousel: React.FC<MatrixCarouselProps> = ({ className }) => 
   const triggerGlitchEffect = () => {
     setGlitchActive(true);
     setTimeout(() => setGlitchActive(false), 500);
+  };
+
+  // Handle "Enter the Matrix" action
+  const handleEnterMatrix = () => {
+    if (isTransitioning) return;
+    
+    triggerGlitchEffect();
+    setIsTransitioning(true);
+    setShowTerminal(true);
+    
+    // Simulate loading progress
+    let progress = 0;
+    const loadingInterval = setInterval(() => {
+      progress += 5;
+      setLoadingProgress(progress);
+      
+      if (progress >= 100) {
+        clearInterval(loadingInterval);
+        
+        // Complete transition after loading
+        setTimeout(() => {
+          setMatrixEntered(true);
+          setIsTransitioning(false);
+          setActiveSlide(0); // Reset to first slide
+          
+          // Call the external callback if provided
+          if (onEnterMatrix) onEnterMatrix();
+        }, 500);
+      }
+    }, 100);
+  };
+
+  // Handle "Explore Components" action
+  const handleExploreComponents = () => {
+    if (isTransitioning) return;
+    
+    triggerGlitchEffect();
+    setIsTransitioning(true);
+    
+    setTimeout(() => {
+      // Navigate directly to Components slide (slide index 2)
+      setActiveSlide(2);
+      setIsTransitioning(false);
+      
+      // Call the external callback if provided
+      if (onExploreComponents) onExploreComponents();
+      
+      // Scroll to "getting-started" section if it exists
+      const gettingStartedSection = document.getElementById('getting-started');
+      if (gettingStartedSection) {
+        gettingStartedSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 500);
   };
 
   // Handle next slide with glitch transition
@@ -80,12 +150,16 @@ export const MatrixCarousel: React.FC<MatrixCarouselProps> = ({ className }) => 
         nextSlide();
       } else if (e.key === 'ArrowLeft') {
         prevSlide();
+      } else if (e.key === 'Escape' && showTerminal) {
+        setShowTerminal(false);
+        setLoadingProgress(0);
+        setIsTransitioning(false);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSlide, isTransitioning]);
+  }, [activeSlide, isTransitioning, showTerminal]);
 
   // Automatic data corruption lines
   useEffect(() => {
@@ -160,8 +234,77 @@ export const MatrixCarousel: React.FC<MatrixCarouselProps> = ({ className }) => 
       <Scanline intensity="light" type="horizontal" className="absolute inset-0 pointer-events-none">
         <div></div>
       </Scanline>
+
+      {/* Terminal overlay for "Enter The Matrix" transition */}
+      {showTerminal && !matrixEntered && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 transition-all duration-500">
+          <div className="w-full max-w-2xl p-4">
+            <Terminal
+              title="MATRIX SYSTEM INITIALIZATION"
+              prompt=">"
+              commands={terminalCommands}
+              initialCommands={["help", "install"]}
+              height="300px"
+              allowUserInput={false}
+              readOnly={true}
+            />
+            
+            {/* Loading progress bar */}
+            <div className="mt-4 h-2 bg-black border border-matrix-border overflow-hidden">
+              <div 
+                className="h-full bg-matrix-text transition-all duration-300"
+                style={{ width: `${loadingProgress}%` }}
+              ></div>
+            </div>
+            <div className="text-right text-xs mt-1 text-matrix-text">
+              {loadingProgress}% COMPLETE
+            </div>
+            
+            {loadingProgress >= 100 && (
+              <div className="text-center mt-4 animate-pulse">
+                <span className="text-matrix-text-bright">INITIALIZATION COMPLETE - ENTERING THE MATRIX</span>
+              </div>
+            )}
+
+            {/* Cancel button */}
+            <div className="text-center mt-6">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  setShowTerminal(false);
+                  setLoadingProgress(0);
+                  setIsTransitioning(false);
+                }}
+              >
+                CANCEL
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <Container>
+        {/* Quick Actions */}
+        <div className="flex justify-center gap-4 mb-8">
+          <Button 
+            variant="primary" 
+            hasGlow={true}
+            onClick={handleEnterMatrix}
+            className="uppercase tracking-wider"
+          >
+            Enter The Matrix
+          </Button>
+          
+          <Button 
+            variant="terminal"
+            onClick={handleExploreComponents}
+            className="uppercase tracking-wider"
+          >
+            Explore Components
+          </Button>
+        </div>
+        
         <div 
           ref={carouselRef}
           className={cn(
@@ -396,7 +539,7 @@ export default function App() {
             </div>
             
             {/* Slide 3: Components */}
-            <div className="flex-shrink-0 w-full h-full p-8 flex flex-col">
+            <div id="getting-started" className="flex-shrink-0 w-full h-full p-8 flex flex-col">
               <div className="mb-6 flex flex-col items-center text-center">
                 <h2 className="inline-block relative mb-2">
                   <GlitchText
