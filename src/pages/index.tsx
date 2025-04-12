@@ -1,3 +1,4 @@
+// Modified src/pages/index.tsx to include the MatrixCarousel component
 import { useState } from 'react';
 import Head from 'next/head';
 import { Container } from '@/components/layout/Container';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import CodeRain from '@/components/effects/CodeRain';
 import { MatrixNavbar } from '@/components/layout/Navbar';
 import { MatrixHero } from '@/components/layout/MatrixHero';
+import { MatrixCarousel } from '../components/showcase/MatrixCarousel'; // Import our carousel
 
 export default function Home() {
   // Define active link state for demonstration
@@ -52,6 +54,9 @@ export default function Home() {
         showVersion={true}
         version="VERSION 2.0"
       />
+
+      {/* Matrix Carousel - Added right below hero */}
+      <MatrixCarousel />
 
       {/* Main content with proper spacing */}
       <main>
