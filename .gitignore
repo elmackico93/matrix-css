@@ -1,2 +1,93 @@
-node_modules
-.next
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/
+
+# Testing
+/coverage
+
+# Next.js build outputs
+/.next/
+/out/
+.swc/
+
+# Production build
+/build
+
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Caches
+.npm
+.eslintcache
+.stylelintcache
+.parcel-cache
+.turbo
+.vercel
+.cache
+tsconfig.tsbuildinfo
+
+# IDE/Editor folders
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# Debug files
+.chrome/
+.debug/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.pem
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.webpack/
+
+# Optional: database-related
+*.sqlite
+*.sqlite3
+*.db
+
+# Optional: dependency directories
+bower_components/
+
+# Storybook
+storybook-static/
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
+
+# Bundle analyzer
+/analyze/
