@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
-import GlitchText from '@/components/effects/GlitchText';
 
 interface MatrixHeroProps {
   className?: string;
@@ -20,6 +19,35 @@ interface MatrixHeroProps {
   disableRainEffect?: boolean;
 }
 
+// Custom enhanced matrix glitch text component
+const EnhancedGlitchText: React.FC<{ text: string; className?: string }> = ({ text, className }) => {
+  return (
+    <div className={cn("relative font-matrix-hacker", className)}>
+      {/* Main text */}
+      <span className="relative z-[2] text-[var(--m-text-bright)] mix-blend-screen">
+        {text}
+      </span>
+      
+      {/* Glitch layers - no backgrounds */}
+      <span
+        className="absolute top-0 left-0 w-full h-full z-[1] text-[#00f8] opacity-50 blur-[0.5px] animate-[glitch-offset_3.5s_infinite_alternate-reverse]"
+        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 45%, 0 45%)', transform: 'translateX(-2px)' }}
+        aria-hidden="true"
+      >
+        {text}
+      </span>
+      
+      <span
+        className="absolute top-0 left-0 w-full h-full z-[1] text-[#f008] opacity-50 blur-[0.5px] animate-[glitch-offset_2.5s_infinite_alternate]"
+        style={{ clipPath: 'polygon(0 55%, 100% 55%, 100% 100%, 0 100%)', transform: 'translateX(2px)' }}
+        aria-hidden="true"
+      >
+        {text}
+      </span>
+    </div>
+  );
+};
+
 export const MatrixHero: React.FC<MatrixHeroProps> = ({
   className,
   title = 'MATRIX.CSS',
@@ -33,6 +61,8 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
 }) => {
   const rainCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
+  const [subtitleVisible, setSubtitleVisible] = useState(false);
+  const [titleVisible, setTitleVisible] = useState(false);
   
   // Initialize matrix rain animation
   useEffect(() => {
@@ -112,6 +142,24 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
       }
     };
   }, [disableRainEffect]);
+
+  // Fade in title and subtitle after slight delays
+  useEffect(() => {
+    // Title appears first
+    const titleTimer = setTimeout(() => {
+      setTitleVisible(true);
+    }, 200);
+    
+    // Subtitle appears slightly after
+    const subtitleTimer = setTimeout(() => {
+      setSubtitleVisible(true);
+    }, 600);
+    
+    return () => {
+      clearTimeout(titleTimer);
+      clearTimeout(subtitleTimer);
+    };
+  }, []);
 
   // Hacker-inspired button effects
   const handlePrimaryButtonMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -436,17 +484,39 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
       
       {/* Hero Content with enhanced visibility */}
       <div className="relative z-2 text-center px-5 max-w-4xl">
-        <div className="inline-block relative mb-8">
-          <h1 className="text-[clamp(3rem,8vw,8rem)] font-bold tracking-[6px] text-shadow-[0_0_20px_var(--m-glow),0_0_40px_var(--m-glow)] mb-2 uppercase animate-[pulse_3s_infinite]">
-            <GlitchText text={title} />
+        {/* Title with animated entrance - NO BACKGROUND */}
+        <div 
+          className={cn(
+            "inline-block relative mb-8",
+            "transition-all duration-800 ease-out",
+            titleVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-6"
+          )}
+        >
+          <h1 className="text-[clamp(3rem,8vw,8rem)] font-bold tracking-[6px] mb-2 uppercase">
+            {/* Enhanced glitch text without background */}
+            <EnhancedGlitchText 
+              text={title} 
+              className="text-shadow-[0_0_20px_var(--m-glow),0_0_40px_var(--m-glow)] animate-[pulse_3s_infinite]" 
+            />
           </h1>
           <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-[var(--m-text)] to-transparent my-5 animate-[expand_2s_ease]"></div>
         </div>
         
-        {/* Semi-transparent background to make text more readable */}
-        <p className="text-[clamp(1rem,2vw,1.5rem)] max-w-3xl mx-auto mb-12 leading-relaxed text-shadow-[0_0_10px_var(--m-glow)] bg-[rgba(0,0,0,0.7)] p-5 rounded border border-[var(--m-border)]">
-          {subtitle}
-        </p>
+        {/* Gradient backdrop text with smooth fade-in */}
+        <div 
+          className={cn(
+            "relative",
+            "transition-all duration-1000 ease-in-out",
+            subtitleVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-4"
+          )}
+        >
+          {/* Backdrop blur effect */}
+          <div className="absolute inset-0 backdrop-blur-sm rounded bg-gradient-to-b from-[rgba(0,0,0,0.25)] to-[rgba(0,0,0,0.5)] border border-[var(--m-border)]"></div>
+          
+          <p className="relative z-1 text-[clamp(1rem,2vw,1.5rem)] max-w-3xl mx-auto mb-12 leading-relaxed text-shadow-[0_0_10px_var(--m-glow)] p-5 rounded">
+            {subtitle}
+          </p>
+        </div>
         
         {/* Button container */}
         <div className="flex gap-6 justify-center mt-8 flex-wrap">
@@ -520,6 +590,14 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
         @keyframes scan-line {
           0%   { top: 0; }
           100% { top: 100%; }
+        }
+        
+        @keyframes glitch-offset {
+          0% { transform: translateX(0); }
+          25% { transform: translateX(-2px); }
+          50% { transform: translateX(0); }
+          75% { transform: translateX(2px); }
+          100% { transform: translateX(0); }
         }
         
         .data-interference {
