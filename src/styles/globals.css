@@ -167,3 +167,51 @@ a:hover::after {
   background: var(--m-text-dim);
 }
 
+/* Add these to your globals.css file for the enhanced search bar */
+
+/* Search Bar Animation Keyframes */
+@keyframes search-pulse {
+  0% { opacity: 0.5; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes search-glitch {
+  0%, 100% { transform: translateX(0); filter: brightness(1); }
+  20% { transform: translateX(-1px); filter: brightness(1.2); }
+  40% { transform: translateX(1px); filter: brightness(0.9); }
+  60% { transform: translateX(-1px); filter: brightness(1.2); }
+  80% { transform: translateX(1px); filter: brightness(1); }
+}
+
+@keyframes data-flow {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Search Container Effects */
+.search-container {
+  /* For browsers that don't support clip-path */
+  -webkit-clip-path: polygon(
+    0 0, 
+    100% 0, 
+    100% calc(100% - 6px), 
+    calc(100% - 6px) 100%, 
+    0 100%
+  );
+  clip-path: polygon(
+    0 0, 
+    100% 0, 
+    100% calc(100% - 6px), 
+    calc(100% - 6px) 100%, 
+    0 100%
+  );
+}
+
+.search-container-active {
+  border-color: var(--m-text) !important;
+}
+
+.search-container-active .search-input::placeholder {
+  color: var(--m-text-bright) !important;
+  opacity: 0.7 !important;
+}
