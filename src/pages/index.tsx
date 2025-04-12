@@ -16,7 +16,7 @@ export default function Home() {
     { number: '02', text: 'COMPONENTS', href: '#components', isActive: activeLink === 'COMPONENTS' },
     { number: '03', text: 'UTILITIES', href: '#utilities', isActive: activeLink === 'UTILITIES' },
     { number: '04', text: 'EXAMPLES', href: '#examples', isActive: activeLink === 'EXAMPLES' },
-    { number: '05', text: 'GITHUB', href: 'https://github.com/example/matrix-css', isActive: activeLink === 'GITHUB' },
+    { number: '05', text: 'GITHUB', href: 'https://github.com/elmackico93/matrix-css', isActive: activeLink === 'GITHUB' },
   ];
 
   return (
