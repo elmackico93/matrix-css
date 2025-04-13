@@ -49,6 +49,11 @@ interface MatrixHeroProps {
   version?: string;
   disableRainEffect?: boolean;
   enableFeatureRotation?: boolean;
+  featureRotationInterval?: number;
+  featureGlitchIntensity?: 'light' | 'medium' | 'heavy';
+  showFeatureNavigation?: boolean;
+  terminalLoadingDuration?: number;
+  onEnterMatrix?: () => void;
 }
 
 export const MatrixHero: React.FC<MatrixHeroProps> = ({
@@ -62,6 +67,11 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
   version = 'VERSION 2.0',
   disableRainEffect = false,
   enableFeatureRotation = true,
+  featureRotationInterval = 7000,
+  featureGlitchIntensity = 'medium',
+  showFeatureNavigation = false,
+  terminalLoadingDuration = 3000,
+  onEnterMatrix,
 }) => {
   const rainCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
@@ -70,6 +80,7 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
   const [terminalActive, setTerminalActive] = useState(false);
   const [matrixEntered, setMatrixEntered] = useState(false);
   const [glitchActive, setGlitchActive] = useState(false);
+  const [currentFeature, setCurrentFeature] = useState<number>(-1);
   
   const titleRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
@@ -246,12 +257,22 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
   // Handle terminal completion
   const handleTerminalComplete = () => {
     setMatrixEntered(true);
+    
+    // Call external callback if provided
+    if (onEnterMatrix) {
+      onEnterMatrix();
+    }
   };
   
   // Handle terminal close
   const handleCloseTerminal = () => {
     setTerminalActive(false);
     setMatrixEntered(false);
+  };
+  
+  // Track feature changes
+  const handleFeatureChange = (feature: any, index: number) => {
+    setCurrentFeature(index);
   };
 
   // Hacker-inspired button effects
@@ -583,7 +604,7 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
         initialCommands={["help", "install"]}
         sourceElementId={primaryButtonRef.current?.id || undefined}
         showLoadingProgress={true}
-        loadingDuration={3000}
+        loadingDuration={terminalLoadingDuration}
         maxWidth="2xl"
         matrixEffects={true}
         onComplete={handleTerminalComplete}
@@ -645,7 +666,14 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
           {/* Rotating features or static subtitle */}
           {enableFeatureRotation ? (
             <div className="relative z-1 text-[clamp(1rem,2vw,1.5rem)] max-w-3xl mx-auto mb-12 leading-relaxed text-shadow-[0_0_10px_var(--m-glow)] p-5 rounded">
-              <RotatingFeatures baseText={subtitle} />
+              <RotatingFeatures 
+                baseText={subtitle}
+                transitionInterval={featureRotationInterval}
+                glitchIntensity={featureGlitchIntensity}
+                showNavigation={showFeatureNavigation}
+                fixedHeight={true}
+                onFeatureChange={handleFeatureChange}
+              />
             </div>
           ) : (
             <p className="relative z-1 text-[clamp(1rem,2vw,1.5rem)] max-w-3xl mx-auto mb-12 leading-relaxed text-shadow-[0_0_10px_var(--m-glow)] p-5 rounded">

@@ -1,19 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/utils/cn';
 
-interface RotatingFeaturesProps {
-  className?: string;
-  baseText?: string;
-}
-
-interface FeatureItem {
+export interface FeatureItem {
   title: string;
   description: string;
   icon: string; // Using ASCII/Unicode art for icons
 }
 
-// Features data array - each will be shown in sequence
-const MATRIX_FEATURES: FeatureItem[] = [
+export interface RotatingFeaturesProps {
+  className?: string;
+  baseText?: string;
+  features?: FeatureItem[];
+  transitionInterval?: number;
+  autoRotate?: boolean;
+  glitchIntensity?: 'light' | 'medium' | 'heavy';
+  showNavigation?: boolean;
+  minHeight?: string;
+  fixedHeight?: boolean;
+  onFeatureChange?: (feature: FeatureItem, index: number) => void;
+}
+
+// Default features data array - each will be shown in sequence
+const DEFAULT_MATRIX_FEATURES: FeatureItem[] = [
   {
     title: "UI COMPONENTS",
     description: "Complete set of Matrix-styled UI elements with cyberpunk aesthetics and digital glitch effects",
@@ -48,44 +56,75 @@ const MATRIX_FEATURES: FeatureItem[] = [
 
 export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
   className,
-  baseText = "Immerse your users in the digital realm with the complete Matrix-inspired design framework."
+  baseText = "Immerse your users in the digital realm with the complete Matrix-inspired design framework.",
+  features = DEFAULT_MATRIX_FEATURES,
+  transitionInterval = 10000,
+  autoRotate = true,
+  glitchIntensity = 'medium',
+  showNavigation = false,
+  minHeight = '160px',
+  fixedHeight = true,
+  onFeatureChange,
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [visibleText, setVisibleText] = useState(baseText);
-  const [glitchEffect, setGlitchEffect] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
+  const [visibleText, setVisibleText] = useState<string>(baseText);
+  const [glitchEffect, setGlitchEffect] = useState<boolean>(false);
+  const [userInteracted, setUserInteracted] = useState<boolean>(false);
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
+  
   const containerRef = useRef<HTMLDivElement>(null);
+  const autoRotateTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [containerHeight, setContainerHeight] = useState<number | null>(null);
-  const [allFeaturesTexts, setAllFeaturesTexts] = useState<string[]>([]);
   
   // Character set for the matrix effect
   const matrixChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01";
 
-  // Precompute all feature texts on mount to measure max height
+  // Calculate optimal container height based on content
   useEffect(() => {
-    const texts = MATRIX_FEATURES.map(feature => 
-      `${feature.icon} ${feature.title}: ${feature.description}`
-    );
-    // Add base text to the mix
-    texts.push(baseText);
-    setAllFeaturesTexts(texts);
-  }, [baseText]);
-
-  // Pre-set a fixed height value to prevent any measurement issues
-  useEffect(() => {
-    // Fixed height value that's large enough for all possible content
-    // This is a more reliable approach than measuring in the browser
-    setContainerHeight(160);
+    if (!containerRef.current || !fixedHeight) return;
     
-    // Add resize listener to adjust height if window size changes dramatically
+    // Create a hidden measure div to accurately determine needed height
+    const measureDiv = document.createElement('div');
+    measureDiv.style.position = 'absolute';
+    measureDiv.style.visibility = 'hidden';
+    measureDiv.style.width = `${containerRef.current.offsetWidth}px`;
+    measureDiv.style.fontSize = 'inherit';
+    document.body.appendChild(measureDiv);
+    
+    // Find max height between features and base text
+    let maxHeight = 0;
+    
+    // Check base text height
+    measureDiv.textContent = baseText;
+    maxHeight = Math.max(maxHeight, measureDiv.offsetHeight);
+    
+    // Check feature text heights
+    features.forEach(feature => {
+      const featureText = `${feature.icon} ${feature.title}: ${feature.description}`;
+      measureDiv.textContent = featureText;
+      maxHeight = Math.max(maxHeight, measureDiv.offsetHeight);
+    });
+    
+    // Add padding and set min height
+    const minHeightValue = parseInt(minHeight) || 160;
+    const calculatedHeight = Math.max(maxHeight + 40, minHeightValue);
+    
+    // Set container height and cleanup
+    setContainerHeight(calculatedHeight);
+    document.body.removeChild(measureDiv);
+    
+    // Handle window resize
     const handleResize = () => {
-      // For smaller screens, increase height to accommodate more lines
-      if (window.innerWidth < 640) { // Mobile breakpoint
-        setContainerHeight(220);
-      } else if (window.innerWidth < 768) { // Small tablet
-        setContainerHeight(180);
-      } else {
-        setContainerHeight(160);
+      if (containerRef.current) {
+        // For smaller screens, allow more space for wrapped text
+        if (window.innerWidth < 640) { // Mobile breakpoint
+          setContainerHeight(calculatedHeight + 60);
+        } else if (window.innerWidth < 768) { // Small tablet
+          setContainerHeight(calculatedHeight + 20);
+        } else {
+          setContainerHeight(calculatedHeight);
+        }
       }
     };
     
@@ -94,53 +133,119 @@ export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
     
     // Listen for resize events
     window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [baseText, features, fixedHeight, minHeight]);
   
-  // Effect for handling the feature rotation
+  // Handle auto-rotation with ability to pause on user interaction
   useEffect(() => {
-    const rotationInterval = setInterval(() => {
-      // Start transition animation
-      setIsTransitioning(true);
-      setGlitchEffect(true);
-      
-      // Schedule text update after transition starts
-      setTimeout(() => {
-        // Update to next feature
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % MATRIX_FEATURES.length);
-      }, 500);
-      
-      // End glitch effect
-      setTimeout(() => {
-        setGlitchEffect(false);
-      }, 1000);
-      
-      // End transition
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 1500);
-      
-    }, 10000); // Change every 10 seconds
+    if (!autoRotate || userInteracted || features.length <= 1 || isTransitioning) return;
     
-    return () => clearInterval(rotationInterval);
-  }, []);
-  
-  // Effect to update the visible text based on current feature
-  useEffect(() => {
-    // If we're at base state (index 0 and not transitioning), show the base text
-    if (currentIndex === -1) {
+    // Initialize with base text first, then start rotation
+    if (initialLoad) {
+      setInitialLoad(false);
       setVisibleText(baseText);
-      return;
+      
+      // Start rotating after initial display period
+      autoRotateTimerRef.current = setTimeout(() => {
+        rotateFeature(0);
+      }, transitionInterval);
+      
+      return () => {
+        if (autoRotateTimerRef.current) clearTimeout(autoRotateTimerRef.current);
+      };
     }
     
-    const currentFeature = MATRIX_FEATURES[currentIndex];
+    // Set up regular rotation
+    autoRotateTimerRef.current = setTimeout(() => {
+      rotateFeature((currentIndex + 1) % features.length);
+    }, transitionInterval);
+    
+    return () => {
+      if (autoRotateTimerRef.current) clearTimeout(autoRotateTimerRef.current);
+    };
+  }, [autoRotate, userInteracted, currentIndex, features.length, isTransitioning, initialLoad, baseText, transitionInterval]);
+  
+  // Get glitch animation intensity parameters
+  const getGlitchIntensityStyles = () => {
+    switch (glitchIntensity) {
+      case 'light':
+        return {
+          transitionSteps: 4,
+          stepDelay: 120,
+          glitchDuration: 800,
+          transitionDuration: 1200
+        };
+      case 'heavy':
+        return {
+          transitionSteps: 8,
+          stepDelay: 80,
+          glitchDuration: 1200,
+          transitionDuration: 1800
+        };
+      default: // medium
+        return {
+          transitionSteps: 6,
+          stepDelay: 100,
+          glitchDuration: 1000,
+          transitionDuration: 1500
+        };
+    }
+  };
+  
+  // Function to handle feature rotation with transitions
+  const rotateFeature = useCallback((index: number) => {
+    if (index === currentIndex || isTransitioning) return;
+    
+    // Reset auto-rotation if active
+    if (autoRotateTimerRef.current) {
+      clearTimeout(autoRotateTimerRef.current);
+    }
+    
+    const intensityStyles = getGlitchIntensityStyles();
+    
+    // Start transition animation
+    setIsTransitioning(true);
+    setGlitchEffect(true);
+    
+    // Schedule text update after transition starts
+    setTimeout(() => {
+      setCurrentIndex(index);
+      
+      // Notify if callback provided
+      if (onFeatureChange) {
+        onFeatureChange(features[index], index);
+      }
+    }, 300);
+    
+    // End glitch effect
+    setTimeout(() => {
+      setGlitchEffect(false);
+    }, intensityStyles.glitchDuration);
+    
+    // End transition
+    setTimeout(() => {
+      setIsTransitioning(false);
+      
+      // Restart auto-rotation if enabled
+      if (autoRotate && !userInteracted) {
+        autoRotateTimerRef.current = setTimeout(() => {
+          rotateFeature((index + 1) % features.length);
+        }, transitionInterval);
+      }
+    }, intensityStyles.transitionDuration);
+  }, [autoRotate, currentIndex, features, isTransitioning, onFeatureChange, transitionInterval, userInteracted]);
+  
+  // Handle text updates during transition
+  useEffect(() => {
+    if (initialLoad) return;
+    
+    const currentFeature = features[currentIndex];
+    const targetText = `${currentFeature.icon} ${currentFeature.title}: ${currentFeature.description}`;
     
     if (isTransitioning) {
       // During transition, create a "digital decoding" effect
-      let transitionSteps = 6;
+      const intensityStyles = getGlitchIntensityStyles();
+      let transitionSteps = intensityStyles.transitionSteps;
       let stepCount = 0;
       
       const textDecoder = setInterval(() => {
@@ -148,11 +253,10 @@ export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
         
         if (stepCount >= transitionSteps) {
           // Final state - show the clean text
-          setVisibleText(`${currentFeature.icon} ${currentFeature.title}: ${currentFeature.description}`);
+          setVisibleText(targetText);
           clearInterval(textDecoder);
         } else {
           // Transitional states - gradually "decode" the text
-          const targetText = `${currentFeature.icon} ${currentFeature.title}: ${currentFeature.description}`;
           let decodingText = "";
           
           for (let i = 0; i < targetText.length; i++) {
@@ -167,14 +271,22 @@ export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
           
           setVisibleText(decodingText);
         }
-      }, 100);
+      }, intensityStyles.stepDelay);
       
       return () => clearInterval(textDecoder);
     } else {
       // Not transitioning - show the clean text
-      setVisibleText(`${currentFeature.icon} ${currentFeature.title}: ${currentFeature.description}`);
+      setVisibleText(targetText);
     }
-  }, [currentIndex, isTransitioning, baseText]);
+  }, [currentIndex, isTransitioning, features, matrixChars, initialLoad]);
+  
+  // Handler for navigation dots
+  const handleDotClick = (index: number) => {
+    if (index === currentIndex || isTransitioning) return;
+    
+    setUserInteracted(true);
+    rotateFeature(index);
+  };
   
   return (
     <div 
@@ -185,12 +297,14 @@ export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
         glitchEffect && "text-glitch",
         className
       )}
-      style={containerHeight ? { 
-        height: `${containerHeight}px`,
+      style={{ 
+        height: containerHeight ? `${containerHeight}px` : minHeight,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
-      } : {}}
+        justifyContent: 'center',
+        transition: 'height 0.3s ease'
+      }}
+      aria-live="polite"
     >
       {/* Data stream overlay */}
       {isTransitioning && (
@@ -204,8 +318,30 @@ export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
           isTransitioning && "opacity-90"
         )}
       >
-        <div className="text-container">{visibleText}</div>
+        <div className="text-container">
+          {visibleText}
+        </div>
       </div>
+      
+      {/* Navigation dots */}
+      {showNavigation && features.length > 1 && (
+        <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1 z-20">
+          {features.map((_, index) => (
+            <button
+              key={`dot-${index}`}
+              className={cn(
+                "w-2 h-2 rounded-full transition-all duration-300",
+                currentIndex === index 
+                  ? "bg-matrix-text opacity-90" 
+                  : "bg-matrix-text opacity-30"
+              )}
+              onClick={() => handleDotClick(index)}
+              aria-label={`Go to feature ${index + 1}`}
+              aria-current={currentIndex === index ? 'true' : 'false'}
+            />
+          ))}
+        </div>
+      )}
       
       {/* Digital scanner line effect */}
       {isTransitioning && (
@@ -215,7 +351,6 @@ export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
       <style jsx>{`
         .matrix-rotating-features {
           transition: opacity 300ms ease;
-          /* Fixed height container to prevent layout shifts */
           display: flex;
           align-items: center;
           justify-content: center;
@@ -253,17 +388,15 @@ export const RotatingFeatures: React.FC<RotatingFeaturesProps> = ({
           width: 100%;
           max-height: 100%;
           overflow: hidden;
-          /* Center content vertically and horizontally */
           display: flex;
           align-items: center;
           justify-content: center;
         }
         
         .text-container {
-          /* Limit width to prevent overflow */
           max-width: 100%;
-          /* Center text */
           text-align: center;
+          line-height: 1.5;
         }
         
         @keyframes data-stream {
