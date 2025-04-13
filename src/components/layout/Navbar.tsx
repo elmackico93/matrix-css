@@ -408,7 +408,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
       }, 300);
     }
   }, [isOpen]);
-
+  
   // Clean up body overflow when component unmounts
   useEffect(() => {
     return () => {
@@ -458,13 +458,16 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
 
   return (
     <>
-      {/* Mobile Menu Container */}
+      {/* Mobile Menu Container - Always below navbar in z-index */}
       {isOpen && (
         <div 
-          className={`fixed inset-0 bg-[rgba(0,10,2,0.97)] border-b border-matrix-border overflow-auto z-[9999] ${
+          className={`fixed top-0 left-0 right-0 bottom-0 w-full h-screen bg-[rgba(0,10,2,0.97)] border-b border-matrix-border overflow-auto z-[999] ${
             glitchEffect ? 'menu-glitch-effect' : ''
           } ${menuAnimationComplete ? 'menu-active' : 'menu-entering'}`}
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', zIndex: 9999 }}
+          style={{ 
+            position: 'fixed', 
+            zIndex: 999
+          }}
         >
           {/* Matrix Rain Effect Canvas */}
           <canvas 
@@ -475,30 +478,19 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
           
           {/* Menu Content Container */}
           <div 
-            className="menu-container relative z-10 flex flex-col items-start w-full h-full px-6 pt-[90px] pb-16 overflow-y-auto"
+            className="menu-container relative z-10 flex flex-col items-start w-full h-full px-4 sm:px-6 pt-[70px] pb-16 overflow-y-auto"
             style={{
               opacity: menuItemsVisible ? 1 : 0,
               transition: 'opacity 0.3s ease-in-out'
             }}
           >
-            {/* Terminal-style header with X close button */}
+            {/* Terminal-style header with improved alignment */}
             <div className="menu-header w-full mb-6 pb-3 border-b border-[rgba(0,255,65,0.2)]">
-              <div className="flex justify-between items-center">
-                <div className="terminal-line flex items-center text-[var(--m-text-bright)] font-matrix-hacker mb-2">
-                  <span className="terminal-prompt text-[var(--m-text-dim)]">&gt;</span>
-                  <span className="terminal-command ml-2 typing-animation">SYSTEM.MENU.LOAD()</span>
-                </div>
-                <button 
-                  onClick={toggleMenu}
-                  className="close-button flex items-center justify-center w-[40px] h-[40px] bg-[rgba(0,0,0,0.5)] border border-[rgba(0,255,65,0.3)] text-[var(--m-text-bright)] rounded-md overflow-hidden transition-all duration-300 hover:bg-[rgba(0,255,65,0.1)]"
-                >
-                  <span className="close-x text-2xl font-light">×</span>
-                  <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[rgba(0,255,65,0.05)] transform -skew-x-45 translate-x-[-150%] transition-transform duration-300 group-hover:translate-x-[150%]"></div>
-                  </div>
-                </button>
+              <div className="terminal-line flex items-center overflow-hidden text-[var(--m-text-bright)] font-matrix-hacker mb-2">
+                <span className="terminal-prompt shrink-0 mr-2 text-[var(--m-text-dim)]">&gt;</span>
+                <span className="terminal-command min-w-0 overflow-hidden whitespace-nowrap typing-animation">SYSTEM.MENU.LOAD()</span>
               </div>
-              <div className="system-status text-[0.8rem] text-[var(--m-text-dim)] font-matrix-hacker">
+              <div className="system-status text-[0.8rem] text-[var(--m-text-dim)] font-matrix-hacker whitespace-nowrap overflow-hidden text-ellipsis">
                 <span className="status-indicator text-[var(--m-text)]">ACCESS GRANTED</span> :: SECURITY LEVEL 3 :: USER AUTHENTICATED
               </div>
             </div>
@@ -597,7 +589,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
       )}
       
       {/* Main Navbar */}
-      <nav
+      <div 
         ref={navRef}
         className={cn(
           'fixed top-0 left-0 right-0 h-[70px] bg-[rgba(0,10,2,0.92)] border-b border-matrix-border backdrop-filter backdrop-blur-[10px] overflow-hidden transition-colors duration-300 z-[1000]',
@@ -698,15 +690,15 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
               </span>
             </div>
           </div>
-          
-          {/* ENHANCED Menu Toggle for Mobile with animations */}
+
+          {/* ENHANCED Menu Toggle for Mobile with animations - ALWAYS VISIBLE but HIDDEN ON DESKTOP */}
           <button 
             type="button"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
             aria-controls="navLinksContainer"
             className={cn(
-              "nav-menu-toggle flex flex-col cursor-pointer border border-[var(--m-border)] p-[6px] rounded-[var(--m-radius)] transition-all duration-300 z-[10000] md:hidden",
+              "nav-menu-toggle fixed top-[14px] right-5 flex flex-col cursor-pointer border border-[var(--m-border)] p-[6px] rounded-[var(--m-radius)] transition-all duration-300 z-[1001] md:hidden",
               isOpen ? "bg-[rgba(0,40,0,0.4)] menu-active" : "bg-transparent"
             )}
             onClick={toggleMenu}
@@ -734,7 +726,7 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
               )}
             </div>
             <div className={cn(
-              "toggle-label text-[0.6rem] tracking-[1px] mt-[2px] transition-all duration-300",
+              "toggle-label text-[0.65rem] text-center tracking-[1px] mt-[2px] transition-all duration-300 font-matrix-hacker",
               isOpen ? "text-[var(--m-text-bright)]" : "text-[var(--m-text-dim)]"
             )}>
               {isOpen ? "SYSTEM" : "MENU"}
@@ -894,349 +886,374 @@ export const MatrixNavbar: React.FC<MatrixNavbarProps> = memo(({
             </div>
           </div>
         </div>
+      </div>
+
+      <style jsx>{`
+        /* Circuit traces pattern */
+        .circuit-traces {
+          background-image: 
+            radial-gradient(circle at 10% 90%, rgba(0, 255, 65, 0.07) 1px, transparent 1px),
+            radial-gradient(circle at 80% 10%, rgba(0, 255, 65, 0.07) 1px, transparent 1px),
+            linear-gradient(to right, rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+          background-size: 20px 20px, 20px 20px, 10px 10px, 10px 10px;
+          background-position: 0 0, 0 0, 0 0, 0 0;
+        }
         
-        <style jsx>{`
-          /* Circuit traces pattern */
-          .circuit-traces {
-            background-image: 
-              radial-gradient(circle at 10% 90%, rgba(0, 255, 65, 0.07) 1px, transparent 1px),
-              radial-gradient(circle at 80% 10%, rgba(0, 255, 65, 0.07) 1px, transparent 1px),
-              linear-gradient(to right, rgba(0, 255, 65, 0.05) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px, 20px 20px, 10px 10px, 10px 10px;
-            background-position: 0 0, 0 0, 0 0, 0 0;
-          }
-          
-          /* Ultra clean search styling */
-          .matrix-search {
-            font-family: var(--m-font-hacker);
-          }
-          
-          .search-inner {
-            background-color: rgba(0, 5, 0, 0.2);
-          }
-          
-          .search-inner:focus-within {
-            background-color: rgba(0, 10, 0, 0.3);
-          }
-          
-          /* Clean empty cursor blink */
-          .empty-cursor {
-            animation: cursor-blink 0.8s step-end infinite;
-          }
-          
-          @keyframes cursor-blink {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 0.8; }
-          }
-          
-          /* Ultra subtle glitch effect */
-          .search-glitch {
-            animation: search-glitch 0.12s ease-in-out;
-          }
-          
-          @keyframes search-glitch {
-            0%, 100% { transform: translateX(0); }
-            33% { transform: translateX(-1px); }
-            66% { transform: translateX(1px); }
-          }
-          
-          /* Logo styling */
-          .logo-text-container {
-            position: relative;
-            overflow: hidden;
-            padding: 0 1px;
-          }
-          
-          .logo-text {
-            text-shadow: 0 0 15px var(--m-glow);
-            color: var(--m-text-bright);
-            position: relative;
-            letter-spacing: 1px;
-            transform: translateZ(0);
-          }
-          
-          /* Enhanced glitch with displacement */
-          .logo-text.glitching {
-            text-shadow: 0 0 20px var(--m-glow), 0 0 30px var(--m-glow);
-            animation: text-flicker 0.2s ease-in-out;
-          }
-          
-          .logo-text.logo-hovered {
-            letter-spacing: 1.5px;
-            transition: letter-spacing 0.3s ease-out;
-          }
-          
-          /* Logo scanning effect */
-          .logo-scan-line {
-            transition: left 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-          }
-          
-          .logo-scan-line.scan-active {
-            left: 100%;
-            transition: left 1.2s cubic-bezier(0.19, 1, 0.22, 1);
-          }
-          
-          /* Enhanced brackets with data pulse */
-          .logo-bracket {
-            position: relative;
-          }
-          
-          .logo-bracket.bracket-active {
-            color: var(--m-text-bright);
-            opacity: 0.95;
-            text-shadow: 0 0 10px var(--m-glow);
-          }
-          
-          .data-pulse {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background-color: var(--m-text);
-            opacity: 0;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-          }
-          
-          .bracket-active .data-pulse {
-            animation: data-pulse 1.5s ease-in-out infinite;
-          }
-          
-          @keyframes data-pulse {
-            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-            50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-          }
-          
-          /* Status indicator enhancements */
-          .status-dot-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-          
-          .status-pulse {
-            animation-duration: 2s;
-          }
-          
-          .status-version {
-            font-size: 0.65rem;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 20;
-          }
-          
-          /* ENHANCED MOBILE MENU STYLES */
-          
-          /* Digital grid pattern for menu background */
-          .menu-container {
-            background-image: 
-              linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-            background-position: 0 0;
-          }
-          
-          /* Enhanced menu animations */
-          .menu-glitch-effect {
-            animation: menu-glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-          }
-          
-          @keyframes menu-glitch {
-            0%, 100% { transform: translateX(0); opacity: 1; }
-            10% { transform: translateX(-10px); opacity: 0.8; }
-            20% { transform: translateX(8px); opacity: 0.9; }
-            30% { transform: translateX(-6px); opacity: 1; }
-            40% { transform: translateX(4px); opacity: 0.9; }
-            50% { transform: translateX(-2px); opacity: 1; }
-            60% { transform: translateX(0); opacity: 0.9; }
-          }
-          
-          .menu-entering {
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-          }
-          
-          .menu-active {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-          }
-          
-          /* Terminal typing animation */
-          .typing-animation {
-            overflow: hidden;
-            white-space: nowrap;
-            animation: typing 1.5s steps(20, end);
-            width: 100%;
-          }
-          
-          @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-          }
-          
-          /* Close button styling */
-          .close-button {
-            position: relative;
-            overflow: hidden;
-            font-family: var(--m-font-hacker);
-          }
-          
-          .close-button .close-x {
-            transform: translateY(-1px);
-          }
-          
-          .close-button:hover {
-            text-shadow: 0 0 10px var(--m-text);
-            border-color: var(--m-text-bright);
-          }
-          
-          .close-button::before {
-            content: "";
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            width: 6px;
-            height: 6px;
-            background-color: var(--m-text);
-            border-radius: 50%;
-            opacity: 0.6;
-          }
-          
-          .close-button::after {
-            content: "";
-            position: absolute;
-            bottom: -2px;
-            left: -2px;
-            width: 6px;
-            height: 6px;
-            background-color: var(--m-text);
-            border-radius: 50%;
-            opacity: 0.6;
-          }
-          
-          /* Hover effects */
-          .mobile-nav-link:hover {
-            background-color: rgba(0, 255, 65, 0.05);
-          }
-          
-          /* Enhanced text flicker animation */
-          @keyframes text-flicker {
-            0%, 100% { opacity: 1; transform: translateX(0); }
-            10% { opacity: 0.9; transform: translateX(1px); }
-            20% { opacity: 1; transform: translateX(-1px); }
-            30% { opacity: 0.9; transform: translateX(0); }
-            40% { opacity: 0.95; transform: translateX(1px); }
-            50% { opacity: 1; transform: translateX(-1px); }
-            60% { opacity: 0.95; transform: translateX(0); }
-            70% { opacity: 1; transform: translateX(1px); }
-            80% { opacity: 0.9; transform: translateX(-1px); }
-            90% { opacity: 1; transform: translateX(0); }
-          }
+        /* Ultra clean search styling */
+        .matrix-search {
+          font-family: var(--m-font-hacker);
+        }
+        
+        .search-inner {
+          background-color: rgba(0, 5, 0, 0.2);
+        }
+        
+        .search-inner:focus-within {
+          background-color: rgba(0, 10, 0, 0.3);
+        }
+        
+        /* Clean empty cursor blink */
+        .empty-cursor {
+          animation: cursor-blink 0.8s step-end infinite;
+        }
+        
+        @keyframes cursor-blink {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.8; }
+        }
+        
+        /* Ultra subtle glitch effect */
+        .search-glitch {
+          animation: search-glitch 0.12s ease-in-out;
+        }
+        
+        @keyframes search-glitch {
+          0%, 100% { transform: translateX(0); }
+          33% { transform: translateX(-1px); }
+          66% { transform: translateX(1px); }
+        }
+        
+        /* Logo styling */
+        .logo-text-container {
+          position: relative;
+          overflow: hidden;
+          padding: 0 1px;
+        }
+        
+        .logo-text {
+          text-shadow: 0 0 15px var(--m-glow);
+          color: var(--m-text-bright);
+          position: relative;
+          letter-spacing: 1px;
+          transform: translateZ(0);
+        }
+        
+        /* Enhanced glitch with displacement */
+        .logo-text.glitching {
+          text-shadow: 0 0 20px var(--m-glow), 0 0 30px var(--m-glow);
+          animation: text-flicker 0.2s ease-in-out;
+        }
+        
+        .logo-text.logo-hovered {
+          letter-spacing: 1.5px;
+          transition: letter-spacing 0.3s ease-out;
+        }
+        
+        /* Logo scanning effect */
+        .logo-scan-line {
+          transition: left 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        .logo-scan-line.scan-active {
+          left: 100%;
+          transition: left 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        /* Enhanced brackets with data pulse */
+        .logo-bracket {
+          position: relative;
+        }
+        
+        .logo-bracket.bracket-active {
+          color: var(--m-text-bright);
+          opacity: 0.95;
+          text-shadow: 0 0 10px var(--m-glow);
+        }
+        
+        .data-pulse {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background-color: var(--m-text);
+          opacity: 0;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        
+        .bracket-active .data-pulse {
+          animation: data-pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes data-pulse {
+          0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+          50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        /* Status indicator enhancements */
+        .status-dot-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .status-pulse {
+          animation-duration: 2s;
+        }
+        
+        .status-version {
+          font-size: 0.65rem;
+          white-space: nowrap;
+          pointer-events: none;
+          z-index: 20;
+        }
 
-          /* Glitch line effect */
-          .nav-glitch-line::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, transparent, rgba(0, 255, 65, 0.1), transparent);
-            transform: skewX(-20deg);
-            animation: glitch-line 5s infinite linear;
-            will-change: transform;
+        /* Menu toggle styling */
+        .nav-menu-toggle {
+          box-shadow: 0 0 5px rgba(0, 255, 65, 0.1);
+          width: 40px;
+          height: 42px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(0, 10, 5, 0.8);
+        }
+        
+        .nav-menu-toggle:hover {
+          box-shadow: 0 0 8px rgba(0, 255, 65, 0.3);
+          border-color: var(--m-text);
+        }
+        
+        .toggle-line {
+          transform-origin: center;
+          box-shadow: 0 0 2px rgba(0, 255, 65, 0.2);
+        }
+        
+        .toggle-active .toggle-line {
+          background-color: var(--m-text-bright);
+        }
+        
+        /* Clean button corners with subtle indicators */
+        .nav-menu-toggle::before,
+        .nav-menu-toggle::after {
+          content: "";
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background-color: var(--m-text);
+          opacity: 0.6;
+          transition: all 0.3s ease;
+        }
+        
+        .nav-menu-toggle::before {
+          top: -1px;
+          right: -1px;
+        }
+        
+        .nav-menu-toggle::after {
+          bottom: -1px;
+          left: -1px;
+        }
+        
+        .nav-menu-toggle:hover::before,
+        .nav-menu-toggle:hover::after {
+          opacity: 0.9;
+          background-color: var(--m-text-bright);
+        }
+        
+        /* Terminal typing animation with width adjustment */
+        .terminal-command {
+          overflow: hidden;
+          white-space: nowrap;
+          animation: typing 1.5s steps(20, end);
+          width: 100%;
+          display: inline-block;
+        }
+        
+        .system-status {
+          max-width: 100%;
+        }
+        
+        @media (max-width: 340px) {
+          .system-status {
+            font-size: 0.7rem;
           }
+        }
+        
+        @keyframes typing {
+          from { width: 0; }
+          to { width: 100%; }
+        }
+        
+        /* ENHANCED MOBILE MENU STYLES */
+        
+        /* Digital grid pattern for menu background */
+        .menu-container {
+          background-image: 
+            linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+          background-size: 20px 20px;
+          background-position: 0 0;
+        }
+        
+        /* Enhanced menu animations */
+        .menu-glitch-effect {
+          animation: menu-glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        @keyframes menu-glitch {
+          0%, 100% { transform: translateX(0); opacity: 1; }
+          10% { transform: translateX(-10px); opacity: 0.8; }
+          20% { transform: translateX(8px); opacity: 0.9; }
+          30% { transform: translateX(-6px); opacity: 1; }
+          40% { transform: translateX(4px); opacity: 0.9; }
+          50% { transform: translateX(-2px); opacity: 1; }
+          60% { transform: translateX(0); opacity: 0.9; }
+        }
+        
+        .menu-entering {
+          opacity: 0;
+          transform: translateY(-20px);
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .menu-active {
+          opacity: 1;
+          transform: translateY(0);
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        /* Hover effects */
+        .mobile-nav-link:hover {
+          background-color: rgba(0, 255, 65, 0.05);
+        }
+        
+        /* Enhanced text flicker animation */
+        @keyframes text-flicker {
+          0%, 100% { opacity: 1; transform: translateX(0); }
+          10% { opacity: 0.9; transform: translateX(1px); }
+          20% { opacity: 1; transform: translateX(-1px); }
+          30% { opacity: 0.9; transform: translateX(0); }
+          40% { opacity: 0.95; transform: translateX(1px); }
+          50% { opacity: 1; transform: translateX(-1px); }
+          60% { opacity: 0.95; transform: translateX(0); }
+          70% { opacity: 1; transform: translateX(1px); }
+          80% { opacity: 0.9; transform: translateX(-1px); }
+          90% { opacity: 1; transform: translateX(0); }
+        }
 
-          @keyframes glitch-line {
-            0%   { left: -100%; }
-            100% { left: 200%; }
-          }
+        /* Glitch line effect */
+        .nav-glitch-line::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(to right, transparent, rgba(0, 255, 65, 0.1), transparent);
+          transform: skewX(-20deg);
+          animation: glitch-line 5s infinite linear;
+          will-change: transform;
+        }
 
-          /* Scanline effect */
-          .nav-scanline::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-              to bottom,
-              transparent,
-              transparent 2px,
-              rgba(0, 0, 0, 0.15) 2px,
-              rgba(0, 0, 0, 0.15) 4px
-            );
-            pointer-events: none;
-          }
+        @keyframes glitch-line {
+          0%   { left: -100%; }
+          100% { left: 200%; }
+        }
 
-          /* Cursor blink effect */
-          @keyframes cursor-blink {
-            0%, 100% { opacity: 0; }
-            50%      { opacity: 1; }
-          }
-          
-          /* Nav link styling */
-          .nav-link {
-            position: relative;
-            margin: 0 2px;
-            border-radius: 0;
-            transition: color 300ms cubic-bezier(0.25, 0.8, 0.25, 1);
-            will-change: color, opacity;
-          }
-          
-          /* Stable text elements */
-          .link-text, .link-number {
-            position: relative;
-            z-index: 2;
-            transform: translateZ(0);
-            will-change: color;
-          }
-          
-          /* Click animation */
-          .nav-link-clicked {
-            animation: link-click 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-          }
-          
-          @keyframes link-click {
-            0%, 100% { opacity: 1; }
-            40% { opacity: 0.9; }
-            60% { opacity: 1; }
-          }
-          
-          /* Data glitch animation on hover */
-          .nav-link:hover::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-              rgba(0, 255, 65, 0) 0%,
-              rgba(0, 255, 65, 0.05) 30%, 
-              rgba(0, 255, 65, 0.05) 70%,
-              rgba(0, 255, 65, 0) 100%
-            );
-            opacity: 0;
-            animation: data-glitch 2s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
-            will-change: opacity, transform;
-          }
-          
-          @keyframes data-glitch {
-            0% { opacity: 0; transform: translateX(-100%); }
-            40% { opacity: 0.8; }
-            60% { opacity: 0.8; }
-            100% { opacity: 0; transform: translateX(100%); }
-          }
-        `}</style>
-      </nav>
+        /* Scanline effect */
+        .nav-scanline::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: repeating-linear-gradient(
+            to bottom,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.15) 2px,
+            rgba(0, 0, 0, 0.15) 4px
+          );
+          pointer-events: none;
+        }
+
+        /* Cursor blink effect */
+        @keyframes cursor-blink {
+          0%, 100% { opacity: 0; }
+          50%      { opacity: 1; }
+        }
+        
+        /* Nav link styling */
+        .nav-link {
+          position: relative;
+          margin: 0 2px;
+          border-radius: 0;
+          transition: color 300ms cubic-bezier(0.25, 0.8, 0.25, 1);
+          will-change: color, opacity;
+        }
+        
+        /* Stable text elements */
+        .link-text, .link-number {
+          position: relative;
+          z-index: 2;
+          transform: translateZ(0);
+          will-change: color;
+        }
+        
+        /* Click animation */
+        .nav-link-clicked {
+          animation: link-click 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+        
+        @keyframes link-click {
+          0%, 100% { opacity: 1; }
+          40% { opacity: 0.9; }
+          60% { opacity: 1; }
+        }
+        
+        /* Data glitch animation on hover */
+        .nav-link:hover::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, 
+            rgba(0, 255, 65, 0) 0%,
+            rgba(0, 255, 65, 0.05) 30%, 
+            rgba(0, 255, 65, 0.05) 70%,
+            rgba(0, 255, 65, 0) 100%
+          );
+          opacity: 0;
+          animation: data-glitch 2s ease-in-out infinite;
+          pointer-events: none;
+          z-index: -1;
+          will-change: opacity, transform;
+        }
+        
+        @keyframes data-glitch {
+          0% { opacity: 0; transform: translateX(-100%); }
+          40% { opacity: 0.8; }
+          60% { opacity: 0.8; }
+          100% { opacity: 0; transform: translateX(100%); }
+        }
+      `}</style>
     </>
   );
 });
