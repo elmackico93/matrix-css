@@ -1,25 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/utils/cn';
-import { RotatingFeatures } from './RotatingFeatures'; // Import our new component
-
-interface MatrixHeroProps {
-  className?: string;
-  title?: string;
-  subtitle?: string;
-  primaryCta?: {
-    text: string;
-    href: string;
-  };
-  secondaryCta?: {
-    text: string;
-    href: string;
-  };
-  showScrollIndicator?: boolean;
-  showVersion?: boolean;
-  version?: string;
-  disableRainEffect?: boolean;
-  enableFeatureRotation?: boolean; // New prop to toggle feature rotation
-}
+import TerminalOverlay from '@/components/effects/TerminalOverlay';
+import { RotatingFeatures } from './RotatingFeatures';
 
 // Custom enhanced matrix glitch text component
 const EnhancedGlitchText: React.FC<{ text: string; className?: string }> = ({ text, className }) => {
@@ -50,252 +32,23 @@ const EnhancedGlitchText: React.FC<{ text: string; className?: string }> = ({ te
   );
 };
 
-// Terminal component that will replace the subtitle
-const MatrixTerminal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const [content, setContent] = useState('');
-  const [cursorPosition, setCursorPosition] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
-  const terminalRef = useRef<HTMLDivElement>(null);
-
-  // Sample code with proper indentation and structure
-  const demoCode = `// Matrix.css Framework - Quick Start Example
-import { 
-  CodeRain, 
-  MatrixNavbar, 
-  MatrixHero,
-  Terminal 
-} from 'matrix-css';
-
-/**
- * Create an immersive Matrix-style interface
- * with just a few components
- */
-function MatrixApp() {
-  return (
-    <div className="matrix-app">
-      {/* Full-screen digital rain background */}
-      <CodeRain 
-        density="medium"
-        speed="normal"
-        charSet="matrix"
-        glitchEffect={true}
-        className="fixed inset-0 -z-10 opacity-70"
-      />
-      
-      {/* Cyberpunk-style navigation */}
-      <MatrixNavbar 
-        logoText="MY_PROJECT"
-        statusText="SYSTEM ONLINE" 
-        links={[
-          { text: "HOME", href: "/" },
-          { text: "DASHBOARD", href: "/dashboard" },
-          { text: "ABOUT", href: "/about" }
-        ]} 
-      />
-      
-      {/* Hero section with Matrix styling */}
-      <MatrixHero
-        title="DIGITAL REVOLUTION"
-        subtitle="Enter the digital realm with Matrix.css"
-        primaryCta={{ 
-          text: "GET STARTED", 
-          href: "#start" 
-        }}
-        secondaryCta={{ 
-          text: "DOCUMENTATION", 
-          href: "#docs" 
-        }}
-      />
-      
-      {/* Interactive terminal for user input */}
-      <Terminal
-        title="Access Terminal"
-        initialCommands={["help"]}
-        commands={{
-          help: () => "Available commands: status, login, exit",
-          status: () => "All systems operational",
-          login: () => "Access granted. Welcome to the Matrix."
-        }}
-      />
-    </div>
-  );
-}
-
-export default MatrixApp;`;
-
-  // Handle realistic typing effect
-  useEffect(() => {
-    if (isTyping && cursorPosition < demoCode.length) {
-      // Variable typing speed with contextual pauses
-      let typingSpeed = 25 + Math.random() * 25;
-      const currentChar = demoCode[cursorPosition];
-      
-      // Add natural pauses at different syntactic points
-      if (currentChar === '\n') {
-        typingSpeed = 200 + Math.random() * 150;
-      } else if (currentChar === '{' || currentChar === '}') {
-        typingSpeed = 150 + Math.random() * 100;
-      } else if (currentChar === '(' || currentChar === ')') {
-        typingSpeed = 80 + Math.random() * 50;
-      } else if (currentChar === ',' || currentChar === ';') {
-        typingSpeed = 120 + Math.random() * 60;
-      }
-      
-      // Random longer "thinking" pause
-      if (Math.random() > 0.985) {
-        typingSpeed = 400 + Math.random() * 300;
-      }
-      
-      const typingTimer = setTimeout(() => {
-        setContent(demoCode.substring(0, cursorPosition + 1));
-        setCursorPosition(prev => prev + 1);
-        
-        // Play typing sound occasionally
-        if (Math.random() > 0.7 && currentChar !== ' ' && currentChar !== '\n') {
-          playTypingSound();
-        }
-      }, typingSpeed);
-      
-      return () => clearTimeout(typingTimer);
-    } else if (cursorPosition >= demoCode.length) {
-      setIsTyping(false);
-    }
-  }, [cursorPosition, isTyping]);
-
-  // Scroll terminal to keep content visible
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [content]);
-
-  // Play typing sound effect
-  const playTypingSound = () => {
-    try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.type = 'square';
-      oscillator.frequency.value = 100 + Math.random() * 400;
-      gainNode.gain.value = 0.05;
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.start();
-      
-      setTimeout(() => {
-        oscillator.stop();
-        audioContext.close();
-      }, 10 + Math.random() * 20);
-    } catch (e) {
-      // Audio context not available
-    }
+interface MatrixHeroProps {
+  className?: string;
+  title?: string;
+  subtitle?: string;
+  primaryCta?: {
+    text: string;
+    href: string;
   };
-  
-  // Copy code to clipboard
-  const copyCode = () => {
-    navigator.clipboard.writeText(demoCode)
-      .then(() => {
-        const messageEl = document.createElement('div');
-        messageEl.innerText = 'Code copied to clipboard';
-        messageEl.className = 'absolute top-3 right-[90px] bg-[var(--m-text)] text-black px-3 py-2 rounded-md text-sm font-mono';
-        messageEl.style.animation = 'fadeOut 2s forwards';
-        
-        if (terminalRef.current) {
-          terminalRef.current.appendChild(messageEl);
-          setTimeout(() => messageEl.remove(), 2000);
-        }
-      });
+  secondaryCta?: {
+    text: string;
+    href: string;
   };
-
-  return (
-    <div className="w-full h-[70vh] max-h-[600px] bg-[rgba(0,0,0,0.9)] border border-[var(--m-text)] rounded-md overflow-hidden shadow-[0_0_30px_rgba(0,255,65,0.2)] relative">
-      {/* Terminal header */}
-      <div className="bg-[rgba(0,30,0,0.9)] py-2 px-3 flex justify-between items-center border-b border-[var(--m-border)]">
-        <div className="flex items-center">
-          <div className="mr-3 flex space-x-2">
-            <span className="h-3 w-3 rounded-full bg-[#ff4a4a]"></span>
-            <span className="h-3 w-3 rounded-full bg-[#ffbf00]"></span>
-            <span className="h-3 w-3 rounded-full bg-[#00cd4e]"></span>
-          </div>
-          <span className="font-mono text-sm text-[var(--m-text)]">matrix-app.tsx</span>
-        </div>
-        <div className="flex space-x-2">
-          {/* Enhanced Copy Button with icon */}
-          <button 
-            onClick={copyCode}
-            className="terminal-button copy-button"
-          >
-            <span className="button-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-            </span>
-            <span className="button-text">COPY</span>
-          </button>
-          
-          {/* Enhanced Close Button with icon */}
-          <button 
-            onClick={onClose}
-            className="terminal-button close-button"
-          >
-            <span className="button-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </span>
-            <span className="button-text">EXIT</span>
-          </button>
-        </div>
-      </div>
-      
-      {/* Terminal content */}
-      <div 
-        ref={terminalRef}
-        className="font-mono text-sm p-4 h-[calc(100%-40px)] overflow-auto whitespace-pre bg-[rgba(0,5,0,0.95)]"
-      >
-        <div 
-          className="terminal-code" 
-          dangerouslySetInnerHTML={{ 
-            __html: formatCodeWithSyntaxHighlighting(content) + (isTyping ? '<span class="cursor"></span>' : '')
-          }} 
-        />
-      </div>
-      
-      {/* Terminal scanlines effect */}
-      <div className="scanlines absolute inset-0 pointer-events-none"></div>
-    </div>
-  );
-};
-
-// Helper function to add syntax highlighting
-function formatCodeWithSyntaxHighlighting(code: string): string {
-  return code
-    // Replace one type of tokens at a time
-    .replace(
-      /(\/\/.*|\/\*[\s\S]*?\*\/|\*.*)/g, 
-      '<span class="comment">$1</span>'
-    )
-    .replace(
-      /\b(import|from|function|return|export|default|const|let|var)\b/g,
-      '<span class="keyword">$1</span>'
-    )
-    .replace(
-      /(<\/?[\w\d]+|className|href|text|title|commands|density|charSet|opacity|glitchEffect|statusText|logoText|links|initialCommands|showVersion|version|primaryCta|secondaryCta)\b/g,
-      '<span class="tag">$1</span>'
-    )
-    .replace(
-      /(".*?"|'.*?')/g,
-      '<span class="string">$1</span>'
-    )
-    .replace(
-      /\b(true|false)\b/g,
-      '<span class="boolean">$1</span>'
-    );
+  showScrollIndicator?: boolean;
+  showVersion?: boolean;
+  version?: string;
+  disableRainEffect?: boolean;
+  enableFeatureRotation?: boolean;
 }
 
 export const MatrixHero: React.FC<MatrixHeroProps> = ({
@@ -308,20 +61,29 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
   showVersion = true,
   version = 'VERSION 2.0',
   disableRainEffect = false,
-  enableFeatureRotation = true, // Default to true
+  enableFeatureRotation = true,
 }) => {
   const rainCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [subtitleVisible, setSubtitleVisible] = useState(false);
   const [titleVisible, setTitleVisible] = useState(false);
   const [terminalActive, setTerminalActive] = useState(false);
+  const [matrixEntered, setMatrixEntered] = useState(false);
+  const [glitchActive, setGlitchActive] = useState(false);
+  
   const titleRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
-  const terminalContainerRef = useRef<HTMLDivElement>(null);
+  const primaryButtonRef = useRef<HTMLAnchorElement>(null);
   
-  // Digital grid background ref for hacker terminal mode
-  const gridCanvasRef = useRef<HTMLCanvasElement>(null);
-  
+  // Define terminal commands
+  const terminalCommands = {
+    help: () => 'Available commands: help, install, version, features, components',
+    install: () => 'Installing Matrix.css...\nDone! Ready to immerse in the digital realm.',
+    version: () => 'Matrix.css v2.0.0',
+    features: () => 'Core features: Visual Effects, React Components, Dark/Light Themes, Grid System',
+    components: () => 'UI components: Button, Card, Alert, Modal, Progress, Switch, etc.',
+  };
+
   // Initialize matrix rain animation
   useEffect(() => {
     if (!rainCanvasRef.current || disableRainEffect) return;
@@ -408,184 +170,6 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
       }
     };
   }, [disableRainEffect, terminalActive]);
-  
-  // Subtle digital grid background when terminal is active
-  useEffect(() => {
-    if (!gridCanvasRef.current || !terminalActive) return;
-    
-    const canvas = gridCanvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    // Set canvas dimensions
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    // Grid parameters
-    const cellSize = 40;
-    const nodeRadius = 1;
-    const lineWidth = 0.5;
-    
-    // Data pulses (moving dots along the grid lines)
-    const dataPulses: {
-      x: number;
-      y: number;
-      targetX: number;
-      targetY: number;
-      progress: number;
-      speed: number;
-      size: number;
-      color: string;
-    }[] = [];
-    
-    // Generate initial pulses
-    const generatePulses = () => {
-      const maxPulses = 15; // Number of pulses to show at once
-      
-      while (dataPulses.length < maxPulses) {
-        // Start position (random grid node)
-        const startX = Math.floor(Math.random() * (canvas.width / cellSize)) * cellSize;
-        const startY = Math.floor(Math.random() * (canvas.height / cellSize)) * cellSize;
-        
-        // End position (adjacent node - only horizontal or vertical movement)
-        let endX = startX;
-        let endY = startY;
-        
-        if (Math.random() > 0.5) {
-          // Move horizontally
-          endX = startX + (Math.random() > 0.5 ? cellSize : -cellSize);
-        } else {
-          // Move vertically
-          endY = startY + (Math.random() > 0.5 ? cellSize : -cellSize);
-        }
-        
-        // Only add if within canvas bounds
-        if (endX >= 0 && endX <= canvas.width && endY >= 0 && endY <= canvas.height) {
-          dataPulses.push({
-            x: startX,
-            y: startY,
-            targetX: endX,
-            targetY: endY,
-            progress: 0,
-            speed: 0.005 + Math.random() * 0.015, // Random speed
-            size: 1 + Math.random() * 2,
-            color: `rgba(0, ${150 + Math.floor(Math.random() * 105)}, ${30 + Math.floor(Math.random() * 50)}, ${0.5 + Math.random() * 0.5})`
-          });
-        }
-      }
-    };
-    
-    // Create initial pulses
-    generatePulses();
-    
-    // Draw function
-    const draw = () => {
-      // Clear canvas with transparent black
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Set grid style
-      ctx.strokeStyle = 'rgba(0, 60, 20, 0.15)';
-      ctx.lineWidth = lineWidth;
-      
-      // Draw horizontal grid lines
-      for (let y = 0; y <= canvas.height; y += cellSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-      
-      // Draw vertical grid lines
-      for (let x = 0; x <= canvas.width; x += cellSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      
-      // Draw grid nodes
-      ctx.fillStyle = 'rgba(0, 100, 30, 0.25)';
-      for (let x = 0; x <= canvas.width; x += cellSize) {
-        for (let y = 0; y <= canvas.height; y += cellSize) {
-          ctx.beginPath();
-          ctx.arc(x, y, nodeRadius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-      
-      // Update and draw data pulses
-      for (let i = dataPulses.length - 1; i >= 0; i--) {
-        const pulse = dataPulses[i];
-        
-        // Update progress
-        pulse.progress += pulse.speed;
-        
-        // Remove completed pulses
-        if (pulse.progress >= 1) {
-          dataPulses.splice(i, 1);
-          continue;
-        }
-        
-        // Calculate current position
-        const currentX = pulse.x + (pulse.targetX - pulse.x) * pulse.progress;
-        const currentY = pulse.y + (pulse.targetY - pulse.y) * pulse.progress;
-        
-        // Draw pulse
-        ctx.fillStyle = pulse.color;
-        ctx.beginPath();
-        ctx.arc(currentX, currentY, pulse.size, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Create glowing effect
-        const gradient = ctx.createRadialGradient(
-          currentX, currentY, 0,
-          currentX, currentY, pulse.size * 3
-        );
-        gradient.addColorStop(0, pulse.color);
-        gradient.addColorStop(1, 'rgba(0, 100, 30, 0)');
-        
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(currentX, currentY, pulse.size * 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      
-      // Add new pulses if needed
-      if (dataPulses.length < 15 && Math.random() > 0.95) {
-        generatePulses();
-      }
-      
-      // Occasionally add binary/hex numbers
-      if (Math.random() > 0.98) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const text = Math.random() > 0.5 
-          ? Math.floor(Math.random() * 256).toString(16).toUpperCase() // Hex
-          : Math.floor(Math.random() * 2).toString(); // Binary
-          
-        ctx.fillStyle = 'rgba(0, 255, 65, 0.1)';
-        ctx.font = '20px monospace';
-        ctx.fillText(text, x, y);
-      }
-      
-      gridAnimationRef.current = requestAnimationFrame(draw);
-    };
-    
-    // Start animation
-    const gridAnimationRef = { current: requestAnimationFrame(draw) };
-    
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      if (gridAnimationRef.current) {
-        cancelAnimationFrame(gridAnimationRef.current);
-      }
-    };
-  }, [terminalActive]);
 
   // Fade in title and subtitle after slight delays
   useEffect(() => {
@@ -651,20 +235,23 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
       // Audio context not available
     }
     
-    // Lock page scrolling when terminal is active
-    document.body.style.overflow = 'hidden';
+    // Trigger glitch effect
+    setGlitchActive(true);
+    setTimeout(() => setGlitchActive(false), 300);
     
-    // Activate terminal after transition
-    setTimeout(() => {
-      setTerminalActive(true);
-    }, 600);
+    // Open terminal overlay
+    setTerminalActive(true);
+  };
+  
+  // Handle terminal completion
+  const handleTerminalComplete = () => {
+    setMatrixEntered(true);
   };
   
   // Handle terminal close
   const handleCloseTerminal = () => {
-    // Re-enable page scrolling
-    document.body.style.overflow = '';
     setTerminalActive(false);
+    setMatrixEntered(false);
   };
 
   // Hacker-inspired button effects
@@ -924,7 +511,6 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
           }, duration);
         } catch (e) {
           // Audio context might not be available
-          console.log('Audio context not available');
         }
       }
     };
@@ -988,65 +574,37 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
         />
       )}
       
-      {/* Terminal Overlay */}
-      {terminalActive && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center terminal-overlay-container">
-          {/* Overlay Background with Matrix Effect */}
-          <div className="absolute inset-0 bg-black bg-opacity-80 terminal-overlay">
-            {/* Digital code elements */}
-            <div className="matrix-overlay-effect"></div>
-            
-            {/* Lock icon and status text */}
-            <div className="absolute top-6 right-6 flex items-center">
-              <div className="w-8 h-8 border-2 border-[var(--m-text)] rounded-full flex items-center justify-center mr-3 animate-pulse">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--m-text)]">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-              </div>
-              <div className="text-[var(--m-text)] font-mono text-xs uppercase tracking-wider">
-                System Locked • Terminal Access Only
-              </div>
-            </div>
-            
-            {/* Binary rain columns */}
-            <div className="binary-rain-container">
-              {Array.from({ length: 20 }).map((_, i) => (
-                <div key={i} className="binary-column" style={{ 
-                  left: `${i * 5}%`, 
-                  animationDelay: `${Math.random() * 5}s`,
-                  animationDuration: `${5 + Math.random() * 10}s`
-                }}>
-                  {Array.from({ length: 15 }).map((_, j) => (
-                    <div key={j} className="binary-digit" style={{
-                      animationDelay: `${Math.random() * 2}s`,
-                      opacity: Math.random() < 0.7 ? 0.4 : 0.8
-                    }}>
-                      {Math.random() > 0.5 ? '1' : '0'}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-            
-            {/* Matrix system warnings */}
-            <div className="absolute bottom-8 left-8 text-left">
-              <div className="text-[var(--m-text)] font-mono text-xs mb-2 opacity-70">SYSTEM STATUS</div>
-              <div className="system-warning">WARNING: Unauthorized access detected</div>
-              <div className="system-warning">ALERT: Security protocol engaged</div>
-              <div className="system-warning">NOTICE: Terminal mode active</div>
-            </div>
-            
-            {/* Grid lines */}
-            <div className="grid-overlay"></div>
-          </div>
-          
-          {/* Terminal Window */}
-          <div className="w-full max-w-4xl z-50 opacity-0 terminal-window-animation">
-            <MatrixTerminal onClose={handleCloseTerminal} />
-          </div>
-        </div>
-      )}
+      {/* Terminal Overlay Component */}
+      <TerminalOverlay
+        isOpen={terminalActive}
+        onClose={handleCloseTerminal}
+        title="MATRIX SYSTEM INITIALIZATION"
+        commands={terminalCommands}
+        initialCommands={["help", "install"]}
+        sourceElementId={primaryButtonRef.current?.id || undefined}
+        showLoadingProgress={true}
+        loadingDuration={3000}
+        maxWidth="2xl"
+        matrixEffects={true}
+        onComplete={handleTerminalComplete}
+        terminalProps={{
+          typingEffect: true,
+          syntaxHighlighting: true,
+          height: "300px",
+        }}
+      />
+      
+      {/* Glitch overlay effect that activates during transitions */}
+      <div 
+        className={cn(
+          "fixed inset-0 pointer-events-none z-50 opacity-0 transition-opacity",
+          glitchActive && "opacity-70 transition-none"
+        )}
+        style={{
+          backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4wMQFgQZFcuKGAAAAARnQU1BAACxjwv8YQUAAAOVSURBVGjezZpLaBNRFIZPYt/gIzZqmmTikpBM0kVFKFJBBUVw4UJciCKCGxFcuHEjgmtdiAvBhQtxIaI7FbuQqoigpSmxpnk0M80jkzTNq4nJOPdMJpNMJ51H0/zgMNyZuff8c+45c+6ZMdlsNhPDMMrYAQygvJA6k+2vGCmKoowZjUYT0WgUdnZ2IBKJgM1mE76Hggyfzwe6urqgt7dXeM9qteIB0pxROp0GsqPXsrKyQHJ2DlIxlwhxhUg5Jx5zRYn39Pf36/fWCDGzw0bvxQmMQnxeF0ql0vQYCUkB8XhcsLfZbJDP58UJGysrK2A2m6G5uRk8Hg+YTCYoFovgdDoF4XA4IPVhsVggFAqB2+2G1dVVcDgcsLi4CL29vZDL5aCrqwva29uF526PR7PbGBSoLJfLX8jmfS2q3SLPfReLxZ/Y7mI+n/+JG/6I7z6Kx+NfS6XSt1QqRe6dQnPFvIeZ6bsRnPN9Ugy9h61AW6xhbKo5NC/IGUEjERAkAALB5XI/eDzeN6iVl9vb23+XU6/q6hq9vb0PpFJpo1QqfQYgbxOJxNdIJPKHZLkqlZpqbGw8gbofw4FvwEXfICh/0+n0ByIxGovFaYZl4VT4XVFReSIQCL7kOO7LEZpHiESiC7W1tf0Gg6EPRT4gGPMoEAiE8/PzP3EhM7u7u9+I3GAwOI2i3wGkH2q1+lJLS8sNvV7f0dDQoPX7/S82NjbGsKMvMfdHVN1sNtsyOzs7gX1+NJvNj1Qq1WVMTL2rq6vf8Zvx+fl52Nvbm0qlUm8RgLGxsfuYIAbQR2/juG2oM4JVwQjqvb6+/jSVSpVYWVlZGhoaAhSlUSgUA7hAL+mdLnEOh2OstbV1FM8F4+Pjt9fW1p48Hb6LLnV0mM3mMezwcHd398Py8vLH7u7uRwL7KBnRQiQSSb1Wq72H95fReygIcnxudrsdA0QFLS0tN7FTbXd3943QiQnjMrfNxHYcPFaXP4X5GVtTDsvdvY4n5V7D9HGQJFfsFtZPHyWFPpK0Z5KyXrM/l0vvbSV6c9kzdv6iOUlZ8yz9/vfS9bJZkgCSSUqr25KUt9fnZG0k0UZDg6QsOF6QJeXP8kVTkpBX1fJlHnhO1kBJ/v0Xeek6tgRxgCQjSU0kCe8hCQa27JUlvZYk5deynJpIsnAcIG9I7uQ/SBrYf5A0sN9I/gX6kZhIpc+0jAAAAABJRU5ErkJggg==")',
+          backgroundBlendMode: 'overlay',
+        }}
+      ></div>
       
       {/* Hero Content */}
       <div className={cn(
@@ -1099,6 +657,8 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
         {/* Button container */}
         <div className="flex gap-6 justify-center mt-8 flex-wrap">
           <a 
+            id="matrix-cta-primary"
+            ref={primaryButtonRef}
             href={primaryCta.href} 
             className="m-btn-primary relative overflow-hidden inline-flex items-center justify-center px-8 py-3 min-w-[180px] text-[var(--m-black)] bg-gradient-to-b from-[rgba(0,180,45,0.7)] to-[rgba(0,120,20,0.7)] border border-[var(--m-text)] rounded-[var(--m-radius)] font-bold text-xl uppercase tracking-wider shadow-[0_0_5px_rgba(0,255,65,0.2)] transition-all duration-250"
             onMouseEnter={handlePrimaryButtonMouseEnter}
@@ -1180,226 +740,6 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
           100% { transform: translateX(0); }
         }
         
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        /* Terminal buttons */
-        .terminal-button {
-          display: flex;
-          align-items: center;
-          padding: 6px 12px;
-          border-radius: 3px;
-          font-family: monospace;
-          text-transform: uppercase;
-          font-size: 11px;
-          letter-spacing: 1px;
-          border: 1px solid;
-          transition: all 0.2s ease;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .copy-button {
-          background: rgba(0, 70, 0, 0.8);
-          color: var(--m-text);
-          border-color: rgba(0, 255, 65, 0.3);
-        }
-        
-        .close-button {
-          background: rgba(70, 0, 0, 0.8);
-          color: var(--m-text);
-          border-color: rgba(255, 65, 65, 0.3);
-        }
-        
-        .terminal-button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            90deg, 
-            transparent, 
-            rgba(255, 255, 255, 0.1), 
-            transparent
-          );
-          transition: 0.5s;
-        }
-        
-        .terminal-button:hover::before {
-          left: 100%;
-        }
-        
-        .copy-button:hover {
-          background: rgba(0, 100, 0, 0.9);
-          box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
-          transform: translateY(-1px);
-        }
-        
-        .close-button:hover {
-          background: rgba(100, 0, 0, 0.9);
-          box-shadow: 0 0 10px rgba(255, 65, 65, 0.5);
-          transform: translateY(-1px);
-        }
-        
-        .terminal-button:active {
-          transform: translateY(1px);
-        }
-        
-        .button-icon {
-          margin-right: 5px;
-          display: flex;
-          align-items: center;
-        }
-        
-        .button-text {
-          font-weight: bold;
-        }
-        
-        /* Terminal overlay animations */
-        .terminal-overlay-container {
-          animation: overlay-appear 0.5s forwards;
-        }
-        
-        @keyframes overlay-appear {
-          from { background-color: rgba(0, 0, 0, 0); }
-          to { background-color: rgba(0, 0, 0, 0.8); }
-        }
-        
-        .terminal-window-animation {
-          animation: terminal-popup 0.8s forwards 0.3s;
-        }
-        
-        @keyframes terminal-popup {
-          0% { 
-            opacity: 0;
-            transform: scale(0.8);
-          }
-          70% {
-            opacity: 1;
-            transform: scale(1.05);
-          }
-          100% { 
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
-        .binary-column {
-          position: absolute;
-          top: -20%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          animation: binary-fall linear infinite;
-        }
-        
-        @keyframes binary-fall {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(120vh); }
-        }
-        
-        .binary-digit {
-          color: var(--m-text);
-          font-family: monospace;
-          font-size: 14px;
-          margin: 4px 0;
-          animation: digit-flicker 3s infinite alternate;
-        }
-        
-        @keyframes digit-flicker {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.8; }
-        }
-        
-        .system-warning {
-          font-family: monospace;
-          color: var(--m-text);
-          font-size: 12px;
-          margin-bottom: 6px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          animation: warning-blink 4s infinite;
-          opacity: 0.8;
-        }
-        
-        @keyframes warning-blink {
-          0%, 92%, 96%, 100% { opacity: 0.8; }
-          94%, 98% { opacity: 1; }
-        }
-        
-        .matrix-overlay-effect {
-          position: absolute;
-          inset: 0;
-          background-image: 
-            repeating-linear-gradient(0deg, rgba(0, 255, 65, 0.1) 0px, transparent 1px, transparent 2px),
-            repeating-linear-gradient(90deg, rgba(0, 255, 65, 0.1) 0px, transparent 1px, transparent 2px);
-          background-size: 30px 30px;
-          animation: grid-movement 30s linear infinite;
-        }
-        
-        @keyframes grid-movement {
-          0% { background-position: 0 0; }
-          100% { background-position: 50px 50px; }
-        }
-        
-        .grid-overlay {
-          position: absolute;
-          inset: 0;
-          background-image: 
-            radial-gradient(rgba(0, 255, 65, 0.3) 1px, transparent 1px);
-          background-size: 40px 40px;
-          pointer-events: none;
-          opacity: 0.2;
-        }
-        
-        .subtitle-container.terminal-transition {
-          animation: matrix-transition 0.6s forwards;
-        }
-        
-        @keyframes matrix-transition {
-          0% { 
-            transform: scale(1);
-            filter: brightness(1);
-          }
-          20% { 
-            transform: scale(1.02);
-            filter: brightness(1.5);
-          }
-          30% { 
-            transform: scale(0.98) skewX(2deg);
-            filter: brightness(0.8);
-          }
-          50% { 
-            transform: scale(1.05) skewX(-2deg);
-            filter: brightness(1.2);
-          }
-          100% { 
-            transform: scale(0.9);
-            opacity: 0; 
-            filter: brightness(0);
-          }
-        }
-        
-        .terminal-container {
-          animation: terminal-appear 0.5s ease-out forwards;
-        }
-        
-        @keyframes terminal-appear {
-          from { 
-            transform: scale(0.9);
-            opacity: 0;
-          }
-          to { 
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-        
         .data-interference {
           position: relative;
         }
@@ -1422,10 +762,6 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
           100% { opacity: 0; transform: translateY(100%); }
         }
         
-        .terminal-effect {
-          position: relative;
-        }
-        
         .button-glitch {
           animation: button-glitch 0.3s linear;
         }
@@ -1437,85 +773,6 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
           60% { transform: translate(2px, 2px); }
           80% { transform: translate(2px, -2px); }
           100% { transform: translate(0); }
-        }
-        
-        .scanlines {
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          width: 100%;
-          background: linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 255, 65, 0.02) 50%,
-            rgba(0, 0, 0, 0) 100%
-          );
-          background-size: 100% 2px;
-          animation: scanline 0.5s linear infinite;
-        }
-        
-        @keyframes scanline {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(2px); }
-        }
-        
-        .cursor {
-          display: inline-block;
-          width: 2px;
-          height: 1em;
-          background-color: var(--m-text);
-          animation: cursor-blink 1s step-end infinite;
-          vertical-align: text-bottom;
-          margin-left: 2px;
-        }
-        
-        .terminal-code {
-          line-height: 1.6;
-          color: var(--m-text);
-        }
-        
-        .terminal-code .comment {
-          color: #7d7d7d;
-        }
-        
-        .terminal-code .keyword {
-          color: #c586c0;
-        }
-        
-        .terminal-code .tag {
-          color: #569cd6;
-        }
-        
-        .terminal-code .string {
-          color: #ce9178;
-        }
-        
-        .terminal-code .boolean {
-          color: #569cd6;
-        }
-        
-        /* Digital background animation */
-        .animate-fadeIn {
-          animation: fadeIn 1s ease-in-out forwards;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-          .terminal-container {
-            margin-top: 0;
-          }
-        }
-        
-        @media (max-width: 640px) {
-          .m-btn-primary, .m-btn-secondary {
-            min-width: 160px;
-            font-size: 1rem;
-          }
-        }
-        
-        a.m-btn-primary::after, a.m-btn-secondary::after {
-          display: none;
         }
       `}</style>
     </section>
