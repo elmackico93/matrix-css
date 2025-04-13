@@ -199,8 +199,8 @@ export default MatrixApp;`;
     navigator.clipboard.writeText(demoCode)
       .then(() => {
         const messageEl = document.createElement('div');
-        messageEl.innerText = 'Code copied!';
-        messageEl.className = 'absolute top-3 right-3 bg-[var(--m-text)] text-black px-3 py-1 rounded text-sm';
+        messageEl.innerText = 'Code copied to clipboard';
+        messageEl.className = 'absolute top-3 right-[90px] bg-[var(--m-text)] text-black px-3 py-2 rounded-md text-sm font-mono';
         messageEl.style.animation = 'fadeOut 2s forwards';
         
         if (terminalRef.current) {
@@ -211,9 +211,9 @@ export default MatrixApp;`;
   };
 
   return (
-    <div className="w-full h-[70vh] max-h-[600px] bg-[rgba(0,0,0,0.85)] border border-[var(--m-text)] rounded-md overflow-hidden shadow-[0_0_20px_rgba(0,255,65,0.2)] relative">
+    <div className="w-full h-[70vh] max-h-[600px] bg-[rgba(0,0,0,0.9)] border border-[var(--m-text)] rounded-md overflow-hidden shadow-[0_0_30px_rgba(0,255,65,0.2)] relative">
       {/* Terminal header */}
-      <div className="bg-[rgba(0,30,0,0.8)] py-2 px-3 flex justify-between items-center border-b border-[var(--m-border)]">
+      <div className="bg-[rgba(0,30,0,0.9)] py-2 px-3 flex justify-between items-center border-b border-[var(--m-border)]">
         <div className="flex items-center">
           <div className="mr-3 flex space-x-2">
             <span className="h-3 w-3 rounded-full bg-[#ff4a4a]"></span>
@@ -223,17 +223,32 @@ export default MatrixApp;`;
           <span className="font-mono text-sm text-[var(--m-text)]">matrix-app.tsx</span>
         </div>
         <div className="flex space-x-2">
+          {/* Enhanced Copy Button with icon */}
           <button 
             onClick={copyCode}
-            className="px-3 py-1 text-xs bg-[rgba(0,50,0,0.7)] text-[var(--m-text)] border border-[var(--m-border)] rounded hover:bg-[rgba(0,70,0,0.8)] transition-colors"
+            className="terminal-button copy-button"
           >
-            Copy Code
+            <span className="button-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </span>
+            <span className="button-text">COPY</span>
           </button>
+          
+          {/* Enhanced Close Button with icon */}
           <button 
             onClick={onClose}
-            className="px-3 py-1 text-xs bg-[rgba(50,0,0,0.7)] text-[var(--m-text)] border border-[var(--m-border)] rounded hover:bg-[rgba(70,0,0,0.8)] transition-colors"
+            className="terminal-button close-button"
           >
-            Close Terminal
+            <span className="button-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </span>
+            <span className="button-text">EXIT</span>
           </button>
         </div>
       </div>
@@ -594,10 +609,6 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
   const handleEnterMatrix = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     
-    // Store title position to keep it stable
-    const titleRect = titleRef.current?.getBoundingClientRect();
-    const titleTop = titleRect?.top || 0;
-    
     // Play activation sound
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -640,20 +651,20 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
       // Audio context not available
     }
     
+    // Lock page scrolling when terminal is active
+    document.body.style.overflow = 'hidden';
+    
     // Activate terminal after transition
     setTimeout(() => {
       setTerminalActive(true);
-      
-      // Center the page to show terminal fully
-      setTimeout(() => {
-        if (terminalContainerRef.current) {
-          terminalContainerRef.current.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-        }
-      }, 100);
     }, 600);
+  };
+  
+  // Handle terminal close
+  const handleCloseTerminal = () => {
+    // Re-enable page scrolling
+    document.body.style.overflow = '';
+    setTerminalActive(false);
   };
 
   // Hacker-inspired button effects
@@ -1032,7 +1043,7 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
           
           {/* Terminal Window */}
           <div className="w-full max-w-4xl z-50 opacity-0 terminal-window-animation">
-            <MatrixTerminal onClose={() => setTerminalActive(false)} />
+            <MatrixTerminal onClose={handleCloseTerminal} />
           </div>
         </div>
       )}
@@ -1172,6 +1183,80 @@ export const MatrixHero: React.FC<MatrixHeroProps> = ({
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        
+        /* Terminal buttons */
+        .terminal-button {
+          display: flex;
+          align-items: center;
+          padding: 6px 12px;
+          border-radius: 3px;
+          font-family: monospace;
+          text-transform: uppercase;
+          font-size: 11px;
+          letter-spacing: 1px;
+          border: 1px solid;
+          transition: all 0.2s ease;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .copy-button {
+          background: rgba(0, 70, 0, 0.8);
+          color: var(--m-text);
+          border-color: rgba(0, 255, 65, 0.3);
+        }
+        
+        .close-button {
+          background: rgba(70, 0, 0, 0.8);
+          color: var(--m-text);
+          border-color: rgba(255, 65, 65, 0.3);
+        }
+        
+        .terminal-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.1), 
+            transparent
+          );
+          transition: 0.5s;
+        }
+        
+        .terminal-button:hover::before {
+          left: 100%;
+        }
+        
+        .copy-button:hover {
+          background: rgba(0, 100, 0, 0.9);
+          box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+          transform: translateY(-1px);
+        }
+        
+        .close-button:hover {
+          background: rgba(100, 0, 0, 0.9);
+          box-shadow: 0 0 10px rgba(255, 65, 65, 0.5);
+          transform: translateY(-1px);
+        }
+        
+        .terminal-button:active {
+          transform: translateY(1px);
+        }
+        
+        .button-icon {
+          margin-right: 5px;
+          display: flex;
+          align-items: center;
+        }
+        
+        .button-text {
+          font-weight: bold;
         }
         
         /* Terminal overlay animations */
