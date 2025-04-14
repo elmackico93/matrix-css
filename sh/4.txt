@@ -1,0 +1,1121 @@
+# MATRIX.CSS NEXT.JS FRAMEWORK - CONSOLIDATED FILE (PART 4/9)
+# CONTEXT AND PAGES
+
+===== src/context/ThemeContext.tsx =====
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+type Theme = 'dark' | 'light';
+
+interface ThemeContextType {
+  theme: Theme;
+  toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
+}
+
+// Create context with a default value to prevent the undefined error
+const ThemeContext = createContext<ThemeContextType>({
+  theme: 'dark',
+  toggleTheme: () => {},
+  setTheme: () => {},
+});
+
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Initialize with a default theme for server-side rendering
+  const [theme, setTheme] = useState<Theme>('dark');
+  const [mounted, setMounted] = useState(false);
+
+  // Only run this effect on the client-side
+  useEffect(() => {
+    setMounted(true);
+    const storedTheme = localStorage.getItem('matrixTheme') as Theme | null;
+    if (storedTheme) {
+      setTheme(storedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      setTheme('light');
+    }
+  }, []);
+
+  // Apply theme to document
+  useEffect(() => {
+    if (mounted) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('matrixTheme', theme);
+    }
+  }, [theme, mounted]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  const value = {
+    theme,
+    toggleTheme,
+    setTheme,
+  };
+
+  // Prevent hydration mismatch by rendering a simplified version during SSR
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+};
+
+export const useTheme = () => {
+  return useContext(ThemeContext);
+};
+
+===== src/context/ThemeContext/index.ts =====
+export * from './ThemeContext';
+
+===== src/context/ThemeContext/ThemeContext.tsx =====
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { ThemeMode } from '@/types/theme';
+
+interface ThemeContextType {
+  theme: ThemeMode;
+  toggleTheme: () => void;
+  setTheme: (theme: ThemeMode) => void;
+}
+
+// Create context with a default value
+const ThemeContext = createContext<ThemeContextType>({
+  theme: 'dark',
+  toggleTheme: () => {},
+  setTheme: () => {},
+});
+
+/**
+ * Provider component for theme state management
+ * Handles persistence, system preference detection, and theme switching
+ */
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Initialize with a default theme for server-side rendering
+  const [theme, setTheme] = useState<ThemeMode>('dark');
+  const [mounted, setMounted] = useState(false);
+
+  // Only run this effect on the client-side
+  useEffect(() => {
+    setMounted(true);
+    const storedTheme = localStorage.getItem('matrixTheme') as ThemeMode | null;
+    
+    // Use stored theme or system preference
+    if (storedTheme) {
+      setTheme(storedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      setTheme('light');
+    }
+  }, []);
+
+  // Apply theme to document when it changes
+  useEffect(() => {
+    if (mounted) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('matrixTheme', theme);
+    }
+  }, [theme, mounted]);
+
+  // Toggle between dark and light themes
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  const value = {
+    theme,
+    toggleTheme,
+    setTheme,
+  };
+
+  // Prevent hydration mismatch by only providing theme data after mounting
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+};
+
+/**
+ * Custom hook to access the theme context
+ * @returns ThemeContextType with theme state and functions
+ */
+export const useTheme = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
+  
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  
+  return context;
+};
+
+export default ThemeProvider;
+
+===== src/context/ThemeContext/ThemeContext.test.tsx =====
+import React from 'react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
+import { ThemeProvider, useTheme } from './ThemeContext';
+
+// Mock for localStorage
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: jest.fn((key: string) => store[key] || null),
+    setItem: jest.fn((key: string, value: string) => {
+      store[key] = value.toString();
+    }),
+    clear: jest.fn(() => {
+      store = {};
+    }),
+  };
+})();
+
+// Mock for matchMedia
+const matchMediaMock = jest.fn();
+
+// Setup test environment
+beforeAll(() => {
+  Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+  Object.defineProperty(window, 'matchMedia', { value: matchMediaMock });
+  
+  // Mock the document methods used
+  document.documentElement.setAttribute = jest.fn();
+});
+
+beforeEach(() => {
+  localStorageMock.clear();
+  jest.clearAllMocks();
+});
+
+// Test component that uses the theme hook
+const TestComponent = () => {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <div>
+      <div data-testid="theme-value">{theme}</div>
+      <button data-testid="toggle-btn" onClick={toggleTheme}>
+        Toggle Theme
+      </button>
+    </div>
+  );
+};
+
+describe('ThemeContext', () => {
+  it('should default to dark theme', () => {
+    // Don't set any stored theme or system preference
+    matchMediaMock.mockImplementation(() => ({
+      matches: false,
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }));
+    
+    render(
+      <ThemeProvider>
+        <TestComponent />
+      </ThemeProvider>
+    );
+    
+    expect(screen.getByTestId('theme-value').textContent).toBe('dark');
+  });
+
+  it('should use light theme when system prefers it', () => {
+    // Mock system preference for light theme
+    matchMediaMock.mockImplementation((query) => ({
+      matches: query === '(prefers-color-scheme: light)',
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }));
+    
+    render(
+      <ThemeProvider>
+        <TestComponent />
+      </ThemeProvider>
+    );
+    
+    // Need to wait for the effect to run
+    act(() => {
+      jest.runAllTimers();
+    });
+    
+    expect(screen.getByTestId('theme-value').textContent).toBe('light');
+  });
+
+  it('should load theme from localStorage if available', () => {
+    // Mock localStorage with stored theme
+    localStorageMock.getItem.mockReturnValueOnce('light');
+    
+    render(
+      <ThemeProvider>
+        <TestComponent />
+      </ThemeProvider>
+    );
+    
+    // Need to wait for the effect to run
+    act(() => {
+      jest.runAllTimers();
+    });
+    
+    expect(screen.getByTestId('theme-value').textContent).toBe('light');
+  });
+
+  it('should toggle theme when toggle function is called', () => {
+    render(
+      <ThemeProvider>
+        <TestComponent />
+      </ThemeProvider>
+    );
+    
+    // Default is dark
+    expect(screen.getByTestId('theme-value').textContent).toBe('dark');
+    
+    // Toggle to light
+    fireEvent.click(screen.getByTestId('toggle-btn'));
+    expect(screen.getByTestId('theme-value').textContent).toBe('light');
+    
+    // Should have stored in localStorage
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('matrixTheme', 'light');
+    
+    // Toggle back to dark
+    fireEvent.click(screen.getByTestId('toggle-btn'));
+    expect(screen.getByTestId('theme-value').textContent).toBe('dark');
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('matrixTheme', 'dark');
+  });
+
+  it('should apply theme to document element', () => {
+    render(
+      <ThemeProvider>
+        <TestComponent />
+      </ThemeProvider>
+    );
+    
+    // Need to wait for the effect to run
+    act(() => {
+      jest.runAllTimers();
+    });
+    
+    expect(document.documentElement.setAttribute).toHaveBeenCalledWith('data-theme', 'dark');
+    
+    // Toggle theme
+    fireEvent.click(screen.getByTestId('toggle-btn'));
+    expect(document.documentElement.setAttribute).toHaveBeenCalledWith('data-theme', 'light');
+  });
+});
+
+===== src/context/ThemeContext/ThemeContext.types.ts =====
+import { ThemeMode } from '@/types/theme';
+
+/**
+ * Context properties for the theme system
+ */
+export interface ThemeContextType {
+  /**
+   * Current theme mode ('dark' or 'light')
+   */
+  theme: ThemeMode;
+  
+  /**
+   * Function to toggle between dark and light themes
+   */
+  toggleTheme: () => void;
+  
+  /**
+   * Function to explicitly set the theme
+   */
+  setTheme: (theme: ThemeMode) => void;
+}
+
+/**
+ * Props for the ThemeProvider component
+ */
+export interface ThemeProviderProps {
+  /**
+   * React children to be wrapped by the provider
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Optional initial theme to use
+   * If not provided, will attempt to use localStorage or system preference
+   */
+  initialTheme?: ThemeMode;
+}
+
+===== src/context/index.ts =====
+export * from './ThemeContext';
+
+===== src/pages/_app.tsx =====
+import { ThemeProvider } from '@/context/ThemeContext';
+import '@/styles/globals.css';
+import type { AppProps } from 'next/app';
+
+export default function App({ Component, pageProps }: AppProps) {
+  return (
+    <ThemeProvider>
+      <Component {...pageProps} />
+    </ThemeProvider>
+  );
+}
+
+===== src/pages/index.tsx =====
+// Modified src/pages/index.tsx to include the MatrixCarousel component
+import { useState } from 'react';
+import Head from 'next/head';
+import { Container } from '@/components/layout/Container';
+import { Button } from '@/components/ui/Button';
+import CodeRain from '@/components/effects/CodeRain';
+import { MatrixNavbar } from '@/components/layout/Navbar';
+import { MatrixHero } from '@/components/layout/MatrixHero';
+
+export default function Home() {
+  // Define active link state for demonstration
+  const [activeLink, setActiveLink] = useState('GETTING_STARTED');
+  
+  // Custom links with active state
+  const navLinks = [
+    { number: '01', text: 'GETTING_STARTED', href: '#getting-started', isActive: activeLink === 'GETTING_STARTED' },
+    { number: '02', text: 'COMPONENTS', href: '#components', isActive: activeLink === 'COMPONENTS' },
+    { number: '03', text: 'UTILITIES', href: '#utilities', isActive: activeLink === 'UTILITIES' },
+    { number: '04', text: 'EXAMPLES', href: '#examples', isActive: activeLink === 'EXAMPLES' },
+    { number: '05', text: 'GITHUB', href: 'https://github.com/elmackico93/matrix-css', isActive: activeLink === 'GITHUB' },
+  ];
+
+  return (
+    <>
+      <Head>
+        <title>Matrix.css - A Cyberpunk CSS Framework</title>
+        <meta name="description" content="The ultimate Matrix-inspired CSS framework" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {/* Matrix-themed background effect */}
+      <CodeRain 
+        className="fixed inset-0 -z-10 opacity-70" 
+        density="medium"
+        charSet="matrix"
+        glitchEffect={true}
+      />
+
+      {/* Enhanced Matrix Navbar */}
+      <MatrixNavbar 
+        logoText="MATRIX.CSS" 
+        statusText="SYSTEM ONLINE"
+        links={navLinks}
+      />
+
+      {/* Matrix Hero Section */}
+      <MatrixHero 
+        title="MATRIX.CSS"
+        subtitle="Immerse your users in the digital realm with the complete Matrix-inspired design framework. Build stunning cyberpunk interfaces with minimal effort."
+        primaryCta={{ text: "ENTER THE MATRIX", href: "#getting-started" }}
+        secondaryCta={{ text: "EXPLORE COMPONENTS", href: "#components" }}
+        showVersion={true}
+        version="VERSION 2.0"
+      />
+
+      {/* Main content with proper spacing */}
+      <main>
+        <Container>
+          <section id="getting-started" className="py-20">
+            <h2 className="text-3xl mb-6 border-b border-matrix-border pb-2">Getting Started</h2>
+            {/* Your getting started content here */}
+          </section>
+        </Container>
+      </main>
+    </>
+  );
+}
+
+===== src/pages/_document.tsx =====
+import { Html, Head, Main, NextScript } from 'next/document';
+
+export default function Document() {
+  return (
+    <Html lang="en">
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+}
+
+===== src/pages/components.tsx =====
+import { useState } from 'react';
+import Head from 'next/head';
+import { Container } from '@/components/layout/Container';
+import { Row } from '@/components/layout/Row';
+import { Col } from '@/components/layout/Col';
+import { MatrixNavbar } from '@/components/layout/Navbar';
+import { MatrixSidebar } from '@/components/layout/Sidebar';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/Alert';
+import { Badge } from '@/components/ui/Badge';
+
+export default function ComponentsPage() {
+  const [activeSection, setActiveSection] = useState('buttons');
+  
+  // Custom links for navbar
+  const navLinks = [
+    { number: '01', text: 'GETTING_STARTED', href: '/' },
+    { number: '02', text: 'COMPONENTS', href: '/components', isActive: true },
+    { number: '03', text: 'UTILITIES', href: '/utilities' },
+    { number: '04', text: 'EXAMPLES', href: '/examples' },
+    { number: '05', text: 'GITHUB', href: 'https://github.com/example/matrix-css' },
+  ];
+  
+  // Sidebar sections
+  const sidebarSections = [
+    {
+      title: "Basic Components",
+      links: [
+        { id: "buttons", text: "Buttons", href: "#buttons" },
+        { id: "cards", text: "Cards", href: "#cards" },
+        { id: "alerts", text: "Alerts", href: "#alerts" },
+        { id: "badges", text: "Badges", href: "#badges" }
+      ]
+    },
+    {
+      title: "Form Components",
+      links: [
+        { id: "inputs", text: "Inputs", href: "#inputs" },
+        { id: "checkboxes", text: "Checkboxes", href: "#checkboxes" },
+        { id: "radios", text: "Radio Buttons", href: "#radios" },
+        { id: "switches", text: "Switches", href: "#switches" },
+        { id: "select", text: "Select", href: "#select" },
+      ]
+    },
+    {
+      title: "Advanced Components",
+      links: [
+        { id: "modals", text: "Modals", href: "#modals" },
+        { id: "tooltips", text: "Tooltips", href: "#tooltips" },
+        { id: "dropdowns", text: "Dropdowns", href: "#dropdowns" },
+        { id: "tabs", text: "Tabs", href: "#tabs" },
+        { id: "progress", text: "Progress", href: "#progress" },
+      ]
+    }
+  ];
+
+  return (
+    <>
+      <Head>
+        <title>Components - Matrix.css</title>
+        <meta name="description" content="Matrix.css component library" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {/* Enhanced Matrix Navbar */}
+      <MatrixNavbar 
+        logoText="MATRIX.CSS" 
+        statusText="COMPONENTS"
+        links={navLinks}
+      />
+
+      <div className="flex min-h-screen pt-[70px]">
+        {/* Sidebar with component navigation */}
+        <MatrixSidebar
+          sections={sidebarSections}
+          activeSectionId={activeSection}
+          onSectionChange={setActiveSection}
+          showConnectionLines={true}
+        />
+        
+        {/* Main content area */}
+        <main className="flex-1 bg-matrix-bg px-6 py-10">
+          <Container>
+            <h1 className="text-4xl font-bold mb-8">Components</h1>
+            <p className="text-matrix-text mb-12 max-w-3xl">
+              Matrix.css provides a comprehensive set of React components designed with a cyberpunk aesthetic.
+              Browse the components below to see examples and usage instructions.
+            </p>
+            
+            {/* Buttons Section */}
+            <section id="buttons" className="mb-16">
+              <h2 className="text-3xl mb-6 border-b border-matrix-border pb-2">Buttons</h2>
+              
+              <h3 className="text-xl mb-4">Button Variants</h3>
+              <div className="flex flex-wrap gap-4 mb-8">
+                <Button variant="default">Default</Button>
+                <Button variant="primary">Primary</Button>
+                <Button variant="outline">Outline</Button>
+                <Button variant="ghost">Ghost</Button>
+                <Button variant="terminal">Terminal</Button>
+                <Button variant="danger">Danger</Button>
+              </div>
+              
+              <h3 className="text-xl mb-4">Button Sizes</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button variant="primary" size="sm">Small</Button>
+                <Button variant="primary" size="md">Medium</Button>
+                <Button variant="primary" size="lg">Large</Button>
+              </div>
+            </section>
+            
+            {/* Cards Section */}
+            <section id="cards" className="mb-16">
+              <h2 className="text-3xl mb-6 border-b border-matrix-border pb-2">Cards</h2>
+              
+              <Row>
+                <Col md="6" lg="4" className="mb-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Simple Card</CardTitle>
+                      <CardDescription>Basic card example</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p>This is a simple card with header, content, and footer sections.</p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button variant="terminal" size="sm">Action</Button>
+                    </CardFooter>
+                  </Card>
+                </Col>
+                
+                <Col md="6" lg="4" className="mb-6">
+                  <Card glowOnHover={true}>
+                    <CardHeader>
+                      <CardTitle>Hover Effect</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p>This card has a glow effect when hovered.</p>
+                    </CardContent>
+                  </Card>
+                </Col>
+              </Row>
+            </section>
+            
+            {/* Alerts Section */}
+            <section id="alerts" className="mb-16">
+              <h2 className="text-3xl mb-6 border-b border-matrix-border pb-2">Alerts</h2>
+              
+              <Alert variant="default" className="mb-4">
+                <AlertTitle>Default Alert</AlertTitle>
+                <AlertDescription>This is a default alert component.</AlertDescription>
+              </Alert>
+              
+              <Alert variant="primary" className="mb-4">
+                <AlertTitle>Primary Alert</AlertTitle>
+                <AlertDescription>This is a primary alert component.</AlertDescription>
+              </Alert>
+              
+              <Alert variant="success" className="mb-4">
+                <AlertTitle>Success Alert</AlertTitle>
+                <AlertDescription>Operation completed successfully.</AlertDescription>
+              </Alert>
+              
+              <Alert variant="warning" className="mb-4">
+                <AlertTitle>Warning Alert</AlertTitle>
+                <AlertDescription>Please proceed with caution.</AlertDescription>
+              </Alert>
+              
+              <Alert variant="danger" className="mb-4">
+                <AlertTitle>Danger Alert</AlertTitle>
+                <AlertDescription>Critical error detected.</AlertDescription>
+              </Alert>
+            </section>
+            
+            {/* Badges Section */}
+            <section id="badges" className="mb-16">
+              <h2 className="text-3xl mb-6 border-b border-matrix-border pb-2">Badges</h2>
+              
+              <div className="flex flex-wrap gap-4 mb-8">
+                <Badge variant="default">Default</Badge>
+                <Badge variant="primary">Primary</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="success">Success</Badge>
+                <Badge variant="warning">Warning</Badge>
+                <Badge variant="danger">Danger</Badge>
+                <Badge variant="info">Info</Badge>
+                <Badge variant="outline">Outline</Badge>
+              </div>
+            </section>
+          </Container>
+        </main>
+      </div>
+    </>
+  );
+}
+
+===== src/pages/effects.tsx =====
+import { useState } from 'react';
+import Head from 'next/head';
+import { Container } from '@/components/layout/Container';
+import { Row } from '@/components/layout/Row';
+import { Col } from '@/components/layout/Col';
+import { MatrixNavbar } from '@/components/layout/Navbar';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/Card';
+import CodeRain from '@/components/effects/CodeRain';
+import GlitchText from '@/components/effects/GlitchText';
+import NeuralNetwork from '@/components/effects/NeuralNetwork';
+import Scanline from '@/components/effects/Scanline';
+import Terminal from '@/components/effects/Terminal';
+import TerminalOverlay from '@/components/effects/TerminalOverlay';
+
+export default function EffectsPage() {
+  const [terminalActive, setTerminalActive] = useState(false);
+  
+  // Navbar links
+  const navLinks = [
+    { number: '01', text: 'GETTING_STARTED', href: '/' },
+    { number: '02', text: 'COMPONENTS', href: '/components' },
+    { number: '03', text: 'EFFECTS', href: '/effects', isActive: true },
+    { number: '04', text: 'EXAMPLES', href: '/examples' },
+    { number: '05', text: 'GITHUB', href: 'https://github.com/example/matrix-css' },
+  ];
+  
+  // Terminal commands for demos
+  const terminalCommands = {
+    help: () => 'Available commands: help, install, version, features, components',
+    install: () => 'Installing Matrix.css...\nDone! Ready to immerse in the digital realm.',
+    version: () => 'Matrix.css v2.0.0',
+    features: () => 'Core features: Visual Effects, React Components, Dark/Light Themes, Grid System',
+    components: () => 'UI components: Button, Card, Alert, Modal, Progress, Switch, etc.',
+  };
+
+  return (
+    <>
+      <Head>
+        <title>Visual Effects - Matrix.css</title>
+        <meta name="description" content="Matrix.css visual effects library" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {/* Enhanced Matrix Navbar */}
+      <MatrixNavbar 
+        logoText="MATRIX.CSS" 
+        statusText="EFFECTS"
+        links={navLinks}
+      />
+
+      {/* Terminal Overlay Demo */}
+      <TerminalOverlay
+        isOpen={terminalActive}
+        onClose={() => setTerminalActive(false)}
+        title="MATRIX SYSTEM INITIALIZATION"
+        commands={terminalCommands}
+        initialCommands={["help", "version"]}
+        showLoadingProgress={true}
+        loadingDuration={3000}
+      />
+
+      <main className="min-h-screen pt-[100px]">
+        <Container>
+          <h1 className="text-4xl font-bold mb-8">Matrix Visual Effects</h1>
+          <p className="text-matrix-text mb-12 max-w-3xl">
+            Bring your applications to life with these cyberpunk-inspired effects. Each component
+            is fully customizable and designed to enhance your Matrix-themed interfaces.
+          </p>
+          
+          <Row>
+            {/* Code Rain Effect */}
+            <Col lg="6" className="mb-10">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Code Rain</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative h-64 mb-4 border border-matrix-border">
+                    <CodeRain
+                      density="medium"
+                      speed="medium"
+                      charSet="matrix"
+                      glitchEffect={true}
+                    />
+                  </div>
+                  <p className="mb-4">The iconic falling code effect from The Matrix. Customize character sets, speed, and density.</p>
+                  <Button variant="terminal" size="sm" onClick={() => window.location.href = '#code-rain-docs'}>
+                    View Documentation
+                  </Button>
+                </CardContent>
+              </Card>
+            </Col>
+            
+            {/* Glitch Text Effect */}
+            <Col lg="6" className="mb-10">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Glitch Text</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 mb-4 flex items-center justify-center border border-matrix-border">
+                    <GlitchText
+                      text="SYSTEM MALFUNCTION"
+                      as="h2"
+                      intensity="medium"
+                      className="text-3xl"
+                    />
+                  </div>
+                  <p className="mb-4">Create digital text distortion effects with customizable intensity levels.</p>
+                  <Button variant="terminal" size="sm" onClick={() => window.location.href = '#glitch-text-docs'}>
+                    View Documentation
+                  </Button>
+                </CardContent>
+              </Card>
+            </Col>
+            
+            {/* Neural Network */}
+            <Col lg="6" className="mb-10">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Neural Network</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 mb-4 border border-matrix-border">
+                    <NeuralNetwork
+                      layers={[4, 8, 6, 3]}
+                      animated={true}
+                      showLabels={true}
+                    />
+                  </div>
+                  <p className="mb-4">Visualize neural networks with animated connections and nodes.</p>
+                  <Button variant="terminal" size="sm" onClick={() => window.location.href = '#neural-network-docs'}>
+                    View Documentation
+                  </Button>
+                </CardContent>
+              </Card>
+            </Col>
+            
+            {/* Scanline Effect */}
+            <Col lg="6" className="mb-10">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Scanline</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Scanline className="h-64 mb-4 flex items-center justify-center border border-matrix-border" intensity="medium" type="horizontal">
+                    <div className="text-center text-matrix-text-bright text-lg">
+                      Content with scanline effect applied
+                    </div>
+                  </Scanline>
+                  <p className="mb-4">Add retro CRT-style scanlines to any content with adjustable intensity.</p>
+                  <Button variant="terminal" size="sm" onClick={() => window.location.href = '#scanline-docs'}>
+                    View Documentation
+                  </Button>
+                </CardContent>
+              </Card>
+            </Col>
+            
+            {/* Terminal */}
+            <Col lg="6" className="mb-10">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Terminal</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-4">
+                    <Terminal
+                      title="matrix-terminal.sh"
+                      prompt="$"
+                      commands={terminalCommands}
+                      initialCommands={["help"]}
+                      height="15rem"
+                    />
+                  </div>
+                  <p className="mb-4">Interactive terminal emulator with customizable commands and typing effects.</p>
+                  <Button variant="terminal" size="sm" onClick={() => window.location.href = '#terminal-docs'}>
+                    View Documentation
+                  </Button>
+                </CardContent>
+              </Card>
+            </Col>
+            
+            {/* Terminal Overlay */}
+            <Col lg="6" className="mb-10">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Terminal Overlay</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 mb-4 flex items-center justify-center border border-matrix-border">
+                    <Button variant="primary" hasGlow={true} onClick={() => setTerminalActive(true)}>
+                      Activate Terminal Overlay
+                    </Button>
+                  </div>
+                  <p className="mb-4">Full-screen terminal overlay with Matrix effects and loading sequences.</p>
+                  <Button variant="terminal" size="sm" onClick={() => window.location.href = '#terminal-overlay-docs'}>
+                    View Documentation
+                  </Button>
+                </CardContent>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </main>
+    </>
+  );
+}
+
+===== src/pages/examples.tsx =====
+import Head from 'next/head';
+import { useTheme } from '@/context/ThemeContext';
+import { Container } from '@/components/layout/Container';
+import { Row } from '@/components/layout/Row';
+import { Col } from '@/components/layout/Col';
+import { MatrixNavbar } from '@/components/layout/Navbar';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/Alert';
+import { GlitchText } from '@/components/effects/GlitchText';
+import { Scanline } from '@/components/effects/Scanline';
+import { CodeRain } from '@/components/effects/CodeRain';
+
+export default function ExamplesPage() {
+  const { theme, toggleTheme } = useTheme();
+  
+  // Navbar links
+  const navLinks = [
+    { number: '01', text: 'GETTING_STARTED', href: '/' },
+    { number: '02', text: 'COMPONENTS', href: '/components' },
+    { number: '03', text: 'EFFECTS', href: '/effects' },
+    { number: '04', text: 'EXAMPLES', href: '/examples', isActive: true },
+    { number: '05', text: 'GITHUB', href: 'https://github.com/example/matrix-css' },
+  ];
+
+  return (
+    <>
+      <Head>
+        <title>Example Layouts - Matrix.css</title>
+        <meta name="description" content="Example layouts built with Matrix.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {/* Full-screen background effect */}
+      <div className="fixed inset-0 -z-10">
+        <CodeRain
+          density="low"
+          speed="slow"
+          charSet="matrix"
+          opacity={0.5}
+        />
+      </div>
+
+      {/* Navbar */}
+      <MatrixNavbar
+        logoText="MATRIX.CSS"
+        statusText="EXAMPLES"
+        links={navLinks}
+      />
+
+      <main className="min-h-screen pt-[100px]">
+        <Container>
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-4xl font-bold">Example Layouts</h1>
+            
+            <Button
+              variant="outline"
+              onClick={toggleTheme}
+              className="gap-2"
+            >
+              {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            </Button>
+          </div>
+          
+          <p className="text-matrix-text mb-12 max-w-3xl">
+            Browse these example layouts to see how Matrix.css components can be used together
+            to create cohesive cyberpunk-style interfaces.
+          </p>
+          
+          {/* Dashboard Example */}
+          <section className="mb-16">
+            <h2 className="text-3xl mb-6 border-b border-matrix-border pb-2">
+              <GlitchText text="Dashboard Example" intensity="light" />
+            </h2>
+            
+            <Row>
+              {/* Metrics Cards */}
+              <Col sm="6" lg="3" className="mb-6">
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle>System Status</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold text-matrix-text-bright mb-2">98%</div>
+                    <div className="flex justify-between items-center">
+                      <span>Operational</span>
+                      <Badge variant="success">Online</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Col>
+              
+              <Col sm="6" lg="3" className="mb-6">
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle>Users</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold text-matrix-text-bright mb-2">2,547</div>
+                    <div className="flex justify-between items-center">
+                      <span>Active now</span>
+                      <Badge variant="primary">+15%</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Col>
+              
+              <Col sm="6" lg="3" className="mb-6">
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle>Resources</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold text-matrix-text-bright mb-2">73%</div>
+                    <div className="flex justify-between items-center">
+                      <span>Utilization</span>
+                      <Badge variant="warning">Moderate</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Col>
+              
+              <Col sm="6" lg="3" className="mb-6">
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle>Security</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold text-matrix-text-bright mb-2">A+</div>
+                    <div className="flex justify-between items-center">
+                      <span>Rating</span>
+                      <Badge variant="success">Secure</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Col>
+              
+              {/* Activity Feed */}
+              <Col md="8" className="mb-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>System Activity</CardTitle>
+                    <CardDescription>Recent events and notifications</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-4">
+                      <li className="p-3 border border-matrix-border rounded bg-black bg-opacity-20">
+                        <div className="flex justify-between">
+                          <span className="font-bold">Security Scan Complete</span>
+                          <span className="text-matrix-text-dim">10 min ago</span>
+                        </div>
+                        <p className="text-sm">All systems clear. No vulnerabilities detected.</p>
+                      </li>
+                      <li className="p-3 border border-matrix-border rounded bg-black bg-opacity-20">
+                        <div className="flex justify-between">
+                          <span className="font-bold">Database Backup</span>
+                          <span className="text-matrix-text-dim">1 hour ago</span>
+                        </div>
+                        <p className="text-sm">Automated backup completed successfully.</p>
+                      </li>
+                      <li className="p-3 border border-matrix-border rounded bg-black bg-opacity-20">
+                        <div className="flex justify-between">
+                          <span className="font-bold">System Update Available</span>
+                          <span className="text-matrix-text-dim">2 hours ago</span>
+                        </div>
+                        <p className="text-sm">New version 2.1.3 is available for installation.</p>
+                      </li>
+                      <li className="p-3 border border-matrix-border rounded bg-black bg-opacity-20">
+                        <div className="flex justify-between">
+                          <span className="font-bold">New User Registered</span>
+                          <span className="text-matrix-text-dim">4 hours ago</span>
+                        </div>
+                        <p className="text-sm">User "operator42" has joined the system.</p>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </Col>
+              
+              {/* Alerts Panel */}
+              <Col md="4" className="mb-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>System Alerts</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Alert variant="warning">
+                      <AlertTitle>Network Performance</AlertTitle>
+                      <AlertDescription>Node 12 is experiencing higher latency than normal.</AlertDescription>
+                    </Alert>
+                    <Alert variant="info">
+                      <AlertTitle>Maintenance</AlertTitle>
+                      <AlertDescription>Scheduled downtime on Friday at 02:00 UTC.</AlertDescription>
+                    </Alert>
+                    <Alert variant="success">
+                      <AlertTitle>Updates</AlertTitle>
+                      <AlertDescription>All security patches have been applied.</AlertDescription>
+                    </Alert>
+                  </CardContent>
+                </Card>
+              </Col>
+            </Row>
+          </section>
+          
+          {/* Login Form Example */}
+          <section className="mb-16">
+            <h2 className="text-3xl mb-6 border-b border-matrix-border pb-2">Login Screen Example</h2>
+            
+            <div className="mx-auto max-w-md">
+              <Scanline intensity="light" type="horizontal">
+                <Card>
+                  <CardHeader className="text-center">
+                    <GlitchText text="MATRIX SYSTEM ACCESS" as="h3" className="text-2xl" />
+                    <CardDescription>Enter credentials to continue</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form className="space-y-4">
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-matrix-text">Username</label>
+                        <input
+                          type="text"
+                          className="block w-full p-2 bg-matrix-bg bg-opacity-90 border text-matrix-text
+                                    border-matrix-border rounded transition-all duration-200
+                                    focus:ring-2 focus:ring-matrix-text focus:outline-none
+                                    placeholder:text-matrix-text-dim"
+                          placeholder="Enter username"
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-matrix-text">Password</label>
+                        <input
+                          type="password"
+                          className="block w-full p-2 bg-matrix-bg bg-opacity-90 border text-matrix-text
+                                    border-matrix-border rounded transition-all duration-200
+                                    focus:ring-2 focus:ring-matrix-text focus:outline-none
+                                    placeholder:text-matrix-text-dim"
+                          placeholder="Enter password"
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          id="remember-me"
+                          type="checkbox"
+                          className="w-4 h-4 bg-matrix-bg border-matrix-border rounded
+                                    text-matrix-text-bright cursor-pointer appearance-none
+                                    relative before:absolute before:inset-0 before:bg-matrix-primary
+                                    before:scale-0 checked:before:scale-100 before:transition-transform"
+                        />
+                        <label htmlFor="remember-me" className="ml-2 text-sm text-matrix-text">Remember me</label>
+                      </div>
+                      <div className="pt-4">
+                        <Button variant="primary" className="w-full">
+                          LOG IN
+                        </Button>
+                      </div>
+                      <div className="text-center text-matrix-text-dim text-sm">
+                        <a href="#" className="text-matrix-text hover:text-matrix-text-bright">Forgot password?</a> • <a href="#" className="text-matrix-text hover:text-matrix-text-bright">Register</a>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
+              </Scanline>
+            </div>
+          </section>
+        </Container>
+      </main>
+    </>
+  );
+}

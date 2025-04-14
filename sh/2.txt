@@ -1,0 +1,1074 @@
+# MATRIX.CSS NEXT.JS FRAMEWORK - CONSOLIDATED FILE (PART 2/5)
+# UI COMPONENTS
+
+===== src/components/ui/Alert.tsx =====
+import React, { HTMLAttributes, forwardRef } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/utils/cn';
+
+const alertVariants = cva(
+  'relative overflow-hidden border p-4 rounded [&>svg~*]:pl-7 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4',
+  {
+    variants: {
+      variant: {
+        default: 'bg-matrix-panel border-matrix-border text-matrix-text',
+        primary: 'bg-matrix-primary bg-opacity-20 border-matrix-primary text-matrix-text-bright',
+        success: 'bg-matrix-success bg-opacity-20 border-matrix-success text-matrix-success',
+        warning: 'bg-matrix-warning bg-opacity-20 border-matrix-warning text-matrix-warning',
+        danger: 'bg-matrix-danger bg-opacity-20 border-matrix-danger text-matrix-danger',
+        info: 'bg-matrix-info bg-opacity-20 border-matrix-info text-matrix-info',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
+
+export interface AlertProps
+  extends HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof alertVariants> {}
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(
+  ({ className, variant, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        role="alert"
+        className={cn(alertVariants({ variant }), className)}
+        {...props}
+      />
+    );
+  }
+);
+Alert.displayName = 'Alert';
+
+const AlertTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h5
+      ref={ref}
+      className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+      {...props}
+    />
+  )
+);
+AlertTitle.displayName = 'AlertTitle';
+
+const AlertDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('text-sm opacity-90', className)}
+      {...props}
+    />
+  )
+);
+AlertDescription.displayName = 'AlertDescription';
+
+export { Alert, AlertTitle, AlertDescription };
+
+===== src/components/ui/Badge.tsx =====
+import React, { HTMLAttributes, forwardRef } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/utils/cn';
+
+const badgeVariants = cva(
+  'inline-flex items-center rounded px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-matrix-text focus:ring-offset-2',
+  {
+    variants: {
+      variant: {
+        default: 'bg-matrix-panel border border-matrix-border text-matrix-text',
+        primary: 'bg-matrix-primary bg-opacity-20 text-matrix-text-bright',
+        secondary: 'bg-matrix-secondary border border-matrix-border text-matrix-text',
+        success: 'bg-matrix-success bg-opacity-20 text-matrix-success',
+        warning: 'bg-matrix-warning bg-opacity-20 text-matrix-warning',
+        danger: 'bg-matrix-danger bg-opacity-20 text-matrix-danger',
+        info: 'bg-matrix-info bg-opacity-20 text-matrix-info',
+        outline: 'border border-matrix-border text-matrix-text bg-transparent',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
+
+export interface BadgeProps
+  extends HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
+
+const Badge = forwardRef<HTMLDivElement, BadgeProps>(
+  ({ className, variant, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(badgeVariants({ variant }), className)}
+        {...props}
+      />
+    );
+  }
+);
+
+Badge.displayName = 'Badge';
+
+export { Badge, badgeVariants };
+
+===== src/components/ui/Button.tsx =====
+import React, { ButtonHTMLAttributes, forwardRef } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/utils/cn';
+
+const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded relative border font-matrix transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-matrix-text focus:ring-opacity-50 disabled:opacity-50 disabled:pointer-events-none',
+  {
+    variants: {
+      variant: {
+        default:
+          'bg-matrix-panel border-matrix-border text-matrix-text hover:bg-matrix-secondary hover:text-matrix-text-bright before:absolute before:inset-0 before:border-t-2 before:border-t-matrix-text before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+        primary:
+          'bg-matrix-primary bg-opacity-20 border-matrix-primary text-matrix-text-bright hover:bg-opacity-30 hover:border-matrix-text-bright',
+        outline:
+          'bg-transparent border-matrix-text text-matrix-text hover:bg-matrix-text hover:bg-opacity-10',
+        ghost:
+          'bg-transparent border-transparent text-matrix-text hover:bg-matrix-text hover:bg-opacity-10',
+        terminal:
+          'bg-black bg-opacity-60 border-matrix-text text-matrix-text font-matrix-hacker hover:text-matrix-text-bright hover:border-matrix-text-bright hover:shadow-[0_0_10px_var(--m-glow)]',
+        danger:
+          'bg-matrix-danger bg-opacity-20 border-matrix-danger text-matrix-danger hover:bg-opacity-30',
+      },
+      size: {
+        sm: 'h-8 px-3 text-xs',
+        md: 'h-10 px-4 text-sm',
+        lg: 'h-12 px-6 text-base',
+        icon: 'h-10 w-10',
+      },
+      hasGlow: {
+        true: 'shadow-[0_0_10px_var(--m-glow)] hover:shadow-[0_0_15px_var(--m-glow)]',
+        false: '',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'md',
+      hasGlow: false,
+    },
+  }
+);
+
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, hasGlow, ...props }, ref) => {
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size, hasGlow, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+
+Button.displayName = 'Button';
+
+export { Button, buttonVariants };
+
+===== src/components/ui/Card.tsx =====
+import React, { HTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/utils/cn';
+
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  glowOnHover?: boolean;
+}
+
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, glowOnHover = true, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'relative flex flex-col bg-matrix-panel border border-matrix-border rounded overflow-hidden transition-all duration-200',
+          glowOnHover && 'hover:translate-y-[-5px] hover:shadow-[0_5px_15px_rgba(0,255,65,0.1)]',
+          className
+        )}
+        {...props}
+      >
+        {glowOnHover && (
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-matrix-bg via-matrix-text to-matrix-bg opacity-0 transition-opacity duration-500 group-hover:opacity-100 hover:opacity-100" />
+        )}
+        {props.children}
+      </div>
+    );
+  }
+);
+
+Card.displayName = 'Card';
+
+const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'px-6 py-3 border-b border-matrix-border bg-black bg-opacity-20',
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+
+CardHeader.displayName = 'CardHeader';
+
+const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <h3
+        ref={ref}
+        className={cn('text-xl font-bold text-matrix-text-bright mb-0', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardTitle.displayName = 'CardTitle';
+
+const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <p
+        ref={ref}
+        className={cn('text-matrix-text-dim text-sm', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardDescription.displayName = 'CardDescription';
+
+const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('p-6 pt-0 flex-1', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardContent.displayName = 'CardContent';
+
+const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('px-6 py-3 border-t border-matrix-border bg-black bg-opacity-20', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardFooter.displayName = 'CardFooter';
+
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };
+
+===== src/components/ui/Checkbox.tsx =====
+import React, { forwardRef, InputHTMLAttributes } from 'react';
+import { cn } from '@/utils/cn';
+
+export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
+  label?: string;
+  error?: string;
+}
+
+const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ className, label, error, id, ...props }, ref) => {
+    const checkboxId = id || Math.random().toString(36).substring(2, 9);
+
+    return (
+      <div className="flex items-start mb-4">
+        <div className="flex items-center h-5">
+          <input
+            id={checkboxId}
+            type="checkbox"
+            className={cn(
+              'w-4 h-4 bg-matrix-bg border-matrix-border rounded focus:ring-2 focus:ring-matrix-text',
+              'text-matrix-text-bright cursor-pointer appearance-none checked:bg-matrix-primary',
+              'relative before:absolute before:inset-0 before:bg-matrix-primary before:scale-0 checked:before:scale-100 before:transition-transform',
+              'after:absolute after:top-[2px] after:left-[6px] after:w-[5px] after:h-[10px] after:border-r-2 after:border-b-2 after:border-matrix-bg after:rotate-45 after:opacity-0 checked:after:opacity-100',
+              error && 'border-matrix-danger',
+              className
+            )}
+            ref={ref}
+            {...props}
+          />
+        </div>
+        <div className="ml-3 text-sm">
+          {label && (
+            <label htmlFor={checkboxId} className="text-matrix-text cursor-pointer">
+              {label}
+            </label>
+          )}
+          {error && <p className="mt-1 text-sm text-matrix-danger">{error}</p>}
+        </div>
+      </div>
+    );
+  }
+);
+
+Checkbox.displayName = 'Checkbox';
+
+export { Checkbox };
+
+===== src/components/ui/Dropdown.tsx =====
+import React, { useState, useRef, useEffect } from 'react';
+import { cn } from '@/utils/cn';
+
+interface DropdownProps {
+  trigger: React.ReactNode;
+  children: React.ReactNode;
+  align?: 'left' | 'right';
+  className?: string;
+  dropdownClassName?: string;
+}
+
+export const Dropdown: React.FC<DropdownProps> = ({
+  trigger,
+  children,
+  align = 'left',
+  className,
+  dropdownClassName,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <div ref={dropdownRef} className={cn('relative inline-block', className)}>
+      <div onClick={() => setIsOpen(!isOpen)}>{trigger}</div>
+
+      {isOpen && (
+        <div
+          className={cn(
+            'absolute z-10 mt-2 w-48 rounded border border-matrix-border bg-matrix-panel shadow-lg',
+            align === 'left' ? 'left-0' : 'right-0',
+            dropdownClassName
+          )}
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="dropdown-menu"
+        >
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface DropdownItemProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+  disabled?: boolean;
+}
+
+export const DropdownItem: React.FC<DropdownItemProps> = ({
+  children,
+  onClick,
+  className,
+  disabled = false,
+}) => {
+  return (
+    <button
+      className={cn(
+        'block w-full text-left px-4 py-2 text-sm text-matrix-text hover:bg-matrix-bg hover:text-matrix-text-bright',
+        disabled && 'opacity-50 cursor-not-allowed',
+        className
+      )}
+      onClick={onClick}
+      disabled={disabled}
+      role="menuitem"
+    >
+      {children}
+    </button>
+  );
+};
+
+export const DropdownDivider: React.FC = () => {
+  return <hr className="border-t border-matrix-border my-1" />;
+};
+
+export const DropdownHeader: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className,
+}) => {
+  return (
+    <div
+      className={cn(
+        'px-4 py-2 text-xs font-semibold text-matrix-text-dim uppercase tracking-wider',
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+===== src/components/ui/Input.tsx =====
+import React, { forwardRef, InputHTMLAttributes } from 'react';
+import { cn } from '@/utils/cn';
+
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+}
+
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, label, error, id, ...props }, ref) => {
+    const inputId = id || Math.random().toString(36).substring(2, 9);
+
+    return (
+      <div className="mb-4">
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="block mb-2 text-sm font-medium text-matrix-text"
+          >
+            {label}
+          </label>
+        )}
+        <input
+          id={inputId}
+          className={cn(
+            'block w-full p-2 bg-matrix-bg bg-opacity-90 border text-matrix-text',
+            'focus:ring-2 focus:ring-matrix-text focus:outline-none',
+            'border-matrix-border rounded transition-all duration-200',
+            'placeholder:text-matrix-text-dim',
+            error && 'border-matrix-danger',
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+        {error && <p className="mt-1 text-sm text-matrix-danger">{error}</p>}
+      </div>
+    );
+  }
+);
+
+Input.displayName = 'Input';
+
+export { Input };
+
+===== src/components/ui/Modal.tsx =====
+import React, { Fragment, useRef, useState, useEffect } from 'react';
+import { cn } from '@/utils/cn';
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  className?: string;
+  showCloseButton?: boolean;
+  closeOnBackdropClick?: boolean;
+}
+
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  children,
+  className,
+  showCloseButton = true,
+  closeOnBackdropClick = true,
+}) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  // Handle body scroll
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 300);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (closeOnBackdropClick && e.target === backdropRef.current) {
+      handleClose();
+    }
+  };
+
+  if (!isOpen && !isClosing) return null;
+
+  return (
+    <div
+      ref={backdropRef}
+      className={cn(
+        'fixed inset-0 z-50 bg-matrix-overlay backdrop-blur-sm flex items-center justify-center p-4',
+        isClosing ? 'animate-fade-out' : 'animate-fade-in'
+      )}
+      onClick={handleBackdropClick}
+      aria-modal="true"
+      role="dialog"
+    >
+      <div
+        ref={modalRef}
+        className={cn(
+          'relative bg-matrix-panel border border-matrix-border rounded shadow-lg w-full max-w-md transform transition-all duration-300',
+          isClosing ? 'opacity-0 scale-95' : 'opacity-100 scale-100',
+          className
+        )}
+      >
+        {showCloseButton && (
+          <button
+            className="absolute top-3 right-3 text-matrix-text-dim hover:text-matrix-text-bright"
+            onClick={handleClose}
+            aria-label="Close modal"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        )}
+        {children}
+      </div>
+    </div>
+  );
+};
+
+export const ModalHeader: React.FC<{ className?: string; children: React.ReactNode }> = ({
+  className,
+  children,
+}) => {
+  return (
+    <div
+      className={cn('border-b border-matrix-border p-4 font-matrix-hacker', className)}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const ModalBody: React.FC<{ className?: string; children: React.ReactNode }> = ({
+  className,
+  children,
+}) => {
+  return <div className={cn('p-4', className)}>{children}</div>;
+};
+
+export const ModalFooter: React.FC<{ className?: string; children: React.ReactNode }> = ({
+  className,
+  children,
+}) => {
+  return (
+    <div
+      className={cn(
+        'border-t border-matrix-border p-4 flex justify-end space-x-2',
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+===== src/components/ui/Progress.tsx =====
+import * as React from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/utils/cn';
+
+const progressVariants = cva('h-4 overflow-hidden rounded bg-opacity-30 bg-[rgba(0,30,0,0.3)]', {
+  variants: {
+    variant: {
+      default: '',
+      striped: '',
+      animated: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+const progressBarVariants = cva(
+  'h-full flex items-center justify-center text-xs text-white transition-all',
+  {
+    variants: {
+      variant: {
+        default: 'bg-matrix-primary',
+        striped:
+          'bg-matrix-primary bg-[linear-gradient(45deg,rgba(255,255,255,0.15)25%,transparent25%,transparent50%,rgba(255,255,255,0.15)50%,rgba(255,255,255,0.15)75%,transparent75%,transparent)] bg-[size:1rem_1rem]',
+        animated:
+          'bg-matrix-primary bg-[linear-gradient(45deg,rgba(255,255,255,0.15)25%,transparent25%,transparent50%,rgba(255,255,255,0.15)50%,rgba(255,255,255,0.15)75%,transparent75%,transparent)] bg-[size:1rem_1rem] animate-[progress-bar-stripes_1s_linear_infinite]',
+      },
+      color: {
+        default: 'bg-matrix-primary',
+        success: 'bg-matrix-success',
+        warning: 'bg-matrix-warning',
+        danger: 'bg-matrix-danger',
+        info: 'bg-matrix-info',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      color: 'default',
+    },
+  }
+);
+
+export interface ProgressProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof progressVariants> {
+  value?: number;
+  max?: number;
+  color?: 'default' | 'success' | 'warning' | 'danger' | 'info';
+  showLabel?: boolean;
+}
+
+const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
+  ({ className, variant, value = 0, max = 100, color, showLabel = false, ...props }, ref) => {
+    const percentage = Math.min(Math.max(0, (value / max) * 100), 100);
+
+    return (
+      <div
+        ref={ref}
+        className={cn(progressVariants({ variant }), className)}
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-label={`${percentage}% complete`}
+        {...props}
+      >
+        <div
+          className={cn(progressBarVariants({ variant, color }))}
+          style={{ width: `${percentage}%` }}
+        >
+          {showLabel && `${Math.round(percentage)}%`}
+        </div>
+      </div>
+    );
+  }
+);
+
+Progress.displayName = 'Progress';
+
+export { Progress };
+
+===== src/components/ui/Radio.tsx =====
+import React, { forwardRef, InputHTMLAttributes } from 'react';
+import { cn } from '@/utils/cn';
+
+export interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
+  label?: string;
+}
+
+const Radio = forwardRef<HTMLInputElement, RadioProps>(
+  ({ className, label, id, ...props }, ref) => {
+    const radioId = id || Math.random().toString(36).substring(2, 9);
+
+    return (
+      <div className="flex items-center mb-4">
+        <input
+          id={radioId}
+          type="radio"
+          className={cn(
+            'w-4 h-4 bg-matrix-bg border-matrix-border focus:ring-2 focus:ring-matrix-text',
+            'text-matrix-text-bright cursor-pointer appearance-none rounded-full',
+            'relative before:absolute before:inset-0 before:rounded-full before:bg-matrix-primary before:scale-0 checked:before:scale-100 before:transition-transform',
+            'after:absolute after:top-[3px] after:left-[3px] after:w-[6px] after:h-[6px] after:rounded-full after:bg-matrix-bg after:opacity-0 checked:after:opacity-100',
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+        {label && (
+          <label htmlFor={radioId} className="ml-2 text-sm text-matrix-text cursor-pointer">
+            {label}
+          </label>
+        )}
+      </div>
+    );
+  }
+);
+
+Radio.displayName = 'Radio';
+
+export { Radio };
+
+===== src/components/ui/Select.tsx =====
+import React, { forwardRef, SelectHTMLAttributes } from 'react';
+import { cn } from '@/utils/cn';
+
+export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  label?: string;
+  error?: string;
+  options: Array<{ value: string; label: string }>;
+}
+
+const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  ({ className, label, error, id, options, ...props }, ref) => {
+    const selectId = id || Math.random().toString(36).substring(2, 9);
+
+    return (
+      <div className="mb-4">
+        {label && (
+          <label
+            htmlFor={selectId}
+            className="block mb-2 text-sm font-medium text-matrix-text"
+          >
+            {label}
+          </label>
+        )}
+        <select
+          id={selectId}
+          className={cn(
+            'block w-full p-2 bg-matrix-bg bg-opacity-90 border text-matrix-text',
+            'focus:ring-2 focus:ring-matrix-text focus:outline-none',
+            'border-matrix-border rounded transition-all duration-200',
+            'appearance-none bg-no-repeat',
+            // Styled dropdown arrow using background image
+            'bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2300ff41\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E")]',
+            'bg-[position:right_0.75rem_center]',
+            'bg-[size:1em]',
+            'pr-10',
+            error && 'border-matrix-danger',
+            className
+          )}
+          ref={ref}
+          {...props}
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {error && <p className="mt-1 text-sm text-matrix-danger">{error}</p>}
+      </div>
+    );
+  }
+);
+
+Select.displayName = 'Select';
+
+export { Select };
+
+===== src/components/ui/Switch.tsx =====
+import React, { forwardRef, InputHTMLAttributes } from 'react';
+import { cn } from '@/utils/cn';
+
+export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
+  label?: string;
+}
+
+const Switch = forwardRef<HTMLInputElement, SwitchProps>(
+  ({ className, label, id, ...props }, ref) => {
+    const switchId = id || Math.random().toString(36).substring(2, 9);
+
+    return (
+      <label
+        htmlFor={switchId}
+        className="relative inline-flex items-center cursor-pointer mb-4"
+      >
+        <input
+          id={switchId}
+          type="checkbox"
+          className="sr-only peer"
+          ref={ref}
+          {...props}
+        />
+        <div
+          className={cn(
+            "w-11 h-6 bg-matrix-bg border border-matrix-border rounded-full peer",
+            "peer-focus:ring-2 peer-focus:ring-matrix-text peer-focus:outline-none",
+            "peer-checked:after:translate-x-full peer-checked:after:border-white",
+            "after:content-[''] after:absolute after:top-[2px] after:left-[2px]",
+            "after:bg-matrix-text-dim after:border-matrix-border after:border after:rounded-full",
+            "after:h-5 after:w-5 after:transition-all",
+            "peer-checked:bg-matrix-primary peer-checked:bg-opacity-20",
+            "peer-checked:after:bg-matrix-text",
+            className
+          )}
+        ></div>
+        {label && <span className="ml-3 text-sm text-matrix-text">{label}</span>}
+      </label>
+    );
+  }
+);
+
+Switch.displayName = 'Switch';
+
+export { Switch };
+
+===== src/components/ui/Tabs.tsx =====
+import * as React from 'react';
+import { cn } from '@/utils/cn';
+
+const TabsContext = React.createContext<{
+  selectedTab: string;
+  setSelectedTab: (id: string) => void;
+}>({
+  selectedTab: '',
+  setSelectedTab: () => {},
+});
+
+interface TabsProps {
+  defaultTab?: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const Tabs: React.FC<TabsProps> = ({ defaultTab, children, className }) => {
+  const [selectedTab, setSelectedTab] = React.useState<string>(defaultTab || '');
+
+  // Set first tab as default if none provided
+  React.useEffect(() => {
+    if (!defaultTab && React.Children.toArray(children).length > 0) {
+      const firstTab = React.Children.toArray(children)[0] as React.ReactElement;
+      if (firstTab && firstTab.props && firstTab.props.id) {
+        setSelectedTab(firstTab.props.id);
+      }
+    }
+  }, [defaultTab, children]);
+
+  return (
+    <TabsContext.Provider value={{ selectedTab, setSelectedTab }}>
+      <div className={cn('', className)}>{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+interface TabListProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const TabList: React.FC<TabListProps> = ({ children, className }) => {
+  return (
+    <div
+      className={cn(
+        'flex border-b border-matrix-border mb-4 overflow-x-auto',
+        className
+      )}
+      role="tablist"
+    >
+      {children}
+    </div>
+  );
+};
+
+interface TabProps {
+  id: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const Tab: React.FC<TabProps> = ({ id, children, className }) => {
+  const { selectedTab, setSelectedTab } = React.useContext(TabsContext);
+  const isActive = selectedTab === id;
+
+  return (
+    <button
+      role="tab"
+      aria-selected={isActive}
+      id={`tab-${id}`}
+      tabIndex={isActive ? 0 : -1}
+      className={cn(
+        'px-4 py-2 text-sm font-medium transition-all border-b-2 -mb-px',
+        isActive
+          ? 'border-matrix-text-bright text-matrix-text-bright'
+          : 'border-transparent text-matrix-text hover:text-matrix-text-bright hover:border-matrix-text-dim',
+        className
+      )}
+      onClick={() => setSelectedTab(id)}
+    >
+      {children}
+    </button>
+  );
+};
+
+interface TabPanelProps {
+  id: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const TabPanel: React.FC<TabPanelProps> = ({ id, children, className }) => {
+  const { selectedTab } = React.useContext(TabsContext);
+  const isActive = selectedTab === id;
+
+  if (!isActive) return null;
+
+  return (
+    <div
+      role="tabpanel"
+      aria-labelledby={`tab-${id}`}
+      id={`tabpanel-${id}`}
+      className={cn('focus:outline-none', className)}
+      tabIndex={0}
+    >
+      {children}
+    </div>
+  );
+};
+
+===== src/components/ui/Tooltip.tsx =====
+import React, { useState, useRef, useEffect } from 'react';
+import { cn } from '@/utils/cn';
+
+interface TooltipProps {
+  content: string;
+  children: React.ReactElement;
+  position?: 'top' | 'right' | 'bottom' | 'left';
+  delay?: number;
+  className?: string;
+}
+
+export const Tooltip: React.FC<TooltipProps> = ({
+  content,
+  children,
+  position = 'top',
+  delay = 300,
+  className,
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  const showTooltip = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
+  };
+
+  const hideTooltip = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsVisible(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Clone the child element and add event handlers
+  const childWithProps = React.cloneElement(children, {
+    onMouseEnter: showTooltip,
+    onMouseLeave: hideTooltip,
+    onFocus: showTooltip,
+    onBlur: hideTooltip,
+  });
+
+  // Positioning classes
+  const positionClasses = {
+    top: '-translate-x-1/2 -translate-y-full left-1/2 bottom-[calc(100%+5px)]',
+    right: 'translate-y-[-50%] translate-x-[5px] top-1/2 left-full',
+    bottom: '-translate-x-1/2 translate-y-[5px] left-1/2 top-full',
+    left: 'translate-y-[-50%] -translate-x-full top-1/2 right-[calc(100%+5px)]',
+  };
+
+  // Arrow positioning classes
+  const arrowClasses = {
+    top: 'left-1/2 -translate-x-1/2 bottom-full border-t-[5px] border-l-[5px] border-r-[5px] border-b-0 border-transparent border-t-matrix-panel',
+    right: 'top-1/2 -translate-y-1/2 left-full border-r-[5px] border-t-[5px] border-b-[5px] border-l-0 border-transparent border-r-matrix-panel',
+    bottom: 'left-1/2 -translate-x-1/2 top-full border-b-[5px] border-l-[5px] border-r-[5px] border-t-0 border-transparent border-b-matrix-panel',
+    left: 'top-1/2 -translate-y-1/2 right-full border-l-[5px] border-t-[5px] border-b-[5px] border-r-0 border-transparent border-l-matrix-panel',
+  };
+
+  return (
+    <div className="relative inline-block">
+      {childWithProps}
+      {isVisible && (
+        <div
+          ref={tooltipRef}
+          className={cn(
+            'absolute z-50 w-max max-w-xs px-2 py-1 text-sm rounded bg-matrix-panel text-matrix-text border border-matrix-border pointer-events-none',
+            'opacity-0 animate-[fade-in_0.15s_ease-in-out_forwards]',
+            positionClasses[position],
+            className
+          )}
+          role="tooltip"
+          aria-hidden={!isVisible}
+        >
+          {content}
+          <div
+            className={cn(
+              'absolute w-0 h-0 pointer-events-none',
+              arrowClasses[position]
+            )}
+          />
+        </div>
+      )}
+    </div>
+  );
+};

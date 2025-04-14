@@ -1,0 +1,724 @@
+# MATRIX.CSS NEXT.JS FRAMEWORK - CONSOLIDATED FILE (PART 1/5)
+# CONFIGURATION AND UTILITY FILES
+
+===== .gitattributes =====
+# Auto detect text files and perform LF normalization
+* text=auto
+
+===== .gitignore =====
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/
+
+# Testing
+/coverage
+
+# Next.js build outputs
+/.next/
+/out/
+.swc/
+
+# Production build
+/build
+
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Caches
+.npm
+.eslintcache
+.stylelintcache
+.parcel-cache
+.turbo
+.vercel
+.cache
+tsconfig.tsbuildinfo
+
+# IDE/Editor folders
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# Debug files
+.chrome/
+.debug/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.pem
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.webpack/
+
+# Optional: database-related
+*.sqlite
+*.sqlite3
+*.db
+
+# Optional: dependency directories
+bower_components/
+
+# Storybook
+storybook-static/
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
+
+# Bundle analyzer
+/analyze/
+
+===== README.md =====
+# Matrix.css Next.js Framework
+
+A cyberpunk-inspired UI component library for Next.js applications with Matrix-style visual effects.
+
+## Features
+
+- Dark/light theme switching capabilities
+- Matrix-inspired visual effects (code rain, terminal, glitch text)
+- A complete set of UI components (buttons, cards, alerts, etc.)
+- Full TypeScript support
+
+## Getting Started
+
+1. Install dependencies:
+   ```
+   npm install
+   ```
+
+2. Run the development server:
+   ```
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Available Components
+
+### UI Components
+- Button
+- Card
+- Alert
+- Badge
+- Modal
+- Progress
+- Tabs
+- Input
+- Select
+- Checkbox
+- Radio
+- Switch
+- Dropdown
+- Tooltip
+
+### Layout Components
+- Container
+- Row
+- Col
+- Navbar
+- Sidebar
+- Footer
+
+### Effect Components
+- CodeRain
+- Terminal
+- GlitchText
+- Scanline
+- NeuralNetwork
+
+## Theme Customization
+
+Matrix.css provides a built-in theme context with dark and light modes. You can customize the theme by modifying the CSS variables in `src/styles/globals.css`.
+
+===== next-env.d.ts =====
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/pages/building-your-application/configuring/typescript for more information.
+
+===== next.config.js =====
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+}
+
+module.exports = nextConfig
+
+===== package.json =====
+{
+  "name": "matrix-nextjs",
+  "version": "1.0.0",
+  "description": "A Matrix-inspired UI framework for Next.js",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "framer-motion": "^10.16.4",
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^1.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.9",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.52.0",
+    "eslint-config-next": "^14.0.0",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2"
+  }
+}
+
+===== postcss.config.js =====
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+===== tailwind.config.js =====
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        matrix: {
+          bg: 'var(--m-bg)',
+          text: 'var(--m-text)',
+          'text-dim': 'var(--m-text-dim)',
+          'text-bright': 'var(--m-text-bright)',
+          'text-white': 'var(--m-text-white)',
+          glow: 'var(--m-glow)',
+          panel: 'var(--m-panel)',
+          border: 'var(--m-border)',
+          overlay: 'var(--m-overlay)',
+          primary: 'var(--m-primary)',
+          secondary: 'var(--m-secondary)',
+          info: 'var(--m-info)',
+          success: 'var(--m-success)',
+          warning: 'var(--m-warning)',
+          danger: 'var(--m-danger)',
+          light: 'var(--m-light)',
+          dark: 'var(--m-dark)',
+        },
+      },
+      fontFamily: {
+        matrix: 'var(--m-font-main)',
+        'matrix-alt': 'var(--m-font-alt)',
+        'matrix-hacker': 'var(--m-font-hacker)',
+      },
+      animation: {
+        'glow-pulse': 'glow-pulse 2s infinite',
+        scanline: 'scanline 10s linear infinite',
+        noise: 'noise 1s steps(2) infinite',
+        flicker: 'flicker 3s infinite',
+        'cursor-blink': 'cursor-blink 1s step-end infinite',
+        'neuron-pulse': 'neuron-pulse 2s infinite',
+        'connection-pulse': 'connection-pulse 2s infinite',
+      },
+      keyframes: {
+        'glow-pulse': {
+          '0%, 100%': { textShadow: '0 0 5px var(--m-glow)' },
+          '50%': { textShadow: '0 0 20px var(--m-glow), 0 0 30px var(--m-glow)' },
+        },
+        scanline: {
+          '0%': { top: '0' },
+          '100%': { top: '100%' },
+        },
+        noise: {
+          '0%': { transform: 'translate(0, 0)' },
+          '100%': { transform: 'translate(-10%, -10%)' },
+        },
+        flicker: {
+          '0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%': { opacity: '1' },
+          '20%, 21.999%, 63%, 63.999%, 65%, 69.999%': { opacity: '0' },
+        },
+        'cursor-blink': {
+          '0%, 100%': { opacity: '0' },
+          '50%': { opacity: '1' },
+        },
+        'neuron-pulse': {
+          '0%, 100%': { boxShadow: '0 0 5px var(--m-glow)' },
+          '50%': { boxShadow: '0 0 15px var(--m-glow), 0 0 20px var(--m-glow)' },
+        },
+        'connection-pulse': {
+          '0%, 100%': { opacity: '0.5' },
+          '50%': { opacity: '1' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}
+
+===== tsconfig.json =====
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+===== src/utils/cn.ts =====
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+===== src/styles/globals.css =====
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Core colors */
+  --m-black: #000000;
+  --m-bg: #0c0c0c;
+  --m-text: #00ff41; /* Matrix green */
+  --m-text-dim: #0a3f0a;
+  --m-text-bright: #00ff97;
+  --m-text-white: #ffffff;
+  --m-glow: rgba(0, 255, 65, 0.6);
+  --m-panel: #0f0f0f;
+  --m-border: #143214;
+  --m-overlay: rgba(0, 10, 0, 0.8);
+  
+  /* Functional colors */
+  --m-primary: #00ff41;
+  --m-secondary: #072707;
+  --m-info: #39a0ed;
+  --m-success: #00ff41;
+  --m-warning: #ffe100;
+  --m-danger: #ff2222;
+  --m-light: #1d1d1d;
+  --m-dark: #030303;
+  
+  /* Typography */
+  --m-font-main: 'Courier New', monospace;
+  --m-font-alt: 'Lucida Console', Monaco, monospace;
+  --m-font-hacker: 'VT323', monospace;
+  --m-font-size: 16px;
+  --m-line-height: 1.6;
+  
+  /* Spacing */
+  --m-space-xs: 0.25rem;
+  --m-space-sm: 0.5rem;
+  --m-space-md: 1rem;
+  --m-space-lg: 1.5rem;
+  --m-space-xl: 2.5rem;
+  
+  /* Timing */
+  --m-time-fast: 0.2s;
+  --m-time-med: 0.5s;
+  --m-time-slow: 1s;
+  
+  /* Effects */
+  --m-shadow: 0 0 10px var(--m-glow);
+  --m-radius: 3px;
+  
+  /* Grid */
+  --m-cols: 12;
+  --m-gap: 20px;
+  --m-container-width: 1200px;
+
+  /* Interactivity */
+  --m-accent-color: var(--m-primary);
+  --m-caret-color: var(--m-primary);
+  color-scheme: dark;
+  --m-scroll-behavior: smooth;
+}
+
+[data-theme="light"] {
+  --m-bg: #f0f0f0;
+  --m-text: #006400;
+  --m-text-dim: #008000;
+  --m-text-bright: #00aa00;
+  --m-text-white: #333333;
+  --m-glow: rgba(0, 100, 0, 0.4);
+  --m-panel: #ffffff;
+  --m-border: #008000;
+  --m-overlay: rgba(240, 255, 240, 0.8);
+  
+  /* Functional colors - light theme */
+  --m-primary: #008000;
+  --m-secondary: #e0f5e0;
+  --m-info: #0066cc;
+  --m-success: #006400;
+  --m-warning: #cc9900;
+  --m-danger: #ff2222;
+  --m-light: #dcdcdc;
+  --m-dark: #030303;
+}
+
+html {
+  font-size: var(--m-font-size);
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--m-bg);
+  color: var(--m-text);
+  font-family: var(--m-font-main);
+  line-height: var(--m-line-height);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--m-font-hacker);
+  font-weight: 700;
+  margin-bottom: var(--m-space-md);
+  line-height: 1.2;
+  color: var(--m-text-bright);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: var(--m-space-md);
+}
+
+a {
+  color: var(--m-text-bright);
+  text-decoration: none;
+  transition: color var(--m-time-fast);
+  position: relative;
+}
+
+a:hover {
+  color: var(--m-text);
+  text-shadow: 0 0 5px var(--m-glow);
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--m-text-bright);
+  transform: scaleX(0);
+  transition: transform var(--m-time-fast);
+  transform-origin: bottom right;
+}
+
+a:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--m-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--m-secondary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--m-text-dim);
+}
+
+/* Add these to your globals.css file for the enhanced search bar */
+
+/* Search Bar Animation Keyframes */
+@keyframes search-pulse {
+  0% { opacity: 0.5; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes search-glitch {
+  0%, 100% { transform: translateX(0); filter: brightness(1); }
+  20% { transform: translateX(-1px); filter: brightness(1.2); }
+  40% { transform: translateX(1px); filter: brightness(0.9); }
+  60% { transform: translateX(-1px); filter: brightness(1.2); }
+  80% { transform: translateX(1px); filter: brightness(1); }
+}
+
+@keyframes data-flow {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Search Container Effects */
+.search-container {
+  /* For browsers that don't support clip-path */
+  -webkit-clip-path: polygon(
+    0 0, 
+    100% 0, 
+    100% calc(100% - 6px), 
+    calc(100% - 6px) 100%, 
+    0 100%
+  );
+  clip-path: polygon(
+    0 0, 
+    100% 0, 
+    100% calc(100% - 6px), 
+    calc(100% - 6px) 100%, 
+    0 100%
+  );
+}
+
+.search-container-active {
+  border-color: var(--m-text) !important;
+}
+
+.search-container-active .search-input::placeholder {
+  color: var(--m-text-bright) !important;
+  opacity: 0.7 !important;
+}
+
+===== src/context/ThemeContext.tsx =====
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+type Theme = 'dark' | 'light';
+
+interface ThemeContextType {
+  theme: Theme;
+  toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
+}
+
+// Create context with a default value to prevent the undefined error
+const ThemeContext = createContext<ThemeContextType>({
+  theme: 'dark',
+  toggleTheme: () => {},
+  setTheme: () => {},
+});
+
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Initialize with a default theme for server-side rendering
+  const [theme, setTheme] = useState<Theme>('dark');
+  const [mounted, setMounted] = useState(false);
+
+  // Only run this effect on the client-side
+  useEffect(() => {
+    setMounted(true);
+    const storedTheme = localStorage.getItem('matrixTheme') as Theme | null;
+    if (storedTheme) {
+      setTheme(storedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      setTheme('light');
+    }
+  }, []);
+
+  // Apply theme to document
+  useEffect(() => {
+    if (mounted) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('matrixTheme', theme);
+    }
+  }, [theme, mounted]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  const value = {
+    theme,
+    toggleTheme,
+    setTheme,
+  };
+
+  // Prevent hydration mismatch by rendering a simplified version during SSR
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+};
+
+export const useTheme = () => {
+  return useContext(ThemeContext);
+};
+
+===== src/hooks/useLocalStorage.ts =====
+import { useState, useEffect } from 'react';
+
+export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {
+  // State to store our value
+  // Pass initial state function to useState so logic is only executed once
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    if (typeof window === 'undefined') {
+      return initialValue;
+    }
+
+    try {
+      // Get from local storage by key
+      const item = window.localStorage.getItem(key);
+      // Parse stored json or if none return initialValue
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      // If error also return initialValue
+      console.error(`Error reading localStorage key "${key}":`, error);
+      return initialValue;
+    }
+  });
+
+  // Return a wrapped version of useState's setter function that
+  // persists the new value to localStorage.
+  const setValue = (value: T | ((val: T) => T)) => {
+    try {
+      // Allow value to be a function so we have same API as useState
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
+      
+      // Save state
+      setStoredValue(valueToStore);
+      
+      // Save to local storage
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      }
+    } catch (error) {
+      // A more advanced implementation would handle the error case
+      console.error(`Error setting localStorage key "${key}":`, error);
+    }
+  };
+
+  // Subscribe to localStorage changes in other tabs/windows
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === key && e.newValue) {
+        try {
+          setStoredValue(JSON.parse(e.newValue));
+        } catch (error) {
+          console.error(`Error parsing localStorage key "${key}":`, error);
+        }
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange);
+      return () => window.removeEventListener('storage', handleStorageChange);
+    }
+  }, [key]);
+
+  return [storedValue, setValue];
+}
+
+export default useLocalStorage;
+
+===== src/hooks/useMediaQuery.ts =====
+import { useState, useEffect } from 'react';
+
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    // Skip for SSR
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia(query);
+    
+    // Set initial value
+    setMatches(mediaQuery.matches);
+
+    // Update matches when query changes
+    const handler = (event: MediaQueryListEvent) => {
+      setMatches(event.matches);
+    };
+
+    // Add event listener
+    mediaQuery.addEventListener('change', handler);
+    
+    // Cleanup
+    return () => {
+      mediaQuery.removeEventListener('change', handler);
+    };
+  }, [query]);
+
+  return matches;
+}
+
+export default useMediaQuery;

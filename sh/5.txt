@@ -1,0 +1,1950 @@
+# MATRIX.CSS NEXT.JS FRAMEWORK - CONSOLIDATED FILE (PART 5/9)
+# BASIC UI COMPONENTS
+
+===== src/components/ui/Alert/Alert.tsx =====
+import React, { HTMLAttributes, forwardRef } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '../../../utils/cn';
+import { AlertProps } from './Alert.types';
+
+const alertVariants = cva(
+  'relative overflow-hidden border p-4 rounded [&>svg~*]:pl-7 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4',
+  {
+    variants: {
+      variant: {
+        default: 'bg-matrix-panel border-matrix-border text-matrix-text',
+        primary: 'bg-matrix-primary bg-opacity-20 border-matrix-primary text-matrix-text-bright',
+        success: 'bg-matrix-success bg-opacity-20 border-matrix-success text-matrix-success',
+        warning: 'bg-matrix-warning bg-opacity-20 border-matrix-warning text-matrix-warning',
+        danger: 'bg-matrix-danger bg-opacity-20 border-matrix-danger text-matrix-danger',
+        info: 'bg-matrix-info bg-opacity-20 border-matrix-info text-matrix-info',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(
+  ({ className, variant, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        role="alert"
+        className={cn(alertVariants({ variant }), className)}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Alert.displayName = 'Alert';
+
+const AlertTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h5
+      ref={ref}
+      className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+      {...props}
+    />
+  )
+);
+AlertTitle.displayName = 'AlertTitle';
+
+const AlertDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('text-sm opacity-90', className)}
+      {...props}
+    />
+  )
+);
+AlertDescription.displayName = 'AlertDescription';
+
+export { Alert, AlertTitle, AlertDescription, alertVariants };
+
+===== src/components/ui/Alert/Alert.test.tsx =====
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { Alert, AlertTitle, AlertDescription } from './Alert';
+
+describe('Alert', () => {
+  it('renders with default variant', () => {
+    render(
+      <Alert>
+        <AlertTitle>Alert Title</AlertTitle>
+        <AlertDescription>Alert Description</AlertDescription>
+      </Alert>
+    );
+    
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('bg-matrix-panel');
+    expect(alert).toHaveClass('border-matrix-border');
+    expect(alert).toHaveClass('text-matrix-text');
+    
+    const title = screen.getByText('Alert Title');
+    expect(title).toBeInTheDocument();
+    
+    const description = screen.getByText('Alert Description');
+    expect(description).toBeInTheDocument();
+  });
+
+  it('renders with primary variant', () => {
+    render(
+      <Alert variant="primary">
+        <AlertTitle>Primary Alert</AlertTitle>
+        <AlertDescription>This is a primary alert</AlertDescription>
+      </Alert>
+    );
+    
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('bg-matrix-primary');
+    expect(alert).toHaveClass('border-matrix-primary');
+    expect(alert).toHaveClass('text-matrix-text-bright');
+  });
+
+  it('renders with success variant', () => {
+    render(
+      <Alert variant="success">
+        <AlertTitle>Success Alert</AlertTitle>
+        <AlertDescription>This is a success alert</AlertDescription>
+      </Alert>
+    );
+    
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('bg-matrix-success');
+    expect(alert).toHaveClass('border-matrix-success');
+    expect(alert).toHaveClass('text-matrix-success');
+  });
+
+  it('renders with warning variant', () => {
+    render(
+      <Alert variant="warning">
+        <AlertTitle>Warning Alert</AlertTitle>
+        <AlertDescription>This is a warning alert</AlertDescription>
+      </Alert>
+    );
+    
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('bg-matrix-warning');
+    expect(alert).toHaveClass('border-matrix-warning');
+    expect(alert).toHaveClass('text-matrix-warning');
+  });
+
+  it('renders with danger variant', () => {
+    render(
+      <Alert variant="danger">
+        <AlertTitle>Danger Alert</AlertTitle>
+        <AlertDescription>This is a danger alert</AlertDescription>
+      </Alert>
+    );
+    
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('bg-matrix-danger');
+    expect(alert).toHaveClass('border-matrix-danger');
+    expect(alert).toHaveClass('text-matrix-danger');
+  });
+
+  it('renders with info variant', () => {
+    render(
+      <Alert variant="info">
+        <AlertTitle>Info Alert</AlertTitle>
+        <AlertDescription>This is an info alert</AlertDescription>
+      </Alert>
+    );
+    
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('bg-matrix-info');
+    expect(alert).toHaveClass('border-matrix-info');
+    expect(alert).toHaveClass('text-matrix-info');
+  });
+
+  it('passes additional className to the component', () => {
+    render(
+      <Alert className="test-class">
+        <AlertTitle>Alert Title</AlertTitle>
+        <AlertDescription>Alert Description</AlertDescription>
+      </Alert>
+    );
+    
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('test-class');
+  });
+
+  it('forwards ref to the underlying div element', () => {
+    const ref = React.createRef<HTMLDivElement>();
+    render(
+      <Alert ref={ref}>
+        <AlertTitle>Alert Title</AlertTitle>
+        <AlertDescription>Alert Description</AlertDescription>
+      </Alert>
+    );
+    
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('passes data attributes to the component', () => {
+    render(
+      <Alert data-testid="custom-alert" data-custom="test-value">
+        Alert content
+      </Alert>
+    );
+    
+    const alert = screen.getByTestId('custom-alert');
+    expect(alert).toHaveAttribute('data-custom', 'test-value');
+  });
+
+  it('renders AlertTitle with additional className', () => {
+    render(
+      <Alert>
+        <AlertTitle className="custom-title-class">Alert Title</AlertTitle>
+      </Alert>
+    );
+    
+    const title = screen.getByText('Alert Title');
+    expect(title).toHaveClass('custom-title-class');
+  });
+
+  it('renders AlertDescription with additional className', () => {
+    render(
+      <Alert>
+        <AlertDescription className="custom-desc-class">Alert Description</AlertDescription>
+      </Alert>
+    );
+    
+    const description = screen.getByText('Alert Description');
+    expect(description).toHaveClass('custom-desc-class');
+  });
+});
+
+===== src/components/ui/Alert/Alert.stories.tsx =====
+import type { Meta, StoryObj } from '@storybook/react';
+import { Alert, AlertTitle, AlertDescription } from './Alert';
+
+const meta: Meta<typeof Alert> = {
+  title: 'UI/Alert',
+  component: Alert,
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: {
+        type: 'select',
+        options: ['default', 'primary', 'success', 'warning', 'danger', 'info'],
+      },
+      description: 'The variant style of the alert',
+      table: {
+        defaultValue: { summary: 'default' },
+      },
+    },
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes to add to the alert',
+    },
+  },
+  parameters: {
+    layout: 'centered',
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Alert>;
+
+export const Default: Story = {
+  args: {
+    children: (
+      <>
+        <AlertTitle>Default Alert</AlertTitle>
+        <AlertDescription>This is a default alert for informational purposes.</AlertDescription>
+      </>
+    ),
+    variant: 'default',
+  },
+};
+
+export const Primary: Story = {
+  args: {
+    children: (
+      <>
+        <AlertTitle>Primary Alert</AlertTitle>
+        <AlertDescription>This is a primary alert with high importance.</AlertDescription>
+      </>
+    ),
+    variant: 'primary',
+  },
+};
+
+export const Success: Story = {
+  args: {
+    children: (
+      <>
+        <AlertTitle>Success Alert</AlertTitle>
+        <AlertDescription>Operation completed successfully.</AlertDescription>
+      </>
+    ),
+    variant: 'success',
+  },
+};
+
+export const Warning: Story = {
+  args: {
+    children: (
+      <>
+        <AlertTitle>Warning Alert</AlertTitle>
+        <AlertDescription>This action might have consequences.</AlertDescription>
+      </>
+    ),
+    variant: 'warning',
+  },
+};
+
+export const Danger: Story = {
+  args: {
+    children: (
+      <>
+        <AlertTitle>Danger Alert</AlertTitle>
+        <AlertDescription>Critical error has occurred.</AlertDescription>
+      </>
+    ),
+    variant: 'danger',
+  },
+};
+
+export const Info: Story = {
+  args: {
+    children: (
+      <>
+        <AlertTitle>Info Alert</AlertTitle>
+        <AlertDescription>Here's some information you might find useful.</AlertDescription>
+      </>
+    ),
+    variant: 'info',
+  },
+};
+
+export const WithIcon: Story = {
+  render: () => (
+    <Alert variant="primary">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+      </svg>
+      <AlertTitle>Alert with Icon</AlertTitle>
+      <AlertDescription>This alert includes an information icon.</AlertDescription>
+    </Alert>
+  ),
+};
+
+export const TitleOnly: Story = {
+  render: () => (
+    <Alert variant="success">
+      <AlertTitle>Operation Successful</AlertTitle>
+    </Alert>
+  ),
+};
+
+export const DescriptionOnly: Story = {
+  render: () => (
+    <Alert variant="warning">
+      <AlertDescription>This alert has only a description text.</AlertDescription>
+    </Alert>
+  ),
+};
+
+export const MultipleParagraphs: Story = {
+  render: () => (
+    <Alert variant="info">
+      <AlertTitle>System Update</AlertTitle>
+      <AlertDescription>
+        <p className="mb-2">The system will be updated to version 2.0.0 tonight at 2:00 AM UTC.</p>
+        <p>Please save your work before this time to prevent data loss.</p>
+      </AlertDescription>
+    </Alert>
+  ),
+};
+
+export const WithAction: Story = {
+  render: () => (
+    <Alert variant="primary" className="flex justify-between items-start">
+      <div>
+        <AlertTitle>New Message</AlertTitle>
+        <AlertDescription>You have received a new message.</AlertDescription>
+      </div>
+      <button className="px-3 py-1 text-xs bg-matrix-primary bg-opacity-30 border border-matrix-primary rounded hover:bg-opacity-50 transition-colors">
+        View
+      </button>
+    </Alert>
+  ),
+};
+
+===== src/components/ui/Alert/Alert.types.ts =====
+import { HTMLAttributes } from 'react';
+import { VariantProps } from 'class-variance-authority';
+import { alertVariants } from './Alert';
+
+/**
+ * Alert component props
+ * @interface AlertProps
+ * @extends HTMLAttributes<HTMLDivElement> - Extends HTML div element attributes
+ * @extends VariantProps<typeof alertVariants> - Extends variant props from class-variance-authority
+ */
+export interface AlertProps
+  extends HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof alertVariants> {
+  /**
+   * The content of the alert
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the alert
+   */
+  className?: string;
+}
+
+/**
+ * Alert title props
+ * @interface AlertTitleProps
+ * @extends HTMLAttributes<HTMLHeadingElement> - Extends HTML heading element attributes
+ */
+export type AlertTitleProps = HTMLAttributes<HTMLHeadingElement>;
+
+/**
+ * Alert description props
+ * @interface AlertDescriptionProps
+ * @extends HTMLAttributes<HTMLParagraphElement> - Extends HTML paragraph element attributes
+ */
+export type AlertDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+
+===== src/components/ui/Alert/index.ts =====
+export { Alert, AlertTitle, AlertDescription, alertVariants } from './Alert';
+export type { AlertProps, AlertTitleProps, AlertDescriptionProps } from './Alert.types';
+
+===== src/components/ui/Badge/Badge.tsx =====
+import React, { forwardRef } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '../../../utils/cn';
+import { BadgeProps } from './Badge.types';
+
+const badgeVariants = cva(
+  'inline-flex items-center rounded px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-matrix-text focus:ring-offset-2',
+  {
+    variants: {
+      variant: {
+        default: 'bg-matrix-panel border border-matrix-border text-matrix-text',
+        primary: 'bg-matrix-primary bg-opacity-20 text-matrix-text-bright',
+        secondary: 'bg-matrix-secondary border border-matrix-border text-matrix-text',
+        success: 'bg-matrix-success bg-opacity-20 text-matrix-success',
+        warning: 'bg-matrix-warning bg-opacity-20 text-matrix-warning',
+        danger: 'bg-matrix-danger bg-opacity-20 text-matrix-danger',
+        info: 'bg-matrix-info bg-opacity-20 text-matrix-info',
+        outline: 'border border-matrix-border text-matrix-text bg-transparent',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
+
+const Badge = forwardRef<HTMLDivElement, BadgeProps>(
+  ({ className, variant, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(badgeVariants({ variant }), className)}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Badge.displayName = 'Badge';
+
+export { Badge, badgeVariants };
+
+===== src/components/ui/Badge/Badge.test.tsx =====
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { Badge } from './Badge';
+
+describe('Badge', () => {
+  it('renders with default variant', () => {
+    render(<Badge>Default Badge</Badge>);
+    
+    const badge = screen.getByText('Default Badge');
+    expect(badge).toHaveClass('bg-matrix-panel');
+    expect(badge).toHaveClass('border-matrix-border');
+    expect(badge).toHaveClass('text-matrix-text');
+  });
+
+  it('renders with primary variant', () => {
+    render(<Badge variant="primary">Primary Badge</Badge>);
+    
+    const badge = screen.getByText('Primary Badge');
+    expect(badge).toHaveClass('bg-matrix-primary');
+    expect(badge).toHaveClass('text-matrix-text-bright');
+  });
+
+  it('renders with secondary variant', () => {
+    render(<Badge variant="secondary">Secondary Badge</Badge>);
+    
+    const badge = screen.getByText('Secondary Badge');
+    expect(badge).toHaveClass('bg-matrix-secondary');
+    expect(badge).toHaveClass('text-matrix-text');
+  });
+
+  it('renders with success variant', () => {
+    render(<Badge variant="success">Success Badge</Badge>);
+    
+    const badge = screen.getByText('Success Badge');
+    expect(badge).toHaveClass('bg-matrix-success');
+    expect(badge).toHaveClass('text-matrix-success');
+  });
+
+  it('renders with warning variant', () => {
+    render(<Badge variant="warning">Warning Badge</Badge>);
+    
+    const badge = screen.getByText('Warning Badge');
+    expect(badge).toHaveClass('bg-matrix-warning');
+    expect(badge).toHaveClass('text-matrix-warning');
+  });
+
+  it('renders with danger variant', () => {
+    render(<Badge variant="danger">Danger Badge</Badge>);
+    
+    const badge = screen.getByText('Danger Badge');
+    expect(badge).toHaveClass('bg-matrix-danger');
+    expect(badge).toHaveClass('text-matrix-danger');
+  });
+
+  it('renders with info variant', () => {
+    render(<Badge variant="info">Info Badge</Badge>);
+    
+    const badge = screen.getByText('Info Badge');
+    expect(badge).toHaveClass('bg-matrix-info');
+    expect(badge).toHaveClass('text-matrix-info');
+  });
+
+  it('renders with outline variant', () => {
+    render(<Badge variant="outline">Outline Badge</Badge>);
+    
+    const badge = screen.getByText('Outline Badge');
+    expect(badge).toHaveClass('border-matrix-border');
+    expect(badge).toHaveClass('text-matrix-text');
+    expect(badge).toHaveClass('bg-transparent');
+  });
+
+  it('passes additional className to the component', () => {
+    render(<Badge className="test-class">Test Badge</Badge>);
+    
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('test-class');
+  });
+
+  it('forwards ref to the underlying div element', () => {
+    const ref = React.createRef<HTMLDivElement>();
+    render(<Badge ref={ref}>Badge with Ref</Badge>);
+    
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('passes data attributes to the component', () => {
+    render(<Badge data-testid="custom-badge" data-custom="test-value">Data Attribute Badge</Badge>);
+    
+    const badge = screen.getByTestId('custom-badge');
+    expect(badge).toHaveAttribute('data-custom', 'test-value');
+  });
+
+  it('renders with children correctly', () => {
+    render(<Badge>Badge with <span data-testid="child-element">Child</span></Badge>);
+    
+    const childElement = screen.getByTestId('child-element');
+    expect(childElement).toBeInTheDocument();
+    expect(childElement).toHaveTextContent('Child');
+  });
+});
+
+===== src/components/ui/Badge/Badge.stories.tsx =====
+import type { Meta, StoryObj } from '@storybook/react';
+import { Badge } from './Badge';
+
+const meta: Meta<typeof Badge> = {
+  title: 'UI/Badge',
+  component: Badge,
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: {
+        type: 'select',
+        options: [
+          'default',
+          'primary',
+          'secondary',
+          'success',
+          'warning',
+          'danger',
+          'info',
+          'outline',
+        ],
+      },
+      description: 'The variant style of the badge',
+      table: {
+        defaultValue: { summary: 'default' },
+      },
+    },
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes to add to the badge',
+    },
+  },
+  parameters: {
+    layout: 'centered',
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Badge>;
+
+export const Default: Story = {
+  args: {
+    children: 'Default Badge',
+    variant: 'default',
+  },
+};
+
+export const Primary: Story = {
+  args: {
+    children: 'Primary Badge',
+    variant: 'primary',
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    children: 'Secondary Badge',
+    variant: 'secondary',
+  },
+};
+
+export const Success: Story = {
+  args: {
+    children: 'Success Badge',
+    variant: 'success',
+  },
+};
+
+export const Warning: Story = {
+  args: {
+    children: 'Warning Badge',
+    variant: 'warning',
+  },
+};
+
+export const Danger: Story = {
+  args: {
+    children: 'Danger Badge',
+    variant: 'danger',
+  },
+};
+
+export const Info: Story = {
+  args: {
+    children: 'Info Badge',
+    variant: 'info',
+  },
+};
+
+export const Outline: Story = {
+  args: {
+    children: 'Outline Badge',
+    variant: 'outline',
+  },
+};
+
+export const WithIcon: Story = {
+  render: () => (
+    <Badge variant="primary" className="gap-1">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-3 w-3"
+      >
+        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+      </svg>
+      With Icon
+    </Badge>
+  ),
+};
+
+export const WithDot: Story = {
+  render: () => (
+    <Badge variant="outline" className="gap-1">
+      <div className="h-2 w-2 rounded-full bg-matrix-success"></div>
+      Online
+    </Badge>
+  ),
+};
+
+export const NumberBadge: Story = {
+  render: () => (
+    <Badge variant="danger" className="rounded-full h-5 w-5 flex items-center justify-center p-0">
+      5
+    </Badge>
+  ),
+};
+
+export const AllVariants: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Badge variant="default">Default</Badge>
+      <Badge variant="primary">Primary</Badge>
+      <Badge variant="secondary">Secondary</Badge>
+      <Badge variant="success">Success</Badge>
+      <Badge variant="warning">Warning</Badge>
+      <Badge variant="danger">Danger</Badge>
+      <Badge variant="info">Info</Badge>
+      <Badge variant="outline">Outline</Badge>
+    </div>
+  ),
+};
+
+export const WithCustomSize: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <Badge variant="primary" className="text-[10px] px-2 py-0.5">Extra Small</Badge>
+      <Badge variant="primary" className="text-xs px-2.5 py-0.5">Small (Default)</Badge>
+      <Badge variant="primary" className="text-sm px-3 py-1">Medium</Badge>
+      <Badge variant="primary" className="text-base px-4 py-1.5">Large</Badge>
+    </div>
+  ),
+};
+
+===== src/components/ui/Badge/Badge.types.ts =====
+import { HTMLAttributes } from 'react';
+import { VariantProps } from 'class-variance-authority';
+import { badgeVariants } from './Badge';
+
+/**
+ * Badge component props
+ * @interface BadgeProps
+ * @extends HTMLAttributes<HTMLDivElement> - Extends HTML div element attributes
+ * @extends VariantProps<typeof badgeVariants> - Extends variant props from class-variance-authority
+ */
+export interface BadgeProps
+  extends HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {
+  /**
+   * The content of the badge
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the badge
+   */
+  className?: string;
+}
+
+===== src/components/ui/Badge/index.ts =====
+export { Badge, badgeVariants } from './Badge';
+export type { BadgeProps } from './Badge.types';
+
+===== src/components/ui/Button/Button.tsx =====
+import React, { forwardRef } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '../../../utils/cn';
+import { ButtonProps } from './Button.types';
+
+const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded relative border font-matrix transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-matrix-text focus:ring-opacity-50 disabled:opacity-50 disabled:pointer-events-none',
+  {
+    variants: {
+      variant: {
+        default:
+          'bg-matrix-panel border-matrix-border text-matrix-text hover:bg-matrix-secondary hover:text-matrix-text-bright before:absolute before:inset-0 before:border-t-2 before:border-t-matrix-text before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+        primary:
+          'bg-matrix-primary bg-opacity-20 border-matrix-primary text-matrix-text-bright hover:bg-opacity-30 hover:border-matrix-text-bright',
+        outline:
+          'bg-transparent border-matrix-text text-matrix-text hover:bg-matrix-text hover:bg-opacity-10',
+        ghost:
+          'bg-transparent border-transparent text-matrix-text hover:bg-matrix-text hover:bg-opacity-10',
+        terminal:
+          'bg-black bg-opacity-60 border-matrix-text text-matrix-text font-matrix-hacker hover:text-matrix-text-bright hover:border-matrix-text-bright hover:shadow-[0_0_10px_var(--m-glow)]',
+        danger:
+          'bg-matrix-danger bg-opacity-20 border-matrix-danger text-matrix-danger hover:bg-opacity-30',
+      },
+      size: {
+        sm: 'h-8 px-3 text-xs',
+        md: 'h-10 px-4 text-sm',
+        lg: 'h-12 px-6 text-base',
+        icon: 'h-10 w-10',
+      },
+      hasGlow: {
+        true: 'shadow-[0_0_10px_var(--m-glow)] hover:shadow-[0_0_15px_var(--m-glow)]',
+        false: '',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'md',
+      hasGlow: false,
+    },
+  }
+);
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, hasGlow, asChild, children, ...props }, ref) => {
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size, hasGlow, className }))}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';
+
+export { Button, buttonVariants };
+
+===== src/components/ui/Button/Button.test.tsx =====
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from './Button';
+
+describe('Button', () => {
+  it('renders with default variant and size', () => {
+    render(<Button>Default Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Default Button' });
+    expect(button).toHaveClass('bg-matrix-panel');
+    expect(button).toHaveClass('border-matrix-border');
+    expect(button).toHaveClass('text-matrix-text');
+    expect(button).toHaveClass('h-10'); // md size
+  });
+
+  it('renders with primary variant', () => {
+    render(<Button variant="primary">Primary Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Primary Button' });
+    expect(button).toHaveClass('bg-matrix-primary');
+    expect(button).toHaveClass('border-matrix-primary');
+    expect(button).toHaveClass('text-matrix-text-bright');
+  });
+
+  it('renders with outline variant', () => {
+    render(<Button variant="outline">Outline Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Outline Button' });
+    expect(button).toHaveClass('bg-transparent');
+    expect(button).toHaveClass('border-matrix-text');
+    expect(button).toHaveClass('text-matrix-text');
+  });
+
+  it('renders with ghost variant', () => {
+    render(<Button variant="ghost">Ghost Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Ghost Button' });
+    expect(button).toHaveClass('bg-transparent');
+    expect(button).toHaveClass('border-transparent');
+    expect(button).toHaveClass('text-matrix-text');
+  });
+
+  it('renders with terminal variant', () => {
+    render(<Button variant="terminal">Terminal Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Terminal Button' });
+    expect(button).toHaveClass('bg-black');
+    expect(button).toHaveClass('border-matrix-text');
+    expect(button).toHaveClass('text-matrix-text');
+    expect(button).toHaveClass('font-matrix-hacker');
+  });
+
+  it('renders with danger variant', () => {
+    render(<Button variant="danger">Danger Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Danger Button' });
+    expect(button).toHaveClass('bg-matrix-danger');
+    expect(button).toHaveClass('border-matrix-danger');
+    expect(button).toHaveClass('text-matrix-danger');
+  });
+
+  it('renders with sm size', () => {
+    render(<Button size="sm">Small Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Small Button' });
+    expect(button).toHaveClass('h-8');
+    expect(button).toHaveClass('px-3');
+    expect(button).toHaveClass('text-xs');
+  });
+
+  it('renders with md size', () => {
+    render(<Button size="md">Medium Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Medium Button' });
+    expect(button).toHaveClass('h-10');
+    expect(button).toHaveClass('px-4');
+    expect(button).toHaveClass('text-sm');
+  });
+
+  it('renders with lg size', () => {
+    render(<Button size="lg">Large Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Large Button' });
+    expect(button).toHaveClass('h-12');
+    expect(button).toHaveClass('px-6');
+    expect(button).toHaveClass('text-base');
+  });
+
+  it('renders with icon size', () => {
+    render(<Button size="icon">+</Button>);
+    
+    const button = screen.getByRole('button', { name: '+' });
+    expect(button).toHaveClass('h-10');
+    expect(button).toHaveClass('w-10');
+  });
+
+  it('applies glow effect when hasGlow is true', () => {
+    render(<Button hasGlow>Glowing Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Glowing Button' });
+    expect(button).toHaveClass('shadow-[0_0_10px_var(--m-glow)]');
+  });
+
+  it('passes additional className to the component', () => {
+    render(<Button className="test-class">Test Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Test Button' });
+    expect(button).toHaveClass('test-class');
+  });
+
+  it('forwards ref to the underlying button element', () => {
+    const ref = React.createRef<HTMLButtonElement>();
+    render(<Button ref={ref}>Button with Ref</Button>);
+    
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+  });
+
+  it('should be disabled when disabled prop is true', () => {
+    render(<Button disabled>Disabled Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Disabled Button' });
+    expect(button).toBeDisabled();
+    expect(button).toHaveClass('disabled:opacity-50');
+    expect(button).toHaveClass('disabled:pointer-events-none');
+  });
+
+  it('calls onClick handler when clicked', () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Clickable Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Clickable Button' });
+    fireEvent.click(button);
+    
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not call onClick when disabled', () => {
+    const handleClick = jest.fn();
+    render(<Button disabled onClick={handleClick}>Disabled Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Disabled Button' });
+    fireEvent.click(button);
+    
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+
+  it('renders with type button by default', () => {
+    render(<Button>Default Type Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Default Type Button' });
+    expect(button).toHaveAttribute('type', 'button');
+  });
+
+  it('renders with custom type', () => {
+    render(<Button type="submit">Submit Button</Button>);
+    
+    const button = screen.getByRole('button', { name: 'Submit Button' });
+    expect(button).toHaveAttribute('type', 'submit');
+  });
+});
+
+===== src/components/ui/Button/Button.stories.tsx =====
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './Button';
+
+const meta: Meta<typeof Button> = {
+  title: 'UI/Button',
+  component: Button,
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: {
+        type: 'select',
+        options: ['default', 'primary', 'outline', 'ghost', 'terminal', 'danger'],
+      },
+      description: 'The variant style of the button',
+      table: {
+        defaultValue: { summary: 'default' },
+      },
+    },
+    size: {
+      control: {
+        type: 'select',
+        options: ['sm', 'md', 'lg', 'icon'],
+      },
+      description: 'The size of the button',
+      table: {
+        defaultValue: { summary: 'md' },
+      },
+    },
+    hasGlow: {
+      control: 'boolean',
+      description: 'Whether to add a glowing effect to the button',
+      table: {
+        defaultValue: { summary: false },
+      },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Whether the button is disabled',
+    },
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes to add to the button',
+    },
+    onClick: {
+      action: 'clicked',
+      description: 'Function called when the button is clicked',
+    },
+  },
+  parameters: {
+    layout: 'centered',
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const Default: Story = {
+  args: {
+    children: 'Default Button',
+    variant: 'default',
+    size: 'md',
+    hasGlow: false,
+  },
+};
+
+export const Primary: Story = {
+  args: {
+    children: 'Primary Button',
+    variant: 'primary',
+    size: 'md',
+    hasGlow: false,
+  },
+};
+
+export const Outline: Story = {
+  args: {
+    children: 'Outline Button',
+    variant: 'outline',
+    size: 'md',
+    hasGlow: false,
+  },
+};
+
+export const Ghost: Story = {
+  args: {
+    children: 'Ghost Button',
+    variant: 'ghost',
+    size: 'md',
+    hasGlow: false,
+  },
+};
+
+export const Terminal: Story = {
+  args: {
+    children: 'Terminal Button',
+    variant: 'terminal',
+    size: 'md',
+    hasGlow: false,
+  },
+};
+
+export const Danger: Story = {
+  args: {
+    children: 'Danger Button',
+    variant: 'danger',
+    size: 'md',
+    hasGlow: false,
+  },
+};
+
+export const Small: Story = {
+  args: {
+    children: 'Small Button',
+    size: 'sm',
+    variant: 'default',
+  },
+};
+
+export const Medium: Story = {
+  args: {
+    children: 'Medium Button',
+    size: 'md',
+    variant: 'default',
+  },
+};
+
+export const Large: Story = {
+  args: {
+    children: 'Large Button',
+    size: 'lg',
+    variant: 'default',
+  },
+};
+
+export const Icon: Story = {
+  args: {
+    children: '+',
+    size: 'icon',
+    variant: 'default',
+    'aria-label': 'Add item',
+  },
+};
+
+export const WithGlow: Story = {
+  args: {
+    children: 'Glowing Button',
+    variant: 'primary',
+    hasGlow: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    children: 'Disabled Button',
+    variant: 'primary',
+    disabled: true,
+  },
+};
+
+export const WithIcon: Story = {
+  render: () => (
+    <Button variant="primary" className="gap-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"></path>
+      </svg>
+      With Icon
+    </Button>
+  ),
+};
+
+export const AllVariants: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Button variant="default">Default</Button>
+      <Button variant="primary">Primary</Button>
+      <Button variant="outline">Outline</Button>
+      <Button variant="ghost">Ghost</Button>
+      <Button variant="terminal">Terminal</Button>
+      <Button variant="danger">Danger</Button>
+    </div>
+  ),
+};
+
+export const AllSizes: Story = {
+  render: () => (
+    <div className="flex items-center gap-2">
+      <Button variant="primary" size="sm">Small</Button>
+      <Button variant="primary" size="md">Medium</Button>
+      <Button variant="primary" size="lg">Large</Button>
+      <Button variant="primary" size="icon">+</Button>
+    </div>
+  ),
+};
+
+export const TerminalWithGlow: Story = {
+  render: () => (
+    <Button variant="terminal" hasGlow={true}>
+      ENTER THE MATRIX
+    </Button>
+  ),
+};
+
+export const LoadingButton: Story = {
+  render: () => (
+    <Button variant="primary" disabled className="relative">
+      <span className="opacity-0">Loading...</span>
+      <span className="absolute inset-0 flex items-center justify-center">
+        <svg
+          className="animate-spin h-5 w-5 text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+      </span>
+    </Button>
+  ),
+};
+
+===== src/components/ui/Button/Button.types.ts =====
+import { ButtonHTMLAttributes } from 'react';
+import { VariantProps } from 'class-variance-authority';
+import { buttonVariants } from './Button';
+
+/**
+ * Button component props
+ * @interface ButtonProps
+ * @extends ButtonHTMLAttributes<HTMLButtonElement> - Extends HTML button element attributes
+ * @extends VariantProps<typeof buttonVariants> - Extends variant props from class-variance-authority
+ */
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  /**
+   * If true, allows passing a custom component as the child
+   * @default false
+   */
+  asChild?: boolean;
+  
+  /**
+   * The content of the button
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the button
+   */
+  className?: string;
+  
+  /**
+   * Whether to add a glow effect to the button
+   * @default false
+   */
+  hasGlow?: boolean;
+}
+
+===== src/components/ui/Button/index.ts =====
+export { Button, buttonVariants } from './Button';
+export type { ButtonProps } from './Button.types';
+
+===== src/components/ui/Card/Card.tsx =====
+import React, { forwardRef } from 'react';
+import { cn } from '../../../utils/cn';
+import { 
+  CardProps,
+  CardHeaderProps,
+  CardTitleProps,
+  CardDescriptionProps,
+  CardContentProps,
+  CardFooterProps
+} from './Card.types';
+
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, glowOnHover = true, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'relative flex flex-col bg-matrix-panel border border-matrix-border rounded overflow-hidden transition-all duration-200',
+          glowOnHover && 'hover:translate-y-[-5px] hover:shadow-[0_5px_15px_rgba(0,255,65,0.1)]',
+          className
+        )}
+        {...props}
+      >
+        {glowOnHover && (
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-matrix-bg via-matrix-text to-matrix-bg opacity-0 transition-opacity duration-500 group-hover:opacity-100 hover:opacity-100" />
+        )}
+        {children}
+      </div>
+    );
+  }
+);
+
+Card.displayName = 'Card';
+
+const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'px-6 py-3 border-b border-matrix-border bg-black bg-opacity-20',
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+
+CardHeader.displayName = 'CardHeader';
+
+const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <h3
+        ref={ref}
+        className={cn('text-xl font-bold text-matrix-text-bright mb-0', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardTitle.displayName = 'CardTitle';
+
+const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <p
+        ref={ref}
+        className={cn('text-matrix-text-dim text-sm', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardDescription.displayName = 'CardDescription';
+
+const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('p-6 pt-0 flex-1', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardContent.displayName = 'CardContent';
+
+const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('px-6 py-3 border-t border-matrix-border bg-black bg-opacity-20', className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardFooter.displayName = 'CardFooter';
+
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };
+
+===== src/components/ui/Card/Card.test.tsx =====
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
+
+describe('Card', () => {
+  it('renders a basic card with content', () => {
+    render(<Card>Card Content</Card>);
+    
+    const card = screen.getByText('Card Content');
+    expect(card).toBeInTheDocument();
+    expect(card.parentElement).toHaveClass('bg-matrix-panel');
+    expect(card.parentElement).toHaveClass('border-matrix-border');
+    expect(card.parentElement).toHaveClass('hover:translate-y-[-5px]');
+  });
+
+  it('renders a card without hover effect when glowOnHover is false', () => {
+    render(<Card glowOnHover={false}>No Hover Effect</Card>);
+    
+    const card = screen.getByText('No Hover Effect');
+    expect(card.parentElement).not.toHaveClass('hover:translate-y-[-5px]');
+    expect(card.parentElement).not.toHaveClass('hover:shadow-[0_5px_15px_rgba(0,255,65,0.1)]');
+  });
+
+  it('passes additional className to the component', () => {
+    render(<Card className="test-class">Custom Class</Card>);
+    
+    const card = screen.getByText('Custom Class');
+    expect(card.parentElement).toHaveClass('test-class');
+  });
+
+  it('forwards ref to the underlying div element', () => {
+    const ref = React.createRef<HTMLDivElement>();
+    render(<Card ref={ref}>Card with Ref</Card>);
+    
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('renders CardHeader component correctly', () => {
+    render(
+      <Card>
+        <CardHeader>Header Content</CardHeader>
+      </Card>
+    );
+    
+    const header = screen.getByText('Header Content');
+    expect(header).toBeInTheDocument();
+    expect(header).toHaveClass('px-6');
+    expect(header).toHaveClass('py-3');
+    expect(header).toHaveClass('border-b');
+    expect(header).toHaveClass('border-matrix-border');
+  });
+
+  it('renders CardTitle component correctly', () => {
+    render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Card Title</CardTitle>
+        </CardHeader>
+      </Card>
+    );
+    
+    const title = screen.getByText('Card Title');
+    expect(title).toBeInTheDocument();
+    expect(title).toHaveClass('text-xl');
+    expect(title).toHaveClass('font-bold');
+    expect(title).toHaveClass('text-matrix-text-bright');
+  });
+
+  it('renders CardDescription component correctly', () => {
+    render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Card Title</CardTitle>
+          <CardDescription>Card Description</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+    
+    const description = screen.getByText('Card Description');
+    expect(description).toBeInTheDocument();
+    expect(description).toHaveClass('text-matrix-text-dim');
+    expect(description).toHaveClass('text-sm');
+  });
+
+  it('renders CardContent component correctly', () => {
+    render(
+      <Card>
+        <CardContent>Card Content</CardContent>
+      </Card>
+    );
+    
+    const content = screen.getByText('Card Content');
+    expect(content).toBeInTheDocument();
+    expect(content).toHaveClass('p-6');
+    expect(content).toHaveClass('pt-0');
+    expect(content).toHaveClass('flex-1');
+  });
+
+  it('renders CardFooter component correctly', () => {
+    render(
+      <Card>
+        <CardFooter>Card Footer</CardFooter>
+      </Card>
+    );
+    
+    const footer = screen.getByText('Card Footer');
+    expect(footer).toBeInTheDocument();
+    expect(footer).toHaveClass('px-6');
+    expect(footer).toHaveClass('py-3');
+    expect(footer).toHaveClass('border-t');
+    expect(footer).toHaveClass('border-matrix-border');
+  });
+
+  it('renders a complete card with all components', () => {
+    render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Complete Card</CardTitle>
+          <CardDescription>This is a complete card with all components</CardDescription>
+        </CardHeader>
+        <CardContent>Main content goes here</CardContent>
+        <CardFooter>Footer content</CardFooter>
+      </Card>
+    );
+    
+    expect(screen.getByText('Complete Card')).toBeInTheDocument();
+    expect(screen.getByText('This is a complete card with all components')).toBeInTheDocument();
+    expect(screen.getByText('Main content goes here')).toBeInTheDocument();
+    expect(screen.getByText('Footer content')).toBeInTheDocument();
+  });
+
+  it('applies custom className to all subcomponents', () => {
+    render(
+      <Card className="custom-card">
+        <CardHeader className="custom-header">
+          <CardTitle className="custom-title">Title</CardTitle>
+          <CardDescription className="custom-desc">Description</CardDescription>
+        </CardHeader>
+        <CardContent className="custom-content">Content</CardContent>
+        <CardFooter className="custom-footer">Footer</CardFooter>
+      </Card>
+    );
+    
+    expect(screen.getByText('Title').parentElement?.parentElement).toHaveClass('custom-card');
+    expect(screen.getByText('Title').parentElement).toHaveClass('custom-header');
+    expect(screen.getByText('Title')).toHaveClass('custom-title');
+    expect(screen.getByText('Description')).toHaveClass('custom-desc');
+    expect(screen.getByText('Content')).toHaveClass('custom-content');
+    expect(screen.getByText('Footer')).toHaveClass('custom-footer');
+  });
+
+  it('forwards refs to all subcomponents', () => {
+    const headerRef = React.createRef<HTMLDivElement>();
+    const titleRef = React.createRef<HTMLHeadingElement>();
+    const descriptionRef = React.createRef<HTMLParagraphElement>();
+    const contentRef = React.createRef<HTMLDivElement>();
+    const footerRef = React.createRef<HTMLDivElement>();
+    
+    render(
+      <Card>
+        <CardHeader ref={headerRef}>
+          <CardTitle ref={titleRef}>Title</CardTitle>
+          <CardDescription ref={descriptionRef}>Description</CardDescription>
+        </CardHeader>
+        <CardContent ref={contentRef}>Content</CardContent>
+        <CardFooter ref={footerRef}>Footer</CardFooter>
+      </Card>
+    );
+    
+    expect(headerRef.current).toBeInstanceOf(HTMLDivElement);
+    expect(titleRef.current).toBeInstanceOf(HTMLHeadingElement);
+    expect(descriptionRef.current).toBeInstanceOf(HTMLParagraphElement);
+    expect(contentRef.current).toBeInstanceOf(HTMLDivElement);
+    expect(footerRef.current).toBeInstanceOf(HTMLDivElement);
+  });
+});
+
+===== src/components/ui/Card/Card.stories.tsx =====
+import type { Meta, StoryObj } from '@storybook/react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
+import { Button } from '../Button';
+
+const meta: Meta<typeof Card> = {
+  title: 'UI/Card',
+  component: Card,
+  tags: ['autodocs'],
+  argTypes: {
+    glowOnHover: {
+      control: 'boolean',
+      description: 'Whether to apply a glow effect on hover',
+      table: {
+        defaultValue: { summary: true },
+      },
+    },
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes to add to the card',
+    },
+  },
+  parameters: {
+    layout: 'centered',
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Card>;
+
+export const Default: Story = {
+  render: () => (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Default Card</CardTitle>
+        <CardDescription>This is a basic card component</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-matrix-text">The Matrix.css card component provides a flexible container with a clean cyberpunk aesthetic. It can be used for a wide variety of content.</p>
+      </CardContent>
+      <CardFooter>
+        <Button variant="primary" size="sm">Action</Button>
+      </CardFooter>
+    </Card>
+  ),
+};
+
+export const WithoutHoverEffect: Story = {
+  render: () => (
+    <Card className="w-[350px]" glowOnHover={false}>
+      <CardHeader>
+        <CardTitle>Static Card</CardTitle>
+        <CardDescription>This card doesn't have a hover effect</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-matrix-text">This card won't elevate or glow when hovered.</p>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const HeaderOnly: Story = {
+  render: () => (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Header Only</CardTitle>
+        <CardDescription>This card only has a header section</CardDescription>
+      </CardHeader>
+    </Card>
+  ),
+};
+
+export const ContentOnly: Story = {
+  render: () => (
+    <Card className="w-[350px]">
+      <CardContent>
+        <p className="text-matrix-text">This card only has content without header or footer sections.</p>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const WithImage: Story = {
+  render: () => (
+    <Card className="w-[350px] overflow-hidden">
+      <div className="w-full h-[140px] bg-gradient-to-r from-matrix-bg to-[#001a00] flex items-center justify-center">
+        <div className="text-matrix-text-bright text-3xl font-matrix-hacker">MATRIX.CSS</div>
+      </div>
+      <CardHeader>
+        <CardTitle>Card with Image</CardTitle>
+        <CardDescription>Cards can include media elements</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-matrix-text">
+          This card demonstrates how to include an image or other media content.
+        </p>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const WithFooterActions: Story = {
+  render: () => (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Action Card</CardTitle>
+        <CardDescription>This card has action buttons in the footer</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-matrix-text">
+          Cards often include action buttons in their footer section to allow users to interact.
+        </p>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline" size="sm">Cancel</Button>
+        <Button variant="primary" size="sm">Confirm</Button>
+      </CardFooter>
+    </Card>
+  ),
+};
+
+export const Terminal: Story = {
+  render: () => (
+    <Card className="w-[350px] bg-black border-matrix-text">
+      <CardHeader className="border-matrix-text bg-black bg-opacity-90">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-matrix-text-bright font-matrix-hacker">SYSTEM.EXE</CardTitle>
+          <div className="flex space-x-1">
+            <div className="w-3 h-3 rounded-full bg-matrix-danger"></div>
+            <div className="w-3 h-3 rounded-full bg-matrix-warning"></div>
+            <div className="w-3 h-3 rounded-full bg-matrix-success"></div>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="bg-black text-matrix-text font-matrix-hacker p-4">
+        <div className="mb-2">
+          <span className="text-matrix-text-dim">$</span> <span className="text-matrix-text-bright">system.check</span>
+        </div>
+        <div className="mb-2">
+          <span>
+            System check initiated...
+          </span>
+        </div>
+        <div className="mb-2">
+          <span className="text-matrix-success">[OK]</span> Memory: 16GB
+        </div>
+        <div className="mb-2">
+          <span className="text-matrix-success">[OK]</span> Storage: 1TB
+        </div>
+        <div>
+          <span className="text-matrix-success">[OK]</span> Network: Connected
+        </div>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const Horizontal: Story = {
+  render: () => (
+    <Card className="flex flex-row w-[500px] h-[160px] overflow-hidden">
+      <div className="w-[160px] bg-gradient-to-br from-matrix-primary to-matrix-bg bg-opacity-20 flex items-center justify-center">
+        <div className="text-matrix-text-bright text-4xl">M</div>
+      </div>
+      <div className="flex flex-col flex-1">
+        <CardHeader>
+          <CardTitle>Horizontal Card</CardTitle>
+          <CardDescription>A card with horizontal layout</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-matrix-text">
+            This card uses a horizontal layout for a different visual presentation.
+          </p>
+        </CardContent>
+      </div>
+    </Card>
+  ),
+};
+
+export const DataCard: Story = {
+  render: () => (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Network Status</CardTitle>
+        <CardDescription>Current system network metrics</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-matrix-text-dim">Bandwidth</span>
+              <span className="text-matrix-text-bright">125 MB/s</span>
+            </div>
+            <div className="w-full h-2 bg-matrix-bg rounded overflow-hidden">
+              <div className="h-full bg-matrix-primary" style={{ width: '65%' }}></div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-matrix-text-dim">Latency</span>
+              <span className="text-matrix-text-bright">45 ms</span>
+            </div>
+            <div className="w-full h-2 bg-matrix-bg rounded overflow-hidden">
+              <div className="h-full bg-matrix-success" style={{ width: '30%' }}></div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-matrix-text-dim">Packet Loss</span>
+              <span className="text-matrix-danger">2.3%</span>
+            </div>
+            <div className="w-full h-2 bg-matrix-bg rounded overflow-hidden">
+              <div className="h-full bg-matrix-danger" style={{ width: '10%' }}></div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const GridOfCards: Story = {
+  render: () => (
+    <div className="grid grid-cols-2 gap-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Card 1</CardTitle>
+        </CardHeader>
+        <CardContent>Content for card 1</CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Card 2</CardTitle>
+        </CardHeader>
+        <CardContent>Content for card 2</CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Card 3</CardTitle>
+        </CardHeader>
+        <CardContent>Content for card 3</CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Card 4</CardTitle>
+        </CardHeader>
+        <CardContent>Content for card 4</CardContent>
+      </Card>
+    </div>
+  ),
+};
+
+===== src/components/ui/Card/Card.types.ts =====
+import { HTMLAttributes } from 'react';
+
+/**
+ * Card component props
+ * @interface CardProps
+ * @extends HTMLAttributes<HTMLDivElement> - Extends HTML div element attributes
+ */
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  /**
+   * Whether to apply a glow effect on hover
+   * @default true
+   */
+  glowOnHover?: boolean;
+  
+  /**
+   * The content of the card
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the card
+   */
+  className?: string;
+}
+
+/**
+ * Card header component props
+ * @interface CardHeaderProps
+ * @extends HTMLAttributes<HTMLDivElement> - Extends HTML div element attributes
+ */
+export interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
+  /**
+   * The content of the card header
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the card header
+   */
+  className?: string;
+}
+
+/**
+ * Card title component props
+ * @interface CardTitleProps
+ * @extends HTMLAttributes<HTMLHeadingElement> - Extends HTML heading element attributes
+ */
+export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+  /**
+   * The content of the card title
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the card title
+   */
+  className?: string;
+}
+
+/**
+ * Card description component props
+ * @interface CardDescriptionProps
+ * @extends HTMLAttributes<HTMLParagraphElement> - Extends HTML paragraph element attributes
+ */
+export interface CardDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {
+  /**
+   * The content of the card description
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the card description
+   */
+  className?: string;
+}
+
+/**
+ * Card content component props
+ * @interface CardContentProps
+ * @extends HTMLAttributes<HTMLDivElement> - Extends HTML div element attributes
+ */
+export interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
+  /**
+   * The content of the card content area
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the card content
+   */
+  className?: string;
+}
+
+/**
+ * Card footer component props
+ * @interface CardFooterProps
+ * @extends HTMLAttributes<HTMLDivElement> - Extends HTML div element attributes
+ */
+export interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
+  /**
+   * The content of the card footer
+   */
+  children: React.ReactNode;
+  
+  /**
+   * Additional CSS class to apply to the card footer
+   */
+  className?: string;
+}
+
+===== src/components/ui/Card/index.ts =====
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
+export type {
+  CardProps,
+  CardHeaderProps,
+  CardTitleProps,
+  CardDescriptionProps,
+  CardContentProps,
+  CardFooterProps
+} from './Card.types';
