@@ -1514,3 +1514,120 @@
   background-color: var(--m-text-dim);
   border-radius: 3px;
 }
+
+
+/* Matrix Terminal Checkbox - Complete Replacement Style */
+
+/* This completely removes the standard checkbox appearance and replaces it with terminal-style brackets */
+.matrix-terminal-checkbox {
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  font-family: var(--m-font-hacker), 'VT323', monospace;
+  cursor: pointer;
+}
+
+/* Hide the actual checkbox input completely */
+.matrix-terminal-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+
+/* Create the bracket styling for the unchecked state */
+.matrix-terminal-checkbox .checkbox-text {
+  position: relative;
+  padding-left: 2.5rem;
+  color: var(--matrix-text);
+  font-family: var(--m-font-hacker), 'VT323', monospace;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+
+/* Add the brackets before the text */
+.matrix-terminal-checkbox .checkbox-text::before {
+  content: "[ ]";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--m-font-hacker), 'VT323', monospace;
+  color: var(--matrix-text);
+  transition: color 0.2s, content 0.1s;
+}
+
+/* Change the brackets and color when checked */
+.matrix-terminal-checkbox input[type="checkbox"]:checked + .checkbox-text {
+  color: var(--matrix-text-bright);
+}
+
+.matrix-terminal-checkbox input[type="checkbox"]:checked + .checkbox-text::before {
+  content: "[×]";
+  color: var(--matrix-text-bright);
+}
+
+/* Focused state */
+.matrix-terminal-checkbox input[type="checkbox"]:focus + .checkbox-text::before {
+  text-shadow: 0 0 8px var(--matrix-glow);
+}
+
+/* Disabled state */
+.matrix-terminal-checkbox.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.matrix-terminal-checkbox.disabled .checkbox-text,
+.matrix-terminal-checkbox.disabled input[type="checkbox"] {
+  cursor: not-allowed;
+}
+
+/* Matrix Terminal Checkbox - special styling for the system preferences */
+.matrix-terminal-checkbox {
+  display: flex;
+  position: relative;
+  margin-bottom: 0.5rem;
+  font-family: var(--m-font-hacker);
+  color: var(--matrix-text);
+  cursor: pointer;
+}
+
+.matrix-terminal-checkbox input[type="checkbox"] {
+  opacity: 0;
+  position: absolute;
+}
+
+.matrix-terminal-checkbox .checkbox-text {
+  position: relative;
+  padding-left: 2rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.matrix-terminal-checkbox .checkbox-text::before {
+  content: "[ ]";
+  position: absolute;
+  left: 0;
+  color: var(--matrix-text);
+  font-family: var(--m-font-hacker);
+}
+
+.matrix-terminal-checkbox input[type="checkbox"]:checked + .checkbox-text {
+  color: var(--matrix-text-bright);
+}
+
+.matrix-terminal-checkbox input[type="checkbox"]:checked + .checkbox-text::before {
+  content: "[■]";
+  color: var(--matrix-text-bright);
+}
+
+.matrix-terminal-checkbox.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.matrix-terminal-checkbox.disabled .checkbox-text {
+  cursor: not-allowed;
+}

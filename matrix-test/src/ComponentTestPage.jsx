@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './ComponentTestPage.css';
 
-// Import components - uncomment when implemented
+// Import components
+// Uncomment as you implement them
 // import { Button } from './components/core/Button';
 // import { Card } from './components/core/Card';
 // import { Input } from './components/core/Input';
-// import { Checkbox } from './components/core/Checkbox';
+//import { Checkbox } from './components/core/Checkbox';
 // import { Radio } from './components/core/Radio';
 // import { Select } from './components/core/Select';
 // import { Modal } from './components/core/Modal';
@@ -13,8 +14,7 @@ import './ComponentTestPage.css';
 // import { Badge } from './components/core/Badge';
 // import { Progress } from './components/core/Progress';
 // import { Tooltip } from './components/core/Tooltip';
-// import { Tabs } from './components/core/Tabs';
-// import { TabPane } from './components/core/Tabs';
+// import { Tabs, TabPane } from './components/core/Tabs';
 // import { Switch } from './components/core/Switch';
 // import { Dropdown } from './components/core/Dropdown';
 
@@ -941,64 +941,437 @@ function ComponentTestPage() {
           </div>
         );
 
-      case 'checkboxes':
+      // CHECKBOXES SECTION
+// This should replace the 'checkboxes' case in the renderTabContent function in ComponentTestPage.jsx
+
+case 'checkboxes':
+  return (
+    <div className="tab-content">
+      <ComponentSection title="Checkbox Variants">
+        <div className="control-grid">
+          <div className="control-group">
+            <h4 className="group-label">Default Variant</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                checked={checked}
+                onChange={() => setChecked(!checked)}
+              />
+              <span className="checkbox-label">Default Checkbox</span>
+            </label>
+            <div className="description">Current state: {checked ? 'Checked' : 'Unchecked'}</div>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Terminal Style</h4>
+            <label className="matrix-checkbox checkbox-terminal">
+              <input type="checkbox" defaultChecked />
+              <span className="checkbox-label">TERMINAL CHECKBOX</span>
+            </label>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Cyber Style</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                className="cyber-checkbox"
+              />
+              <span className="checkbox-label">Cyber Checkbox</span>
+            </label>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Glow Effect</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                defaultChecked
+                className="glow-checkbox"
+              />
+              <span className="checkbox-label">Glowing Checkbox</span>
+            </label>
+          </div>
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<!-- Default Checkbox -->
+<label class="matrix-checkbox">
+  <input type="checkbox" />
+  <span class="checkbox-label">Default Checkbox</span>
+</label>
+
+<!-- Terminal Checkbox -->
+<label class="matrix-checkbox checkbox-terminal">
+  <input type="checkbox" />
+  <span class="checkbox-label">TERMINAL CHECKBOX</span>
+</label>
+
+<!-- Cyber Style Checkbox -->
+<label class="matrix-checkbox">
+  <input type="checkbox" class="cyber-checkbox" />
+  <span class="checkbox-label">Cyber Checkbox</span>
+</label>
+
+<!-- Glow Effect Checkbox -->
+<label class="matrix-checkbox">
+  <input type="checkbox" class="glow-checkbox" />
+  <span class="checkbox-label">Glowing Checkbox</span>
+</label>`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Matrix Themed Example">
+        <div className="p-4 bg-black bg-opacity-70 border border-matrix-border rounded">
+          <h3 className="mb-4 text-lg font-matrix-hacker text-matrix-text-bright">
+            MATRIX SYSTEM PREFERENCES
+          </h3>
+          <div className="space-y-2">
+            {/* Use the new matrix-terminal-checkbox class for all checkboxes */}
+            <label className="matrix-terminal-checkbox">
+              <input 
+                type="checkbox" 
+                defaultChecked
+              />
+              <span className="checkbox-text">ENABLE CODE RAIN VISUALIZATION</span>
+            </label>
+            
+            <label className="matrix-terminal-checkbox">
+              <input 
+                type="checkbox"
+              />
+              <span className="checkbox-text">CONNECT TO NEURAL NETWORK</span>
+            </label>
+            
+            <label className="matrix-terminal-checkbox">
+              <input 
+                type="checkbox" 
+                defaultChecked
+              />
+              <span className="checkbox-text">ALLOW SYSTEM TRACKING</span>
+            </label>
+            <p className="mt-1 text-xs text-matrix-danger ml-10">WARNING: ACTIVE TRACKING DETECTED</p>
+            
+            <label className="matrix-terminal-checkbox disabled">
+              <input 
+                type="checkbox" 
+                disabled
+              />
+              <span className="checkbox-text">ADMIN CONTROL PANEL</span>
+            </label>
+            <p className="mt-1 text-xs text-matrix-text-dim ml-10">REQUIRES LEVEL 10 CLEARANCE</p>
+          </div>
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<!-- Matrix Terminal Style Checkbox -->
+<label class="matrix-terminal-checkbox">
+  <input type="checkbox" />
+  <span class="checkbox-text">MATRIX SYSTEM OPTION</span>
+</label>
+<!-- Disabled Matrix Terminal Checkbox -->
+<label class="matrix-terminal-checkbox disabled">
+  <input type="checkbox" disabled />
+  <span class="checkbox-text">RESTRICTED OPTION</span>
+</label>`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Checkbox Sizes">
+        <div className="control-grid">
+          <div className="control-group">
+            <h4 className="group-label">Small Size</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                className="w-3.5 h-3.5"
+              />
+              <span className="checkbox-label text-xs">Small Checkbox</span>
+            </label>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Medium Size (Default)</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                defaultChecked
+              />
+              <span className="checkbox-label">Medium Checkbox</span>
+            </label>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Large Size</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                className="w-5 h-5"
+              />
+              <span className="checkbox-label text-base">Large Checkbox</span>
+            </label>
+          </div>
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<Checkbox size="sm" label="Small Checkbox" />
+<Checkbox size="md" label="Medium Checkbox" />
+<Checkbox size="lg" label="Large Checkbox" />`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Checkbox States">
+        <div className="control-grid">
+          <div className="control-group">
+            <h4 className="group-label">Default State</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+              />
+              <span className="checkbox-label">Unchecked by Default</span>
+            </label>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Checked State</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                defaultChecked
+              />
+              <span className="checkbox-label">Checked by Default</span>
+            </label>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Disabled States</h4>
+            <label className="matrix-checkbox disabled">
+              <input 
+                type="checkbox" 
+                disabled
+              />
+              <span className="checkbox-label">Disabled Unchecked</span>
+            </label>
+            <label className="matrix-checkbox disabled">
+              <input 
+                type="checkbox" 
+                disabled
+                defaultChecked
+              />
+              <span className="checkbox-label">Disabled Checked</span>
+            </label>
+          </div>
+
+          <div className="control-group">
+            <h4 className="group-label">Error State</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox"
+                className="border-matrix-danger"
+              />
+              <span className="checkbox-label">Checkbox with Error</span>
+            </label>
+            <p className="mt-1 text-xs text-matrix-danger">This field is required</p>
+          </div>
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<Checkbox label="Unchecked by Default" />
+<Checkbox label="Checked by Default" defaultChecked />
+<Checkbox label="Disabled Unchecked" disabled />
+<Checkbox label="Disabled Checked" disabled defaultChecked />
+<Checkbox label="Checkbox with Error" error="This field is required" />`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Checkbox with Description">
+        <div className="control-grid vertical">
+          <div className="control-group">
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                defaultChecked
+              />
+              <span className="checkbox-label">Advanced Mode</span>
+            </label>
+            <p className="mt-1 text-xs text-matrix-text-dim">Enables advanced features for power users</p>
+
+            <label className="matrix-checkbox mt-3">
+              <input 
+                type="checkbox" 
+              />
+              <span className="checkbox-label">Data Analytics</span>
+            </label>
+            <p className="mt-1 text-xs text-matrix-text-dim">Collect anonymous usage data to improve the system</p>
+
+            <label className="matrix-checkbox checkbox-terminal mt-3">
+              <input 
+                type="checkbox"
+                disabled
+              />
+              <span className="checkbox-label checkbox-terminal">SYSTEM ADMINISTRATION</span>
+            </label>
+            <p className="mt-1 text-xs text-matrix-text-dim">Grants elevated permissions (requires approval)</p>
+          </div>
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<Checkbox 
+  label="Advanced Mode" 
+  description="Enables advanced features for power users" 
+  defaultChecked
+/>
+
+<Checkbox 
+  label="Data Analytics" 
+  description="Collect anonymous usage data to improve the system" 
+/>
+
+<Checkbox 
+  variant="terminal"
+  label="SYSTEM ADMINISTRATION" 
+  description="Grants elevated permissions (requires approval)" 
+  disabled
+/>`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Checkbox Group Example">
+        <div className="control-grid vertical">
+          <div className="control-group">
+            <h4 className="group-label">Select System Features:</h4>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                name="features" 
+                value="firewall" 
+                defaultChecked
+                className="animate-checkbox-glow border-matrix-text"
+              />
+              <span className="checkbox-label">Firewall Protection</span>
+            </label>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                name="features" 
+                value="encryption"
+                className="animate-checkbox-glow border-matrix-text"
+              />
+              <span className="checkbox-label">Data Encryption</span>
+            </label>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                name="features" 
+                value="monitoring" 
+                defaultChecked
+                className="animate-checkbox-glow border-matrix-text"
+              />
+              <span className="checkbox-label">System Monitoring</span>
+            </label>
+            <label className="matrix-checkbox">
+              <input 
+                type="checkbox" 
+                name="features" 
+                value="backups"
+                className="animate-checkbox-glow border-matrix-text"
+              />
+              <span className="checkbox-label">Automated Backups</span>
+            </label>
+          </div>
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<div className="checkbox-group">
+  <h4 className="checkbox-group-title">Select System Features:</h4>
+  <Checkbox variant="glow" label="Firewall Protection" name="features" value="firewall" defaultChecked />
+  <Checkbox variant="glow" label="Data Encryption" name="features" value="encryption" />
+  <Checkbox variant="glow" label="System Monitoring" name="features" value="monitoring" defaultChecked />
+  <Checkbox variant="glow" label="Automated Backups" name="features" value="backups" />
+</div>`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+    </div>
+  );
+      case 'radios':
         return (
           <div className="tab-content">
-            <ComponentSection title="Checkbox Variants">
+            <ComponentSection title="Radio Variants">
               <div className="control-grid">
                 <div className="control-group">
-                  <label className="matrix-checkbox">
+                  <label className="matrix-radio">
                     <input 
-                      type="checkbox" 
-                      checked={checked}
-                      onChange={() => setChecked(!checked)}
+                      type="radio" 
+                      name="demo-radio" 
+                      value="option1"
+                      checked={radioValue === 'option1'}
+                      onChange={() => setRadioValue('option1')}
                     />
-                    <span className="checkbox-label">Default Checkbox</span>
+                    <span className="radio-label">Default Radio</span>
                   </label>
-                  <div className="description">Current state: {checked ? 'Checked' : 'Unchecked'}</div>
+                  <div className="description">Current value: {radioValue}</div>
                 </div>
 
                 <div className="control-group">
-                  <label className="matrix-checkbox">
+                  <label className="matrix-radio">
                     <input 
-                      type="checkbox" 
-                      defaultChecked
+                      type="radio" 
+                      name="demo-radio" 
+                      value="option2"
+                      checked={radioValue === 'option2'}
+                      onChange={() => setRadioValue('option2')}
                     />
-                    <span className="checkbox-label">Checked by Default</span>
+                    <span className="radio-label">Second Option</span>
                   </label>
                 </div>
 
                 <div className="control-group">
-                  <label className="matrix-checkbox disabled">
+                  <label className="matrix-radio disabled">
                     <input 
-                      type="checkbox" 
+                      type="radio" 
+                      name="demo-radio" 
+                      value="option3"
                       disabled
                     />
-                    <span className="checkbox-label">Disabled Checkbox</span>
+                    <span className="radio-label">Disabled Option</span>
                   </label>
                 </div>
               </div>
             </ComponentSection>
 
-            <ComponentSection title="Checkbox Group">
+            <ComponentSection title="Radio Group">
               <div className="control-grid vertical">
                 <div className="control-group">
-                  <h4 className="group-label">Select System Features:</h4>
-                  <label className="matrix-checkbox">
-                    <input type="checkbox" name="features" value="firewall" />
-                    <span className="checkbox-label">Firewall Protection</span>
+                  <h4 className="group-label">Select Connection Type:</h4>
+                  <label className="matrix-radio">
+                    <input type="radio" name="connection" value="secure" defaultChecked />
+                    <span className="radio-label">Secure Connection</span>
                   </label>
-                  <label className="matrix-checkbox">
-                    <input type="checkbox" name="features" value="encryption" />
-                    <span className="checkbox-label">Data Encryption</span>
+                  <label className="matrix-radio">
+                    <input type="radio" name="connection" value="proxied" />
+                    <span className="radio-label">Proxied Connection</span>
                   </label>
-                  <label className="matrix-checkbox">
-                    <input type="checkbox" name="features" value="monitoring" />
-                    <span className="checkbox-label">System Monitoring</span>
-                  </label>
-                  <label className="matrix-checkbox">
-                    <input type="checkbox" name="features" value="backups" />
-                    <span className="checkbox-label">Automated Backups</span>
+                  <label className="matrix-radio">
+                    <input type="radio" name="connection" value="direct" />
+                    <span className="radio-label">Direct Connection (Unsafe)</span>
                   </label>
                 </div>
               </div>
@@ -1006,7 +1379,616 @@ function ComponentTestPage() {
           </div>
         );
 
-      // Other tab content methods are kept the same...
+      case 'selects':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Select Variants">
+              <div className="control-grid">
+                <div className="control-group">
+                  <label htmlFor="default-select" className="block mb-2 text-sm font-medium text-matrix-text">Default Select</label>
+                  <select 
+                    id="default-select"
+                    className="block w-full p-2 bg-matrix-bg border text-matrix-text border-matrix-border rounded"
+                    value={selectValue}
+                    onChange={(e) => setSelectValue(e.target.value)}
+                  >
+                    <option value="default">Choose an option</option>
+                    <option value="option1">Option 1</option>
+                    <option value="option2">Option 2</option>
+                    <option value="option3">Option 3</option>
+                  </select>
+                  <div className="mt-1 text-xs text-matrix-text-dim">Current value: {selectValue}</div>
+                </div>
+
+                <div className="control-group">
+                  <label htmlFor="disabled-select" className="block mb-2 text-sm font-medium text-matrix-text">Disabled Select</label>
+                  <select 
+                    id="disabled-select"
+                    className="block w-full p-2 bg-matrix-bg border text-matrix-text border-matrix-border rounded opacity-50"
+                    disabled
+                  >
+                    <option>Disabled select</option>
+                  </select>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Select with Option Groups">
+              <div className="control-grid">
+                <div className="control-group">
+                  <label htmlFor="grouped-select" className="block mb-2 text-sm font-medium text-matrix-text">Country Selection</label>
+                  <select 
+                    id="grouped-select"
+                    className="block w-full p-2 bg-matrix-bg border text-matrix-text border-matrix-border rounded"
+                  >
+                    <option value="">Select a country</option>
+                    <optgroup label="North America">
+                      <option value="us">United States</option>
+                      <option value="ca">Canada</option>
+                      <option value="mx">Mexico</option>
+                    </optgroup>
+                    <optgroup label="Europe">
+                      <option value="uk">United Kingdom</option>
+                      <option value="fr">France</option>
+                      <option value="de">Germany</option>
+                    </optgroup>
+                    <optgroup label="Asia">
+                      <option value="jp">Japan</option>
+                      <option value="cn">China</option>
+                      <option value="in">India</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <div className="control-group">
+                  <label htmlFor="matrix-styled-select" className="block mb-2 text-sm font-matrix-hacker text-matrix-text-bright">ACCESS LEVEL</label>
+                  <select 
+                    id="matrix-styled-select"
+                    className="block w-full p-2 bg-black border text-matrix-text-bright border-matrix-text rounded font-matrix-hacker tracking-wide shadow-[0_0_5px_var(--m-glow)]"
+                  >
+                    <option value="">SELECT ACCESS LEVEL</option>
+                    <option value="user">USER</option>
+                    <option value="operator">OPERATOR</option>
+                    <option value="admin">ADMINISTRATOR</option>
+                    <option value="system" disabled>SYSTEM</option>
+                  </select>
+                </div>
+              </div>
+            </ComponentSection>
+          </div>
+        );
+
+      case 'switches':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Switch Variants">
+              <div className="control-grid">
+                <div className="control-group">
+                  <label className="matrix-switch">
+                    <input 
+                      type="checkbox" 
+                      checked={switchOn} 
+                      onChange={() => setSwitchOn(!switchOn)} 
+                    />
+                    <span className="switch-slider"></span>
+                    <span className="switch-label">Toggle Switch</span>
+                  </label>
+                  <div className="description">Current state: {switchOn ? 'ON' : 'OFF'}</div>
+                </div>
+
+                <div className="control-group">
+                  <label className="matrix-switch disabled">
+                    <input type="checkbox" disabled />
+                    <span className="switch-slider"></span>
+                    <span className="switch-label">Disabled Switch</span>
+                  </label>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Switch Sizes">
+              <div className="control-grid">
+                <div className="control-group">
+                  <label className="matrix-switch sm">
+                    <input type="checkbox" defaultChecked />
+                    <span className="switch-slider"></span>
+                    <span className="switch-label">Small Switch</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <label className="matrix-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="switch-slider"></span>
+                    <span className="switch-label">Default Switch</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <label className="matrix-switch lg">
+                    <input type="checkbox" defaultChecked />
+                    <span className="switch-slider"></span>
+                    <span className="switch-label">Large Switch</span>
+                  </label>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Matrix Themed Switches">
+              <div className="p-4 bg-black bg-opacity-70 border border-matrix-text rounded">
+                <h3 className="mb-4 text-lg font-matrix-hacker text-matrix-text-bright">SYSTEM CONTROLS</h3>
+                <div className="space-y-3">
+                  <label className="matrix-switch" style={{ textShadow: '0 0 5px var(--m-glow)' }}>
+                    <input type="checkbox" defaultChecked />
+                    <span className="switch-slider" style={{ boxShadow: '0 0 5px var(--m-glow)' }}></span>
+                    <span className="switch-label font-matrix-hacker">MAIN POWER</span>
+                  </label>
+                  
+                  <label className="matrix-switch" style={{ textShadow: '0 0 5px var(--m-glow)' }}>
+                    <input type="checkbox" defaultChecked />
+                    <span className="switch-slider" style={{ boxShadow: '0 0 5px var(--m-glow)' }}></span>
+                    <span className="switch-label font-matrix-hacker">SECURITY SYSTEM</span>
+                  </label>
+                  
+                  <label className="matrix-switch" style={{ textShadow: '0 0 5px var(--m-glow)' }}>
+                    <input type="checkbox" />
+                    <span className="switch-slider" style={{ boxShadow: '0 0 5px var(--m-glow)' }}></span>
+                    <span className="switch-label font-matrix-hacker">STEALTH MODE</span>
+                  </label>
+                  
+                  <label className="matrix-switch disabled" style={{ textShadow: '0 0 5px var(--m-glow)' }}>
+                    <input type="checkbox" disabled />
+                    <span className="switch-slider" style={{ boxShadow: '0 0 5px var(--m-glow)' }}></span>
+                    <span className="switch-label font-matrix-hacker">OVERRIDE PROTOCOL</span>
+                  </label>
+                </div>
+              </div>
+            </ComponentSection>
+          </div>
+        );
+
+      case 'progress':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Progress Bar Variants">
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-matrix-text">Default Progress</span>
+                    <span className="text-sm text-matrix-text-bright">50%</span>
+                  </div>
+                  <div className="matrix-progress">
+                    <div className="progress-bar" style={{ width: '50%' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-matrix-text">Striped Progress</span>
+                    <span className="text-sm text-matrix-text-bright">60%</span>
+                  </div>
+                  <div className="matrix-progress">
+                    <div className="progress-bar striped" style={{ width: '60%' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-matrix-text">Animated Progress</span>
+                    <span className="text-sm text-matrix-text-bright">70%</span>
+                  </div>
+                  <div className="matrix-progress">
+                    <div className="progress-bar animated" style={{ width: '70%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Progress Bar Colors">
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-matrix-text">Default</span>
+                    <span className="text-sm text-matrix-text-bright">40%</span>
+                  </div>
+                  <div className="matrix-progress">
+                    <div className="progress-bar" style={{ width: '40%' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-matrix-text">Success</span>
+                    <span className="text-sm text-matrix-success">80%</span>
+                  </div>
+                  <div className="matrix-progress">
+                    <div className="progress-bar success" style={{ width: '80%' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-matrix-text">Warning</span>
+                    <span className="text-sm text-matrix-warning">60%</span>
+                  </div>
+                  <div className="matrix-progress">
+                    <div className="progress-bar warning" style={{ width: '60%' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-matrix-text">Danger</span>
+                    <span className="text-sm text-matrix-danger">90%</span>
+                  </div>
+                  <div className="matrix-progress">
+                    <div className="progress-bar danger" style={{ width: '90%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Interactive Progress">
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm text-matrix-text">Current Progress</span>
+                  <span className="text-sm text-matrix-text-bright">{progress}%</span>
+                </div>
+                <div className="matrix-progress mb-4">
+                  <div className="progress-bar animated" style={{ width: `${progress}%` }}></div>
+                </div>
+                <div className="flex gap-2">
+                  <MatrixButton onClick={() => setProgress(prev => Math.max(0, prev - 10))}>
+                    Decrease
+                  </MatrixButton>
+                  <MatrixButton onClick={() => setProgress(prev => Math.min(100, prev + 10))}>
+                    Increase
+                  </MatrixButton>
+                  <MatrixButton onClick={() => setProgress(0)}>
+                    Reset
+                  </MatrixButton>
+                  <MatrixButton onClick={() => setProgress(100)} variant="primary">
+                    Complete
+                  </MatrixButton>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Matrix Themed Example">
+              <div className="p-4 bg-black bg-opacity-70 border border-matrix-text rounded">
+                <h3 className="mb-4 text-lg font-matrix-hacker text-matrix-text-bright">SYSTEM DIAGNOSTICS</h3>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between mb-1 font-matrix-hacker">
+                      <span>CPU LOAD</span>
+                      <span className="text-matrix-text-bright">78%</span>
+                    </div>
+                    <div className="matrix-progress" style={{ height: '4px' }}>
+                      <div className="progress-bar animated" style={{ width: '78%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1 font-matrix-hacker">
+                      <span>MEMORY</span>
+                      <span className="text-matrix-text-bright">45%</span>
+                    </div>
+                    <div className="matrix-progress" style={{ height: '4px' }}>
+                      <div className="progress-bar" style={{ width: '45%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1 font-matrix-hacker">
+                      <span>NETWORK</span>
+                      <span className="text-matrix-warning">91%</span>
+                    </div>
+                    <div className="matrix-progress" style={{ height: '4px' }}>
+                      <div className="progress-bar warning animated" style={{ width: '91%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1 font-matrix-hacker">
+                      <span>DISK SPACE</span>
+                      <span className="text-matrix-danger">96%</span>
+                    </div>
+                    <div className="matrix-progress" style={{ height: '4px' }}>
+                      <div className="progress-bar danger" style={{ width: '96%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+          </div>
+        );
+
+      case 'alerts':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Alert Variants">
+              <div className="space-y-4">
+                <div className="matrix-alert">
+                  <div className="alert-content">
+                    <p className="alert-message">This is a default alert that provides information.</p>
+                  </div>
+                </div>
+                
+                <div className="matrix-alert success">
+                  <div className="alert-icon">✓</div>
+                  <div className="alert-content">
+                    <div className="alert-title">Success</div>
+                    <p className="alert-message">Operation completed successfully.</p>
+                  </div>
+                </div>
+                
+                <div className="matrix-alert warning">
+                  <div className="alert-icon">⚠</div>
+                  <div className="alert-content">
+                    <div className="alert-title">Warning</div>
+                    <p className="alert-message">This action might have unexpected consequences.</p>
+                  </div>
+                </div>
+                
+                <div className="matrix-alert danger">
+                  <div className="alert-icon">✕</div>
+                  <div className="alert-content">
+                    <div className="alert-title">Error</div>
+                    <p className="alert-message">A critical error has occurred. Please try again later.</p>
+                  </div>
+                </div>
+                
+                <div className="matrix-alert info">
+                  <div className="alert-icon">ℹ</div>
+                  <div className="alert-content">
+                    <div className="alert-title">Information</div>
+                    <p className="alert-message">Here's some useful information that you should know.</p>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Dismissible Alerts">
+              <div className="space-y-4">
+                {showAlert && (
+                  <div className="matrix-alert danger dismissible">
+                    <div className="alert-icon">⚠</div>
+                    <div className="alert-content">
+                      <div className="alert-title">System Warning</div>
+                      <p className="alert-message">Critical system resources are running low.</p>
+                    </div>
+                    <button className="alert-close" onClick={() => setShowAlert(false)}>✕</button>
+                  </div>
+                )}
+                
+                <MatrixButton onClick={() => setShowAlert(true)} disabled={showAlert}>
+                  Show Alert
+                </MatrixButton>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Matrix Themed Alerts">
+              <div className="space-y-4">
+                <div className="matrix-alert" style={{ background: 'black', border: '1px solid var(--m-text)' }}>
+                  <div className="alert-content">
+                    <div className="alert-title font-matrix-hacker text-matrix-text-bright">SYSTEM NOTIFICATION</div>
+                    <p className="alert-message font-matrix-hacker">Routine maintenance scheduled for 0200 hours.</p>
+                  </div>
+                </div>
+                
+                <div className="matrix-alert danger" style={{ background: 'black', borderLeft: '4px solid var(--m-danger)' }}>
+                  <div className="alert-content">
+                    <div className="alert-title font-matrix-hacker text-matrix-danger">SECURITY BREACH DETECTED</div>
+                    <p className="alert-message">Unauthorized access attempt at node 127.0.0.1</p>
+                    <div className="mt-2 flex justify-end">
+                      <MatrixButton variant="danger" size="sm">Lockdown</MatrixButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+          </div>
+        );
+
+      case 'modals':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Modal Variations">
+              <div className="space-y-4">
+                <MatrixButton onClick={() => setIsModalOpen(true)}>
+                  Open Demo Modal
+                </MatrixButton>
+                
+                {isModalOpen && (
+                  <div className="matrix-modal-backdrop">
+                    <div className="matrix-modal">
+                      <div className="modal-header">
+                        <h3 className="modal-title">Modal Title</h3>
+                        <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
+                      </div>
+                      <div className="modal-body">
+                        <p>This is a basic modal with header, body, and footer sections.</p>
+                        <p className="mt-2">Modals are useful for focused content that requires user attention or interaction.</p>
+                      </div>
+                      <div className="modal-footer">
+                        <MatrixButton variant="outline" size="sm" onClick={() => setIsModalOpen(false)}>
+                          Cancel
+                        </MatrixButton>
+                        <MatrixButton variant="primary" size="sm" onClick={() => setIsModalOpen(false)}>
+                          Confirm
+                        </MatrixButton>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Modal Types">
+              <div className="grid grid-cols-2 gap-4">
+                <MatrixButton>
+                  Standard Modal
+                </MatrixButton>
+                
+                <MatrixButton variant="danger">
+                  Alert Modal
+                </MatrixButton>
+                
+                <MatrixButton variant="primary">
+                  Form Modal
+                </MatrixButton>
+                
+                <MatrixButton variant="terminal">
+                  Matrix Terminal Modal
+                </MatrixButton>
+              </div>
+            </ComponentSection>
+          </div>
+        );
+
+      case 'badges':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Badge Variants">
+              <div className="flex flex-wrap gap-2">
+                <span className="matrix-badge">Default</span>
+                <span className="matrix-badge primary">Primary</span>
+                <span className="matrix-badge success">Success</span>
+                <span className="matrix-badge warning">Warning</span>
+                <span className="matrix-badge danger">Danger</span>
+                <span className="matrix-badge info">Info</span>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Badge Shapes">
+              <div className="flex flex-wrap gap-2">
+                <span className="matrix-badge">Square</span>
+                <span className="matrix-badge pill">Pill Shape</span>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Badge Sizes">
+              <div className="flex flex-wrap gap-2 items-center">
+                <span className="matrix-badge sm">Small</span>
+                <span className="matrix-badge">Default</span>
+                <span className="matrix-badge lg">Large</span>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Badges with Icons">
+              <div className="flex flex-wrap gap-2">
+                <span className="matrix-badge primary">
+                  <span className="badge-icon">✓</span>
+                  Active
+                </span>
+                <span className="matrix-badge danger">
+                  <span className="badge-icon">!</span>
+                  Critical
+                </span>
+                <span className="matrix-badge info">
+                  <span className="badge-icon">ℹ</span>
+                  Info
+                </span>
+              </div>
+            </ComponentSection>
+          </div>
+        );
+
+      case 'tooltips':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Tooltip Positions">
+              <div className="tooltip-grid">
+                <div className="tooltip-container">
+                  <button className="matrix-button tooltip-trigger">Top Tooltip</button>
+                  <div className="matrix-tooltip top">Tooltip appears above</div>
+                </div>
+                
+                <div className="tooltip-container">
+                  <button className="matrix-button tooltip-trigger">Right Tooltip</button>
+                  <div className="matrix-tooltip right">Tooltip appears to the right</div>
+                </div>
+                
+                <div className="tooltip-container">
+                  <button className="matrix-button tooltip-trigger">Bottom Tooltip</button>
+                  <div className="matrix-tooltip bottom">Tooltip appears below</div>
+                </div>
+                
+                <div className="tooltip-container">
+                  <button className="matrix-button tooltip-trigger">Left Tooltip</button>
+                  <div className="matrix-tooltip left">Tooltip appears to the left</div>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Tooltip Styles">
+              <div className="tooltip-grid">
+                <div className="tooltip-container">
+                  <button className="matrix-button primary tooltip-trigger">Hover Me</button>
+                  <div className="matrix-tooltip top" style={{ background: 'black', border: '1px solid var(--m-text)', boxShadow: '0 0 5px var(--m-glow)' }}>
+                    <span className="font-matrix-hacker">MATRIX DATA</span>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+          </div>
+        );
+
+      case 'tabs':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Horizontal Tabs">
+              <div className="matrix-tabs">
+                <div className="tab-list" role="tablist">
+                  <button role="tab" className="tab-item active">Tab 1</button>
+                  <button role="tab" className="tab-item">Tab 2</button>
+                  <button role="tab" className="tab-item">Tab 3</button>
+                </div>
+                <div role="tabpanel" className="tab-panel">
+                  <h4 className="text-lg text-matrix-text-bright mb-2">Tab 1 Content</h4>
+                  <p>This is the content for the first tab panel. Only one tab panel is shown at a time.</p>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Vertical Tabs">
+              <div className="matrix-tabs vertical">
+                <div className="tab-list" role="tablist">
+                  <button role="tab" className="tab-item active">Tab 1</button>
+                  <button role="tab" className="tab-item">Tab 2</button>
+                  <button role="tab" className="tab-item">Tab 3</button>
+                </div>
+                <div role="tabpanel" className="tab-panel">
+                  <h4 className="text-lg text-matrix-text-bright mb-2">Tab 1 Content</h4>
+                  <p>Vertical tabs are useful for forms, settings pages, and dashboards with many sections.</p>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Matrix Themed Tabs">
+              <div className="matrix-tabs" style={{ borderColor: 'var(--m-text)' }}>
+                <div className="tab-list" role="tablist" style={{ borderColor: 'var(--m-text)' }}>
+                  <button role="tab" className="tab-item active font-matrix-hacker uppercase text-xs tracking-wider">SYSTEM</button>
+                  <button role="tab" className="tab-item font-matrix-hacker uppercase text-xs tracking-wider">NETWORK</button>
+                  <button role="tab" className="tab-item font-matrix-hacker uppercase text-xs tracking-wider">SECURITY</button>
+                </div>
+                <div role="tabpanel" className="tab-panel">
+                  <h4 className="text-lg text-matrix-text-bright mb-2 font-matrix-hacker">SYSTEM STATUS</h4>
+                  <div className="grid grid-cols-2 gap-4 font-matrix-hacker">
+                    <div className="flex justify-between">
+                      <span>VERSION:</span>
+                      <span className="text-matrix-text-bright">2.0.14</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>UPTIME:</span>
+                      <span className="text-matrix-text-bright">14:32:07</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+          </div>
+        );
       
       default:
         return <div>Select a component to view</div>;
