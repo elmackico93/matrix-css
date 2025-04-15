@@ -235,50 +235,257 @@ function ComponentTestPage() {
           </div>
         );
       
-      case 'cards':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Card Variants">
-              <div className="card-grid">
+        case 'cards':
+          return (
+            <div className="tab-content">
+              <ComponentSection title="Basic Card Variants">
+                <div className="card-grid">
+                  <div className="matrix-card">
+                    <div className="card-header">Default Card</div>
+                    <div className="card-body">
+                      <p>This is a standard card component with a header and body.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card elevated">
+                    <div className="card-header">Elevated Card</div>
+                    <div className="card-body">
+                      <p>This card has an elevated appearance with a glow effect.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card compact">
+                    <div className="card-header">Compact Card</div>
+                    <div className="card-body">
+                      <p>A more compact version with less padding.</p>
+                    </div>
+                  </div>
+                </div>
+              </ComponentSection>
+        
+              <ComponentSection title="Advanced Card Variants">
+                <div className="card-grid">
+                  <div className="matrix-card" style={{ background: 'black', borderColor: 'var(--matrix-text)' }}>
+                    <div className="card-header" style={{ borderColor: 'var(--matrix-text)', fontFamily: 'var(--m-font-hacker)' }}>
+                      Terminal Card
+                    </div>
+                    <div className="card-body">
+                      <p>Terminal-style card with monospace font and darker background.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card" style={{ background: 'transparent', borderWidth: '2px' }}>
+                    <div className="card-header">Outlined Card</div>
+                    <div className="card-body">
+                      <p>Card with transparent background and thicker border.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card" style={{ 
+                    background: 'rgba(15, 15, 15, 0.3)', 
+                    backdropFilter: 'blur(2px)',
+                    border: '1px solid rgba(0, 255, 65, 0.2)'
+                  }}>
+                    <div className="card-header">Glass Card</div>
+                    <div className="card-body">
+                      <p>Card with translucent glass effect background.</p>
+                    </div>
+                  </div>
+                </div>
+              </ComponentSection>
+        
+              <ComponentSection title="Special Effect Cards">
+                <div className="card-grid">
+                  <div className="matrix-card" style={{
+                    background: 'var(--m-bg)',
+                    boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.5)'
+                  }}>
+                    <div className="card-header">Inset Card</div>
+                    <div className="card-body">
+                      <p>Card with an inset shadow effect for depth.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card" style={{
+                    clipPath: 'polygon(0 10%, 10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%)'
+                  }}>
+                    <div className="card-header">Cyber Card</div>
+                    <div className="card-body">
+                      <p>Card with angled corners for a cyberpunk aesthetic.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card animate-flicker">
+                    <div className="card-header">Flicker Card</div>
+                    <div className="card-body">
+                      <p>Card with a flickering animation effect.</p>
+                    </div>
+                  </div>
+                </div>
+              </ComponentSection>
+        
+              <ComponentSection title="Card Status Indicators">
+                <div className="card-grid">
+                  <div className="matrix-card" style={{ borderLeft: '4px solid var(--m-primary)' }}>
+                    <div className="card-header">Primary Status</div>
+                    <div className="card-body">
+                      <p>Card with primary status indicator.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card" style={{ borderLeft: '4px solid var(--m-success)' }}>
+                    <div className="card-header">Success Status</div>
+                    <div className="card-body">
+                      <p>Card indicating a successful operation.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card" style={{ borderLeft: '4px solid var(--m-warning)' }}>
+                    <div className="card-header">Warning Status</div>
+                    <div className="card-body">
+                      <p>Card indicating a warning or caution.</p>
+                    </div>
+                  </div>
+        
+                  <div className="matrix-card" style={{ borderLeft: '4px solid var(--m-danger)' }}>
+                    <div className="card-header">Danger Status</div>
+                    <div className="card-body">
+                      <p>Card indicating an error or danger.</p>
+                    </div>
+                  </div>
+                </div>
+              </ComponentSection>
+        
+              <ComponentSection title="Card with Data Visualization">
+                <div className="matrix-card" style={{ 
+                  fontFamily: 'var(--m-font-hacker)',
+                  textShadow: '0 0 5px var(--m-glow)',
+                  position: 'relative'
+                }}>
+                  <div className="card-header">
+                    <div style={{ 
+                      position: 'absolute', 
+                      top: '2px',
+                      right: '6px',
+                      fontSize: '0.6rem',
+                      opacity: '0.6'
+                    }}>DATA_NODE_127</div>
+                    System Status
+                  </div>
+                  <div className="card-body">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>CPU USAGE:</span>
+                          <span style={{ color: 'var(--m-text-bright)' }}>68%</span>
+                        </div>
+                        <div className="matrix-progress" style={{ height: '4px', marginTop: '4px' }}>
+                          <div className="progress-bar" style={{ width: '68%' }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>MEMORY:</span>
+                          <span style={{ color: 'var(--m-text-bright)' }}>42%</span>
+                        </div>
+                        <div className="matrix-progress" style={{ height: '4px', marginTop: '4px' }}>
+                          <div className="progress-bar" style={{ width: '42%' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ 
+                      textAlign: 'center', 
+                      color: 'var(--m-text-bright)', 
+                      animation: 'pulse 3s infinite'
+                    }}>
+                      SYSTEM OPERATIONAL
+                    </div>
+                  </div>
+                </div>
+              </ComponentSection>
+        
+              <ComponentSection title="Card with Actions">
                 <div className="matrix-card">
-                  <div className="card-header">Default Card</div>
+                  <div className="card-header">Interactive Card</div>
                   <div className="card-body">
-                    <p>This is a standard card component with a header and body.</p>
+                    <p>This card contains interactive elements like buttons.</p>
+                    <p>Click the buttons below to perform actions.</p>
+                  </div>
+                  <div className="card-footer">
+                    <MatrixButton variant="ghost" size="sm">Cancel</MatrixButton>
+                    <MatrixButton variant="primary" size="sm">Confirm</MatrixButton>
                   </div>
                 </div>
-
-                <div className="matrix-card elevated">
-                  <div className="card-header">Elevated Card</div>
+              </ComponentSection>
+        
+              <ComponentSection title="Card with Terminal Effect">
+                <div className="matrix-card card-terminal-effect" style={{ 
+                  background: 'black', 
+                  borderColor: 'var(--m-text)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-100%',
+                    left: '0',
+                    width: '100%',
+                    height: '5px',
+                    background: 'linear-gradient(to bottom, transparent, rgba(0, 255, 65, 0.2), transparent)',
+                    opacity: '0.6',
+                    animation: 'scanline 3s linear infinite'
+                  }}></div>
+                  <div className="card-header" style={{ 
+                    borderColor: 'var(--m-text)',
+                    fontFamily: 'var(--m-font-hacker)'
+                  }}>
+                    TERMINAL ACCESS
+                  </div>
                   <div className="card-body">
-                    <p>This card has an elevated appearance with a glow effect.</p>
+                    <div style={{ 
+                      fontFamily: 'var(--m-font-hacker)', 
+                      color: 'var(--m-text-bright)'
+                    }}>
+                      <div>> SYSTEM INITIALIZATION</div>
+                      <div>> SECURITY PROTOCOLS ACTIVE</div>
+                      <div>> AWAITING COMMAND INPUT...</div>
+                      <div style={{ 
+                        display: 'inline-block',
+                        width: '0.5em',
+                        height: '1em',
+                        backgroundColor: 'var(--m-text)',
+                        animation: 'cursor-blink 1s step-end infinite',
+                        marginLeft: '2px',
+                        verticalAlign: 'text-bottom'
+                      }}></div>
+                    </div>
                   </div>
                 </div>
-
-                <div className="matrix-card compact">
-                  <div className="card-header">Compact Card</div>
+              </ComponentSection>
+        
+              <ComponentSection title="Card with Hexagonal Grid Pattern">
+                <div className="matrix-card card-hex-grid" style={{
+                  position: 'relative'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    right: '0',
+                    bottom: '0',
+                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 2.5l12.5 7.5v15L15 32.5 2.5 25V10L15 2.5z' stroke='rgba(0, 255, 65, 0.1)' fill='none' stroke-width='0.5' transform='translate(15, 15)'/%3E%3C/svg%3E\")",
+                    opacity: '0.15',
+                    zIndex: '-1'
+                  }}></div>
+                  <div className="card-header">Network Topology</div>
                   <div className="card-body">
-                    <p>A more compact version with less padding.</p>
+                    <p>Security grid with hexagonal mapping protocol.</p>
+                    <p>All nodes connected and operational.</p>
                   </div>
                 </div>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Card with Actions">
-              <div className="matrix-card">
-                <div className="card-header">Interactive Card</div>
-                <div className="card-body">
-                  <p>This card contains interactive elements like buttons.</p>
-                  <p>Click the buttons below to perform actions.</p>
-                </div>
-                <div className="card-footer">
-                  <MatrixButton variant="ghost" size="sm">Cancel</MatrixButton>
-                  <MatrixButton variant="primary" size="sm">Confirm</MatrixButton>
-                </div>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-      
+              </ComponentSection>
+            </div>
+          );
       case 'inputs':
         return (
           <div className="tab-content">
