@@ -1100,3 +1100,266 @@
     }
   }
   
+/* Add these new keyframes animations to your existing CSS */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 5px var(--matrix-glow); }
+  50% { box-shadow: 0 0 20px var(--matrix-glow), 0 0 30px var(--matrix-glow); }
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(2px, 2px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* CSS classes for the clip-path polygon for cyber buttons */
+.clip-path-cyber {
+  clip-path: polygon(
+    0 10%, 10% 0, 90% 0, 100% 10%,
+    100% 90%, 90% 100%, 10% 100%, 0 90%
+  );
+}
+
+/* Animation classes */
+.animate-glow-pulse {
+  animation: glow-pulse 2s infinite;
+}
+
+.animate-glitch {
+  animation: glitch 0.3s ease infinite;
+}
+
+.animate-pulse {
+  animation: pulse 3s infinite;
+}
+
+/* Add these new button variants to your existing matrix-button styles */
+
+/* Neon button */
+.matrix-button.neon {
+  background-color: transparent;
+  border: 2px solid var(--matrix-text);
+  color: var(--matrix-text);
+  box-shadow: 0 0 10px var(--matrix-glow), inset 0 0 10px var(--matrix-glow);
+}
+
+.matrix-button.neon:hover {
+  color: var(--matrix-text-bright);
+  border-color: var(--matrix-text-bright);
+  box-shadow: 0 0 15px var(--matrix-glow), inset 0 0 15px var(--matrix-glow);
+}
+
+/* Holographic button */
+.matrix-button.holographic {
+  background-color: rgba(0, 40, 0, 0.3);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  color: var(--matrix-text);
+  box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+.matrix-button.holographic:hover {
+  background-color: rgba(0, 60, 0, 0.4);
+  border-color: rgba(0, 255, 65, 0.6);
+  box-shadow: inset 0 0 15px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.4);
+  color: var(--matrix-text-bright);
+}
+
+/* Cyber button */
+.matrix-button.cyber {
+  clip-path: polygon(
+    0 10%, 10% 0, 90% 0, 100% 10%,
+    100% 90%, 90% 100%, 10% 100%, 0 90%
+  );
+  background: linear-gradient(to bottom right, rgba(7, 39, 7, 0.8), rgba(10, 63, 10, 0.8));
+  border: 0;
+  color: var(--matrix-text);
+}
+
+.matrix-button.cyber:hover {
+  background: linear-gradient(to bottom right, rgba(10, 63, 10, 0.9), rgba(0, 255, 65, 0.3));
+  color: var(--matrix-text-bright);
+}
+
+/* 3D button */
+.matrix-button.three-d {
+  background: linear-gradient(to bottom, rgba(10, 63, 10, 0.9), rgba(7, 39, 7, 0.9));
+  border: 0;
+  color: var(--matrix-text);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.3),
+    0 4px 0 rgba(0, 0, 0, 0.3),
+    0 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.matrix-button.three-d:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.3),
+    0 6px 0 rgba(0, 0, 0, 0.3),
+    0 7px 7px rgba(0, 0, 0, 0.3);
+}
+
+.matrix-button.three-d:active {
+  transform: translateY(2px);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Pill button */
+.matrix-button.pill {
+  border-radius: 9999px;
+  background-color: var(--matrix-secondary);
+  border: 1px solid var(--matrix-border);
+  color: var(--matrix-text);
+}
+
+.matrix-button.pill:hover {
+  background-color: rgba(0, 40, 0, 0.6);
+  color: var(--matrix-text-bright);
+  border-color: var(--matrix-text);
+}
+
+/* Bordered button */
+.matrix-button.bordered {
+  background-color: transparent;
+  border: 2px solid var(--matrix-border);
+  color: var(--matrix-text);
+}
+
+.matrix-button.bordered:hover {
+  background-color: rgba(0, 255, 65, 0.1);
+  border-color: var(--matrix-text);
+  color: var(--matrix-text-bright);
+}
+
+/* Data button */
+.matrix-button.data {
+  background-color: var(--matrix-secondary);
+  border: 1px solid var(--matrix-border);
+  color: var(--matrix-text);
+  position: relative;
+  overflow: hidden;
+}
+
+.matrix-button.data:hover {
+  background-color: rgba(0, 40, 0, 0.6);
+  border-color: var(--matrix-text);
+  color: transparent;
+}
+
+.matrix-button.data::before {
+  content: "01001110";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  color: var(--matrix-text-bright);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: all 0.3s;
+}
+
+.matrix-button.data:hover::before {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* New Glitch button */
+.matrix-button.glitch {
+  background-color: var(--matrix-bg);
+  border: 1px solid var(--matrix-text);
+  color: var(--matrix-text);
+  position: relative;
+  overflow: hidden;
+}
+
+.matrix-button.glitch:hover {
+  color: var(--matrix-text-bright);
+  animation: glitch 0.3s ease infinite;
+}
+
+.matrix-button.glitch::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--matrix-text);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+
+.matrix-button.glitch:hover::before {
+  opacity: 0.1;
+}
+
+.matrix-button.glitch::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 255, 65, 0.2);
+  transform: translateX(-110%) skewX(20deg);
+  transition: transform 0.5s;
+}
+
+.matrix-button.glitch:hover::after {
+  transform: translateX(110%) skewX(20deg);
+}
+
+/* New Pulse button */
+.matrix-button.pulse {
+  background-color: var(--matrix-panel);
+  border: 1px solid var(--matrix-text);
+  color: var(--matrix-text);
+  position: relative;
+  overflow: hidden;
+  animation: pulse 3s infinite;
+}
+
+.matrix-button.pulse:hover {
+  color: var(--matrix-text-bright);
+}
+
+.matrix-button.pulse::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--matrix-text);
+  transform: scale(1.05);
+  opacity: 0;
+  transition: all 0.7s ease-out;
+}
+
+.matrix-button.pulse:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.matrix-button.pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--matrix-primary);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.5s;
+}
+
+.matrix-button.pulse:hover::after {
+  opacity: 0.1;
+}
