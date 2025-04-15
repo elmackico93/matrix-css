@@ -1,21 +1,38 @@
 import { InputHTMLAttributes, ReactNode } from 'react';
 
-export type InputSize = 'sm' | 'md' | 'lg';
+/**
+ * Available sizes for the Input component
+ */
+export type InputSize = 
+  | 'sm'    // Small size
+  | 'md'    // Medium size (default)
+  | 'lg';   // Large size
 
+/**
+ * Available visual variants for the Input component
+ */
 export type InputVariant = 
   | 'default'   // Standard input with border
   | 'filled'    // Input with filled background
-  | 'outlined'  // Input with outline
-  | 'ghosted'   // Input with minimal styling
-  | 'terminal'; // Input with terminal-like styling
+  | 'outlined'  // Input with thicker outline
+  | 'ghosted'   // Input with minimal styling (bottom border only)
+  | 'terminal'  // Input with terminal-like styling 
+  | 'data'      // Input with data-entry styling and "DATA" label
+  | 'cyber';    // Input with cyberpunk-inspired styling
 
+/**
+ * Available status states for the Input component
+ */
 export type InputStatus = 
-  | 'default' 
-  | 'success' 
-  | 'warning' 
-  | 'error'
-  | 'info';
+  | 'default'  // Normal state
+  | 'success'  // Success state (green)
+  | 'warning'  // Warning state (yellow)
+  | 'error'    // Error state (red)
+  | 'info';    // Info state (blue)
 
+/**
+ * Properties for the Input component
+ */
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   /**
    * Label text to display above the input
@@ -28,7 +45,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   
   /**
-   * Helper text to display below the input
+   * Helper text to display below the input when there is no error
    */
   helperText?: string;
   
@@ -67,8 +84,24 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   fullWidth?: boolean;
   
   /**
-   * Whether the input should glow
+   * Whether the input should have a glowing effect
    * @default false
    */
   hasGlow?: boolean;
+  
+  /**
+   * Whether the input should have a pulsing animation
+   * @default false
+   */
+  animated?: boolean;
+  
+  /**
+   * Additional class name for the container element
+   */
+  containerClassName?: string;
+  
+  /**
+   * Additional class name for the label element
+   */
+  labelClassName?: string;
 }

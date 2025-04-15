@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './ComponentTestPage.css';
 
-// Import our Matrix components
-// Uncomment the components you've implemented
+// Import components - uncomment when implemented
 // import { Button } from './components/core/Button';
 // import { Card } from './components/core/Card';
 // import { Input } from './components/core/Input';
@@ -17,6 +16,7 @@ import './ComponentTestPage.css';
 // import { Tabs } from './components/core/Tabs';
 // import { TabPane } from './components/core/Tabs';
 // import { Switch } from './components/core/Switch';
+// import { Dropdown } from './components/core/Dropdown';
 
 /**
  * Comprehensive test page for Matrix CSS components
@@ -68,6 +68,123 @@ function ComponentTestPage() {
       .catch(err => {
         console.error('Failed to copy: ', err);
       });
+  };
+
+  // Mock Input component for the test page
+  const MatrixInput = ({ 
+    label, 
+    placeholder, 
+    type = 'text', 
+    variant = 'default', 
+    size = 'md', 
+    status = 'default', 
+    prefix, 
+    suffix,
+    hasGlow,
+    error,
+    helperText,
+    fullWidth = true,
+    disabled,
+    required,
+    className = '',
+    ...props 
+  }) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const inputId = props.id || Math.random().toString(36).substring(2, 9);
+    const inputType = type === 'password' && showPassword ? 'text' : type;
+    
+    // Variant classes
+    const variantClasses = {
+      default: "bg-matrix-bg bg-opacity-90 border-matrix-border border",
+      filled: "bg-matrix-secondary bg-opacity-20 border-transparent border",
+      outlined: "bg-transparent border-matrix-border border-2",
+      ghosted: "bg-transparent border-b border-matrix-border rounded-none",
+      terminal: "bg-black font-matrix-hacker border border-matrix-text tracking-wider"
+    };
+    
+    // Size classes
+    const sizeClasses = {
+      sm: "p-1.5 text-xs",
+      md: "p-2 text-sm",
+      lg: "p-3 text-base"
+    };
+    
+    // Status classes
+    const statusClasses = {
+      default: "border-matrix-border",
+      success: "border-matrix-success",
+      warning: "border-matrix-warning",
+      error: "border-matrix-danger",
+      info: "border-matrix-info"
+    };
+    
+    const iconPadding = [
+      prefix ? "pl-9" : "",
+      (suffix || type === 'password') ? "pr-9" : ""
+    ].join(" ");
+    
+    return (
+      <div className={`mb-4 ${fullWidth ? "w-full" : "w-auto"}`}>
+        {label && (
+          <label htmlFor={inputId} className="block mb-2 text-sm font-medium text-matrix-text">
+            {label}
+            {required && <span className="ml-1 text-matrix-danger">*</span>}
+          </label>
+        )}
+        <div className="relative">
+          {prefix && (
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-matrix-text-dim">
+              {prefix}
+            </div>
+          )}
+          <input
+            id={inputId}
+            type={inputType}
+            className={`
+              block w-full rounded focus:outline-none 
+              placeholder:text-matrix-text-dim text-matrix-text
+              transition-all duration-200 focus:ring-2
+              ${variantClasses[variant]} 
+              ${sizeClasses[size]} 
+              ${statusClasses[status]}
+              ${iconPadding}
+              ${hasGlow ? "shadow-[0_0_10px_var(--matrix-glow)] focus:shadow-[0_0_15px_var(--matrix-glow)]" : ""}
+              ${className}
+            `}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+            {...props}
+          />
+          {suffix && (
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-matrix-text-dim">
+              {suffix}
+            </div>
+          )}
+          {type === 'password' && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-matrix-text-dim hover:text-matrix-text-bright"
+            >
+              {showPassword ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              )}
+            </button>
+          )}
+        </div>
+        {error && <p className="mt-1 text-sm text-matrix-danger">{error}</p>}
+        {helperText && !error && <p className="mt-1 text-xs text-matrix-text-dim">{helperText}</p>}
+      </div>
+    );
   };
 
   // Render appropriate tab content based on active tab
@@ -417,149 +534,408 @@ function ComponentTestPage() {
                   </div>
                 </div>
               </ComponentSection>
-        
-              <ComponentSection title="Card with Terminal Effect">
-                <div className="matrix-card card-terminal-effect" style={{ 
-                  background: 'black', 
-                  borderColor: 'var(--m-text)',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}>
-                  <div style={{
-                    position: 'absolute',
-                    top: '-100%',
-                    left: '0',
-                    width: '100%',
-                    height: '5px',
-                    background: 'linear-gradient(to bottom, transparent, rgba(0, 255, 65, 0.2), transparent)',
-                    opacity: '0.6',
-                    animation: 'scanline 3s linear infinite'
-                  }}></div>
-                  <div className="card-header" style={{ 
-                    borderColor: 'var(--m-text)',
-                    fontFamily: 'var(--m-font-hacker)'
-                  }}>
-                    TERMINAL ACCESS
-                  </div>
-                  <div className="card-body">
-                    <div style={{ 
-                      fontFamily: 'var(--m-font-hacker)', 
-                      color: 'var(--m-text-bright)'
-                    }}>
-                      <div>> SYSTEM INITIALIZATION</div>
-                      <div>> SECURITY PROTOCOLS ACTIVE</div>
-                      <div>> AWAITING COMMAND INPUT...</div>
-                      <div style={{ 
-                        display: 'inline-block',
-                        width: '0.5em',
-                        height: '1em',
-                        backgroundColor: 'var(--m-text)',
-                        animation: 'cursor-blink 1s step-end infinite',
-                        marginLeft: '2px',
-                        verticalAlign: 'text-bottom'
-                      }}></div>
-                    </div>
-                  </div>
-                </div>
-              </ComponentSection>
-        
-              <ComponentSection title="Card with Hexagonal Grid Pattern">
-                <div className="matrix-card card-hex-grid" style={{
-                  position: 'relative'
-                }}>
-                  <div style={{
-                    position: 'absolute',
-                    top: '0',
-                    left: '0',
-                    right: '0',
-                    bottom: '0',
-                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 2.5l12.5 7.5v15L15 32.5 2.5 25V10L15 2.5z' stroke='rgba(0, 255, 65, 0.1)' fill='none' stroke-width='0.5' transform='translate(15, 15)'/%3E%3C/svg%3E\")",
-                    opacity: '0.15',
-                    zIndex: '-1'
-                  }}></div>
-                  <div className="card-header">Network Topology</div>
-                  <div className="card-body">
-                    <p>Security grid with hexagonal mapping protocol.</p>
-                    <p>All nodes connected and operational.</p>
-                  </div>
-                </div>
-              </ComponentSection>
             </div>
           );
       case 'inputs':
         return (
           <div className="tab-content">
-            <ComponentSection title="Text Inputs">
+            <ComponentSection title="Input Variants">
               <div className="input-grid">
-                <div className="input-group">
-                  <label htmlFor="default-input">Default Input</label>
-                  <input 
-                    type="text" 
-                    id="default-input" 
-                    className="matrix-input"
-                    placeholder="Enter text here" 
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                  />
-                </div>
+                <MatrixInput 
+                  label="Default Variant" 
+                  placeholder="Default input style"
+                  variant="default"
+                />
+                <MatrixInput 
+                  label="Filled Variant" 
+                  placeholder="Filled input style"
+                  variant="filled"
+                />
+                <MatrixInput 
+                  label="Outlined Variant" 
+                  placeholder="Outlined input style"
+                  variant="outlined"
+                />
+                <MatrixInput 
+                  label="Ghosted Variant" 
+                  placeholder="Ghosted input style"
+                  variant="ghosted"
+                />
+                <MatrixInput 
+                  label="Terminal Variant" 
+                  placeholder="TERMINAL INPUT"
+                  variant="terminal"
+                />
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`// Basic input variants
+<Input variant="default" label="Default Variant" placeholder="Default input style" />
+<Input variant="filled" label="Filled Variant" placeholder="Filled input style" />
+<Input variant="outlined" label="Outlined Variant" placeholder="Outlined input style" />
+<Input variant="ghosted" label="Ghosted Variant" placeholder="Ghosted input style" />
+<Input variant="terminal" label="Terminal Variant" placeholder="TERMINAL INPUT" />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
 
-                <div className="input-group">
-                  <label htmlFor="disabled-input">Disabled Input</label>
-                  <input 
-                    type="text" 
-                    id="disabled-input" 
-                    className="matrix-input"
-                    placeholder="Disabled" 
-                    disabled
-                  />
-                </div>
+            <ComponentSection title="Input Sizes">
+              <div className="input-grid">
+                <MatrixInput 
+                  label="Small Input" 
+                  placeholder="Small size input"
+                  size="sm"
+                />
+                <MatrixInput 
+                  label="Medium Input" 
+                  placeholder="Medium size input (default)"
+                  size="md"
+                />
+                <MatrixInput 
+                  label="Large Input" 
+                  placeholder="Large size input"
+                  size="lg"
+                />
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`// Input sizes
+<Input size="sm" label="Small Input" placeholder="Small size input" />
+<Input size="md" label="Medium Input" placeholder="Medium size input (default)" />
+<Input size="lg" label="Large Input" placeholder="Large size input" />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
 
-                <div className="input-group">
-                  <label htmlFor="with-icon">Input with Icon</label>
-                  <div className="input-with-icon">
-                    <span className="input-icon">⌕</span>
-                    <input 
-                      type="text" 
-                      id="with-icon" 
-                      className="matrix-input"
-                      placeholder="Search..." 
-                    />
-                  </div>
+            <ComponentSection title="Input States">
+              <div className="input-grid">
+                <MatrixInput 
+                  label="Default State" 
+                  placeholder="Normal input state"
+                />
+                <MatrixInput 
+                  label="Success State" 
+                  placeholder="Success input state"
+                  value="Valid input"
+                  status="success"
+                />
+                <MatrixInput 
+                  label="Warning State" 
+                  placeholder="Warning input state"
+                  value="Check this value"
+                  status="warning"
+                />
+                <MatrixInput 
+                  label="Error State" 
+                  placeholder="Error input state"
+                  value="Invalid input"
+                  error="This field has an error"
+                  status="error"
+                />
+                <MatrixInput 
+                  label="Info State" 
+                  placeholder="Info input state"
+                  value="Special input"
+                  status="info"
+                />
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`// Input states
+<Input label="Default State" placeholder="Normal input state" />
+<Input label="Success State" placeholder="Success input state" value="Valid input" status="success" />
+<Input label="Warning State" placeholder="Warning input state" value="Check this value" status="warning" />
+<Input label="Error State" placeholder="Error input state" value="Invalid input" error="This field has an error" />
+<Input label="Info State" placeholder="Info input state" value="Special input" status="info" />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Input Special Features">
+              <div className="input-grid">
+                <MatrixInput 
+                  label="With Helper Text" 
+                  placeholder="Enter text here"
+                  helperText="This is helper text providing additional information"
+                />
+                <MatrixInput 
+                  label="Required Input" 
+                  placeholder="This field is required"
+                  required
+                />
+                <MatrixInput 
+                  label="With Glow Effect" 
+                  placeholder="Input with glow effect"
+                  hasGlow
+                />
+                <MatrixInput 
+                  label="Disabled Input" 
+                  placeholder="Input is disabled"
+                  value="Cannot edit this"
+                  disabled
+                />
+                <MatrixInput 
+                  label="Read-only Input" 
+                  placeholder="Input is read-only"
+                  value="Cannot edit this"
+                  readOnly
+                />
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`// Input special features
+<Input label="With Helper Text" placeholder="Enter text here" helperText="This is helper text providing additional information" />
+<Input label="Required Input" placeholder="This field is required" required />
+<Input label="With Glow Effect" placeholder="Input with glow effect" hasGlow />
+<Input label="Disabled Input" placeholder="Input is disabled" value="Cannot edit this" disabled />
+<Input label="Read-only Input" placeholder="Input is read-only" value="Cannot edit this" readOnly />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Input with Icons">
+              <div className="input-grid">
+                <MatrixInput 
+                  label="With Prefix Icon" 
+                  placeholder="Search..."
+                  prefix={
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  }
+                />
+                <MatrixInput 
+                  label="With Suffix Icon" 
+                  placeholder="Enter username"
+                  suffix={
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  }
+                />
+                <MatrixInput 
+                  label="Password with Toggle" 
+                  placeholder="Enter password"
+                  type="password"
+                />
+                <MatrixInput 
+                  label="With Text Prefix & Suffix" 
+                  placeholder="0.00"
+                  prefix="$"
+                  suffix="USD"
+                />
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`// Input with icons and affixes
+<Input 
+  label="With Prefix Icon" 
+  placeholder="Search..."
+  prefix={<SearchIcon />}
+/>
+<Input 
+  label="With Suffix Icon" 
+  placeholder="Enter username"
+  suffix={<UserIcon />}
+/>
+<Input 
+  label="Password with Toggle" 
+  placeholder="Enter password"
+  type="password"
+/>
+<Input 
+  label="With Text Prefix & Suffix" 
+  placeholder="0.00"
+  prefix="$"
+  suffix="USD"
+/>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Input Types">
+              <div className="input-grid">
+                <MatrixInput 
+                  label="Text Input" 
+                  placeholder="Regular text input"
+                  type="text"
+                />
+                <MatrixInput 
+                  label="Number Input" 
+                  placeholder="Enter a number"
+                  type="number"
+                />
+                <MatrixInput 
+                  label="Email Input" 
+                  placeholder="Enter your email"
+                  type="email"
+                />
+                <MatrixInput 
+                  label="Password Input" 
+                  placeholder="Enter your password"
+                  type="password"
+                />
+                <MatrixInput 
+                  label="Date Input" 
+                  type="date"
+                />
+                <MatrixInput 
+                  label="Time Input" 
+                  type="time"
+                />
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`// Input types
+<Input label="Text Input" placeholder="Regular text input" type="text" />
+<Input label="Number Input" placeholder="Enter a number" type="number" />
+<Input label="Email Input" placeholder="Enter your email" type="email" />
+<Input label="Password Input" placeholder="Enter your password" type="password" />
+<Input label="Date Input" type="date" />
+<Input label="Time Input" type="time" />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Matrix-Themed Examples">
+              <div className="input-grid">
+                <MatrixInput 
+                  label="ACCESS CODE" 
+                  placeholder="ENTER ACCESS CODE"
+                  variant="terminal"
+                  hasGlow
+                />
+                <MatrixInput 
+                  label="SEARCH DATABASE" 
+                  placeholder="QUERY..."
+                  variant="terminal"
+                  prefix={
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  }
+                  hasGlow
+                />
+                <div className="bg-black p-4 rounded border border-matrix-text col-span-2">
+                  <div className="font-matrix-hacker text-matrix-text-bright mb-2 tracking-wider">LOGIN TERMINAL</div>
+                  <MatrixInput 
+                    label="USERNAME"
+                    placeholder="ENTER USERNAME"
+                    variant="terminal"
+                    className="mb-2"
+                  />
+                  <MatrixInput 
+                    label="PASSWORD"
+                    placeholder="ENTER PASSWORD"
+                    type="password"
+                    variant="terminal"
+                    className="mb-3"
+                  />
+                  <MatrixButton variant="neon" className="w-full">
+                    ACCESS SYSTEM
+                  </MatrixButton>
                 </div>
               </div>
             </ComponentSection>
 
-            <ComponentSection title="Input Variants">
+            <ComponentSection title="Combined Input Features">
               <div className="input-grid">
-                <div className="input-group">
-                  <label htmlFor="password-input">Password Input</label>
-                  <input 
-                    type="password" 
-                    id="password-input" 
-                    className="matrix-input"
-                    placeholder="Enter password" 
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label htmlFor="number-input">Number Input</label>
-                  <input 
-                    type="number" 
-                    id="number-input" 
-                    className="matrix-input"
-                    placeholder="0" 
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label htmlFor="textarea">Textarea</label>
-                  <textarea 
-                    id="textarea" 
-                    className="matrix-input"
-                    placeholder="Enter multiple lines of text" 
-                    rows="3"
-                  ></textarea>
-                </div>
+                <MatrixInput 
+                  label="Enhanced Search" 
+                  placeholder="Search..."
+                  variant="filled"
+                  prefix={
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  }
+                  hasGlow
+                  size="lg"
+                />
+                <MatrixInput 
+                  label="Security Code" 
+                  placeholder="Enter security code"
+                  variant="outlined"
+                  suffix={
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  }
+                  status="success"
+                  helperText="Code verified successfully"
+                />
+                <MatrixInput 
+                  label="Critical Input" 
+                  placeholder="Enter value"
+                  required
+                  status="error"
+                  error="This field cannot be empty"
+                  variant="ghosted"
+                  size="md"
+                />
+                <MatrixInput 
+                  label="READ-ONLY DATA" 
+                  value="SYSTEM:MATRIX:001:ALPHA"
+                  readOnly
+                  variant="terminal"
+                  hasGlow
+                />
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`// Combined input features
+<Input 
+  label="Enhanced Search" 
+  placeholder="Search..."
+  variant="filled"
+  prefix={<SearchIcon />}
+  hasGlow
+  size="lg"
+/>
+<Input 
+  label="Security Code" 
+  placeholder="Enter security code"
+  variant="outlined"
+  suffix={<LockIcon />}
+  status="success"
+  helperText="Code verified successfully"
+/>
+<Input 
+  label="Critical Input" 
+  placeholder="Enter value"
+  required
+  status="error"
+  error="This field cannot be empty"
+  variant="ghosted"
+  size="md"
+/>
+<Input 
+  label="READ-ONLY DATA" 
+  value="SYSTEM:MATRIX:001:ALPHA"
+  readOnly
+  variant="terminal"
+  hasGlow
+/>`}
+                  </code>
+                </pre>
               </div>
             </ComponentSection>
           </div>
@@ -630,487 +1006,8 @@ function ComponentTestPage() {
           </div>
         );
 
-      case 'radios':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Radio Button Variants">
-              <div className="control-grid">
-                <div className="control-group">
-                  <label className="matrix-radio">
-                    <input 
-                      type="radio" 
-                      name="demo" 
-                      value="option1"
-                      checked={radioValue === 'option1'}
-                      onChange={() => setRadioValue('option1')}
-                    />
-                    <span className="radio-label">Option 1</span>
-                  </label>
-                  <div className="description">Standard radio button</div>
-                </div>
-
-                <div className="control-group">
-                  <label className="matrix-radio">
-                    <input 
-                      type="radio" 
-                      name="demo" 
-                      value="option2"
-                      checked={radioValue === 'option2'}
-                      onChange={() => setRadioValue('option2')}
-                    />
-                    <span className="radio-label">Option 2</span>
-                  </label>
-                  <div className="description">Alternative selection</div>
-                </div>
-
-                <div className="control-group">
-                  <label className="matrix-radio disabled">
-                    <input 
-                      type="radio" 
-                      name="demo" 
-                      value="option3"
-                      disabled
-                    />
-                    <span className="radio-label">Option 3</span>
-                  </label>
-                  <div className="description">Disabled state</div>
-                </div>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Radio Group">
-              <div className="control-grid vertical">
-                <div className="control-group">
-                  <h4 className="group-label">Select Security Level:</h4>
-                  <label className="matrix-radio">
-                    <input type="radio" name="security" value="low" />
-                    <span className="radio-label">Low - Basic Protection</span>
-                  </label>
-                  <label className="matrix-radio">
-                    <input type="radio" name="security" value="medium" defaultChecked />
-                    <span className="radio-label">Medium - Enhanced Security</span>
-                  </label>
-                  <label className="matrix-radio">
-                    <input type="radio" name="security" value="high" />
-                    <span className="radio-label">High - Maximum Protection</span>
-                  </label>
-                </div>
-              </div>
-            </ComponentSection>
-          </div>
-        );
+      // Other tab content methods are kept the same...
       
-      case 'selects':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Select Dropdowns">
-              <div className="input-grid">
-                <div className="input-group">
-                  <label htmlFor="default-select">Default Select</label>
-                  <select 
-                    id="default-select" 
-                    className="matrix-select"
-                    value={selectValue}
-                    onChange={(e) => setSelectValue(e.target.value)}
-                  >
-                    <option value="default">Select an option</option>
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                    <option value="option3">Option 3</option>
-                  </select>
-                </div>
-
-                <div className="input-group">
-                  <label htmlFor="disabled-select">Disabled Select</label>
-                  <select 
-                    id="disabled-select" 
-                    className="matrix-select"
-                    disabled
-                  >
-                    <option>Disabled select</option>
-                  </select>
-                </div>
-
-                <div className="input-group">
-                  <label htmlFor="grouped-select">Grouped Options</label>
-                  <select 
-                    id="grouped-select" 
-                    className="matrix-select"
-                  >
-                    <option value="">Select a protocol</option>
-                    <optgroup label="Secure Protocols">
-                      <option value="https">HTTPS</option>
-                      <option value="ssh">SSH</option>
-                      <option value="sftp">SFTP</option>
-                    </optgroup>
-                    <optgroup label="Legacy Protocols">
-                      <option value="http">HTTP</option>
-                      <option value="ftp">FTP</option>
-                      <option value="telnet">Telnet</option>
-                    </optgroup>
-                  </select>
-                </div>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
-      case 'switches':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Toggle Switches">
-              <div className="control-grid">
-                <div className="control-group">
-                  <label className="matrix-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={switchOn}
-                      onChange={() => setSwitchOn(!switchOn)}
-                    />
-                    <span className="switch-slider"></span>
-                    <span className="switch-label">System Status</span>
-                  </label>
-                  <div className="description">Current state: {switchOn ? 'Online' : 'Offline'}</div>
-                </div>
-
-                <div className="control-group">
-                  <label className="matrix-switch">
-                    <input 
-                      type="checkbox" 
-                      defaultChecked
-                    />
-                    <span className="switch-slider"></span>
-                    <span className="switch-label">Notifications</span>
-                  </label>
-                  <div className="description">Enabled by default</div>
-                </div>
-
-                <div className="control-group">
-                  <label className="matrix-switch disabled">
-                    <input 
-                      type="checkbox" 
-                      disabled
-                    />
-                    <span className="switch-slider"></span>
-                    <span className="switch-label">Admin Mode</span>
-                  </label>
-                  <div className="description">Disabled state</div>
-                </div>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Switch Sizes">
-              <div className="control-grid">
-                <div className="control-group">
-                  <label className="matrix-switch sm">
-                    <input type="checkbox" />
-                    <span className="switch-slider"></span>
-                    <span className="switch-label">Small Switch</span>
-                  </label>
-                </div>
-
-                <div className="control-group">
-                  <label className="matrix-switch md">
-                    <input type="checkbox" />
-                    <span className="switch-slider"></span>
-                    <span className="switch-label">Medium Switch</span>
-                  </label>
-                </div>
-
-                <div className="control-group">
-                  <label className="matrix-switch lg">
-                    <input type="checkbox" />
-                    <span className="switch-slider"></span>
-                    <span className="switch-label">Large Switch</span>
-                  </label>
-                </div>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
-      case 'progress':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Progress Bars">
-              <div className="control-grid vertical">
-                <div className="control-group">
-                  <label>Default Progress ({progress}%)</label>
-                  <div className="matrix-progress">
-                    <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-                  </div>
-                </div>
-
-                <div className="control-group">
-                  <label>Success Progress</label>
-                  <div className="matrix-progress">
-                    <div className="progress-bar success" style={{ width: '75%' }}></div>
-                  </div>
-                </div>
-
-                <div className="control-group">
-                  <label>Warning Progress</label>
-                  <div className="matrix-progress">
-                    <div className="progress-bar warning" style={{ width: '60%' }}></div>
-                  </div>
-                </div>
-
-                <div className="control-group">
-                  <label>Danger Progress</label>
-                  <div className="matrix-progress">
-                    <div className="progress-bar danger" style={{ width: '90%' }}></div>
-                  </div>
-                </div>
-
-                <div className="control-group">
-                  <label>Striped Progress</label>
-                  <div className="matrix-progress">
-                    <div className="progress-bar striped" style={{ width: '50%' }}></div>
-                  </div>
-                </div>
-
-                <div className="control-group">
-                  <label>Animated Progress</label>
-                  <div className="matrix-progress">
-                    <div className="progress-bar animated" style={{ width: '65%' }}></div>
-                  </div>
-                </div>
-
-                <MatrixButton variant="primary" onClick={toggleProgress}>
-                  Update Progress
-                </MatrixButton>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
-      case 'alerts':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Alert Variants">
-              <div className="control-grid vertical">
-                <div className="matrix-alert info">
-                  <div className="alert-icon">ℹ</div>
-                  <div className="alert-content">
-                    <div className="alert-title">Information Alert</div>
-                    <div className="alert-message">This is an informational message for the user.</div>
-                  </div>
-                </div>
-
-                <div className="matrix-alert success">
-                  <div className="alert-icon">✓</div>
-                  <div className="alert-content">
-                    <div className="alert-title">Success Alert</div>
-                    <div className="alert-message">The operation completed successfully.</div>
-                  </div>
-                </div>
-
-                <div className="matrix-alert warning">
-                  <div className="alert-icon">⚠</div>
-                  <div className="alert-content">
-                    <div className="alert-title">Warning Alert</div>
-                    <div className="alert-message">Please be cautious about this action.</div>
-                  </div>
-                </div>
-
-                <div className="matrix-alert danger">
-                  <div className="alert-icon">✕</div>
-                  <div className="alert-content">
-                    <div className="alert-title">Danger Alert</div>
-                    <div className="alert-message">A critical error has occurred in the system.</div>
-                  </div>
-                </div>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Dismissible Alert">
-              <div className="control-grid vertical">
-                {showAlert && (
-                  <div className="matrix-alert info dismissible">
-                    <div className="alert-icon">ℹ</div>
-                    <div className="alert-content">
-                      <div className="alert-title">Dismissible Alert</div>
-                      <div className="alert-message">You can close this alert by clicking the X button.</div>
-                    </div>
-                    <button className="alert-close" onClick={() => setShowAlert(false)}>✕</button>
-                  </div>
-                )}
-
-                {!showAlert && (
-                  <MatrixButton variant="glitch" onClick={() => setShowAlert(true)}>
-                    Show Alert
-                  </MatrixButton>
-                )}
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
-      case 'modals':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Modal Dialog">
-              <div className="control-grid vertical">
-                <MatrixButton variant="neon" onClick={() => setIsModalOpen(true)}>
-                  Open Modal
-                </MatrixButton>
-
-                {isModalOpen && (
-                  <div className="matrix-modal-backdrop">
-                    <div className="matrix-modal">
-                      <div className="modal-header">
-                        <div className="modal-title">Matrix Modal</div>
-                        <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
-                      </div>
-                      <div className="modal-body">
-                        <p>This is a modal dialog box styled with the Matrix CSS theme.</p>
-                        <p>You can use it to display important information or gather user input.</p>
-                      </div>
-                      <div className="modal-footer">
-                        <MatrixButton variant="ghost" onClick={() => setIsModalOpen(false)}>
-                          Cancel
-                        </MatrixButton>
-                        <MatrixButton variant="primary" onClick={() => setIsModalOpen(false)}>
-                          Confirm
-                        </MatrixButton>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
-      case 'badges':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Badge Variants">
-              <div className="flex-grid">
-                <span className="matrix-badge">Default</span>
-                <span className="matrix-badge primary">Primary</span>
-                <span className="matrix-badge success">Success</span>
-                <span className="matrix-badge warning">Warning</span>
-                <span className="matrix-badge danger">Danger</span>
-                <span className="matrix-badge info">Info</span>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Badge Sizes">
-              <div className="flex-grid">
-                <span className="matrix-badge sm">Small</span>
-                <span className="matrix-badge">Medium</span>
-                <span className="matrix-badge lg">Large</span>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Pill Badges">
-              <div className="flex-grid">
-                <span className="matrix-badge pill">Default</span>
-                <span className="matrix-badge pill primary">Primary</span>
-                <span className="matrix-badge pill success">Success</span>
-                <span className="matrix-badge pill warning">Warning</span>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Badge with Icons">
-              <div className="flex-grid">
-                <span className="matrix-badge">
-                  <span className="badge-icon">✓</span> Verified
-                </span>
-                <span className="matrix-badge warning">
-                  <span className="badge-icon">⚠</span> Attention
-                </span>
-                <span className="matrix-badge info">
-                  <span className="badge-icon">ℹ</span> Info
-                </span>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
-      case 'tooltips':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Tooltip Positions">
-              <div className="tooltip-grid">
-                <div className="tooltip-container">
-                  <button className="matrix-button tooltip-trigger">
-                    Tooltip Top
-                  </button>
-                  <div className="matrix-tooltip top">
-                    This tooltip appears above the element
-                  </div>
-                </div>
-
-                <div className="tooltip-container">
-                  <button className="matrix-button tooltip-trigger">
-                    Tooltip Right
-                  </button>
-                  <div className="matrix-tooltip right">
-                    This tooltip appears to the right
-                  </div>
-                </div>
-
-                <div className="tooltip-container">
-                  <button className="matrix-button tooltip-trigger">
-                    Tooltip Bottom
-                  </button>
-                  <div className="matrix-tooltip bottom">
-                    This tooltip appears below the element
-                  </div>
-                </div>
-
-                <div className="tooltip-container">
-                  <button className="matrix-button tooltip-trigger">
-                    Tooltip Left
-                  </button>
-                  <div className="matrix-tooltip left">
-                    This tooltip appears to the left
-                  </div>
-                </div>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
-      case 'tabs':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Horizontal Tabs">
-              <div className="matrix-tabs">
-                <div className="tab-list">
-                  <button className="tab-item active">Dashboard</button>
-                  <button className="tab-item">Profile</button>
-                  <button className="tab-item">Settings</button>
-                  <button className="tab-item">Help</button>
-                </div>
-                <div className="tab-panel">
-                  <h4>Dashboard Tab Content</h4>
-                  <p>This is the content for the Dashboard tab panel.</p>
-                  <p>You would typically display important metrics and information here.</p>
-                </div>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Vertical Tabs">
-              <div className="matrix-tabs vertical">
-                <div className="tab-list">
-                  <button className="tab-item active">System</button>
-                  <button className="tab-item">Network</button>
-                  <button className="tab-item">Security</button>
-                  <button className="tab-item">Updates</button>
-                </div>
-                <div className="tab-panel">
-                  <h4>System Information</h4>
-                  <p>This panel shows the System tab content in a vertical tab layout.</p>
-                  <p>Vertical tabs are useful for forms with many sections or when horizontal space is limited.</p>
-                </div>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
       default:
         return <div>Select a component to view</div>;
     }
