@@ -1631,3 +1631,247 @@
 .matrix-terminal-checkbox.disabled .checkbox-text {
   cursor: not-allowed;
 }
+
+/* Matrix-themed Modal Animations */
+
+/* Basic animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scale-out {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.95); opacity: 0; }
+}
+
+@keyframes slide-in {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-out {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(20px); opacity: 0; }
+}
+
+/* Glitch animation */
+@keyframes glitch-animation {
+  0% { transform: translate(0); }
+  20% { transform: translate(-3px, 3px); }
+  40% { transform: translate(-3px, -3px); }
+  60% { transform: translate(3px, 3px); }
+  80% { transform: translate(3px, -3px); }
+  100% { transform: translate(0); }
+}
+
+/* Terminal-style appearance */
+@keyframes terminal-in {
+  0% { opacity: 0; transform: scaleY(0.01); transform-origin: top; }
+  50% { opacity: 0.5; transform: scaleY(1); transform-origin: top; }
+  100% { opacity: 1; }
+}
+
+@keyframes terminal-out {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; transform: scaleY(1); transform-origin: bottom; }
+  100% { opacity: 0; transform: scaleY(0.01); transform-origin: bottom; }
+}
+
+/* Blinking cursor animation */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Code rain animation (custom implementation) */
+@keyframes code-rain {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Pulsing glow effect */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 5px var(--matrix-glow); }
+  50% { box-shadow: 0 0 20px var(--matrix-glow), 0 0 30px var(--matrix-glow); }
+}
+
+/* Digital distortion effect */
+@keyframes digital-distortion {
+  0% { clip-path: inset(0% 0% 0% 0%); }
+  5% { clip-path: inset(10% 0% 0% 5%); }
+  10% { clip-path: inset(0% 10% 0% 0%); }
+  15% { clip-path: inset(0% 0% 5% 0%); }
+  20% { clip-path: inset(0% 0% 0% 0%); }
+  80% { clip-path: inset(0% 0% 0% 0%); }
+  85% { clip-path: inset(0% 5% 10% 0%); }
+  90% { clip-path: inset(5% 0% 0% 10%); }
+  95% { clip-path: inset(0% 0% 5% 0%); }
+  100% { clip-path: inset(0% 0% 0% 0%); }
+}
+
+/* Typing effect - cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Apply animations to classes */
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out forwards;
+}
+
+.animate-scale-out {
+  animation: scale-out 0.3s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out forwards;
+}
+
+.animate-slide-out {
+  animation: slide-out 0.3s ease-out forwards;
+}
+
+.animate-glitch {
+  animation: glitch-animation 0.3s infinite;
+}
+
+.animate-terminal-in {
+  animation: terminal-in 0.5s ease-out forwards;
+}
+
+.animate-terminal-out {
+  animation: terminal-out 0.5s ease-out forwards;
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.animate-code-rain {
+  animation: code-rain 20s linear infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s infinite;
+}
+
+.animate-digital-distortion {
+  animation: digital-distortion 5s step-end infinite;
+}
+
+.animate-cursor-blink {
+  animation: cursor-blink 0.8s step-end infinite;
+}
+
+/* Matrix code rain background effect */
+.matrix-code-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, 
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 32, 0, 0.2) 40%, 
+    rgba(0, 128, 0, 0.1) 80%,
+    rgba(0, 255, 0, 0.05) 100%
+  );
+}
+
+.matrix-code-bg::before {
+  content: "01001010111010001010101110100101010110010110101010111010010101";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  transform: rotate(45deg);
+  font-family: monospace;
+  font-size: 18px;
+  letter-spacing: 5px;
+  color: rgba(0, 255, 65, 0.1);
+  line-height: 0.65;
+  white-space: nowrap;
+  animation: code-rain 20s linear infinite;
+}
+
+/* Digital noise overlay */
+.digital-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Glitch clip effect */
+.clip-path-cyber {
+  clip-path: polygon(
+    0 10%, 10% 0, 90% 0, 100% 10%,
+    100% 90%, 90% 100%, 10% 100%, 0 90%
+  );
+}
+
+/* Terminal scanline effect */
+.scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(0, 255, 65, 0.1);
+  opacity: 0.75;
+  z-index: 100;
+  animation: scanline 6s linear infinite;
+}
+
+@keyframes scanline {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+
+/* Hacker style text shadows */
+.text-shadow-glow {
+  text-shadow: 0 0 5px var(--matrix-text), 0 0 10px var(--matrix-glow);
+}
+
+/* Terminal-style text cursor */
+.terminal-cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  background-color: var(--matrix-text);
+  animation: cursor-blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+
+/* Backlight effect for active terminal windows */
+.backlight {
+  box-shadow: 
+    0 0 10px var(--matrix-glow),
+    0 0 20px var(--matrix-glow),
+    inset 0 0 5px var(--matrix-glow);
+}

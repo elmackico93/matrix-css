@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ComponentTestPage.css';
 
 // Import components
@@ -33,6 +33,31 @@ function ComponentTestPage() {
   const [selectValue, setSelectValue] = useState('default');
   const [showAlert, setShowAlert] = useState(false);
   const [progress, setProgress] = useState(45);
+  
+  // States for modal examples
+  const [activeModalType, setActiveModalType] = useState('default');
+  const [terminalCommands, setTerminalCommands] = useState([
+    '> INITIATING CONNECTION TO THE MATRIX...',
+    '> USER AUTHENTICATION REQUIRED',
+    '> ACCESS LEVEL: ADMINISTRATOR',
+    '> SECURITY CLEARANCE: ALPHA-7',
+    '> STATUS: CONNECTED',
+    '',
+    'Ready for input. Type "help" for available commands.'
+  ]);
+  const [terminalInput, setTerminalInput] = useState('');
+  const [glitching, setGlitching] = useState(true);
+  
+  // Glitch effect for access denied modal
+  useEffect(() => {
+    if (isModalOpen && activeModalType === 'access') {
+      const glitchInterval = setInterval(() => {
+        setGlitching(prev => !prev);
+      }, 300);
+      
+      return () => clearInterval(glitchInterval);
+    }
+  }, [isModalOpen, activeModalType]);
 
   // Helper function to render a component card
   const ComponentSection = ({ title, children }) => (
@@ -58,6 +83,62 @@ function ComponentTestPage() {
       {children}
     </button>
   );
+  
+  // Handle terminal commands
+  const handleTerminalCommand = (e) => {
+    e.preventDefault();
+    const command = terminalInput.trim().toLowerCase();
+    
+    let response = [];
+    
+    if (command === 'help') {
+      response = [
+        'AVAILABLE COMMANDS:',
+        '- help: Display this help message',
+        '- status: Check system status',
+        '- scan: Scan for security vulnerabilities',
+        '- exit: Close terminal session'
+      ];
+    } else if (command === 'status') {
+      response = [
+        'SYSTEM STATUS:',
+        '- CPU: 72% OPERATIONAL',
+        '- MEMORY: 45% UTILIZED',
+        '- SECURITY: ACTIVE',
+        '- ENCRYPTION: ENABLED'
+      ];
+    } else if (command === 'scan') {
+      response = [
+        'INITIATING SECURITY SCAN...',
+        'SCANNING NETWORK PERIMETER...',
+        'SCANNING DATABASE ACCESS POINTS...',
+        'SCANNING AUTHENTICATION PROTOCOLS...',
+        'SCAN COMPLETE. NO VULNERABILITIES DETECTED.'
+      ];
+    } else if (command === 'exit') {
+      response = ['TERMINATING SESSION...'];
+      setTimeout(() => setIsModalOpen(false), 1000);
+    } else if (command !== '') {
+      response = [`UNKNOWN COMMAND: "${command}". TYPE "help" FOR AVAILABLE COMMANDS.`];
+    }
+    
+    setTerminalCommands([...terminalCommands, `> ${command}`, ...response, '']);
+    setTerminalInput('');
+    
+    // Auto-scroll to bottom
+    setTimeout(() => {
+      const terminal = document.getElementById('terminal-content');
+      if (terminal) {
+        terminal.scrollTop = terminal.scrollHeight;
+      }
+    }, 10);
+  };
+  
+  // Function to open modal with specific type
+  const openModal = (type) => {
+    setActiveModalType(type);
+    setIsModalOpen(true);
+  };
   
   // Function to copy code snippet to clipboard
   const copyToClipboard = (code) => {
@@ -536,6 +617,7 @@ function ComponentTestPage() {
               </ComponentSection>
             </div>
           );
+          
       case 'inputs':
         return (
           <div className="tab-content">
@@ -941,376 +1023,374 @@ function ComponentTestPage() {
           </div>
         );
 
-      // CHECKBOXES SECTION
-// This should replace the 'checkboxes' case in the renderTabContent function in ComponentTestPage.jsx
+      case 'checkboxes':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Checkbox Variants">
+              <div className="control-grid">
+                <div className="control-group">
+                  <h4 className="group-label">Default Variant</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      checked={checked}
+                      onChange={() => setChecked(!checked)}
+                    />
+                    <span className="checkbox-label">Default Checkbox</span>
+                  </label>
+                  <div className="description">Current state: {checked ? 'Checked' : 'Unchecked'}</div>
+                </div>
 
-case 'checkboxes':
-  return (
-    <div className="tab-content">
-      <ComponentSection title="Checkbox Variants">
-        <div className="control-grid">
-          <div className="control-group">
-            <h4 className="group-label">Default Variant</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                checked={checked}
-                onChange={() => setChecked(!checked)}
-              />
-              <span className="checkbox-label">Default Checkbox</span>
-            </label>
-            <div className="description">Current state: {checked ? 'Checked' : 'Unchecked'}</div>
+                <div className="control-group">
+                  <h4 className="group-label">Terminal Style</h4>
+                  <label className="matrix-checkbox checkbox-terminal">
+                    <input type="checkbox" defaultChecked />
+                    <span className="checkbox-label">TERMINAL CHECKBOX</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <h4 className="group-label">Cyber Style</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      className="cyber-checkbox"
+                    />
+                    <span className="checkbox-label">Cyber Checkbox</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <h4 className="group-label">Glow Effect</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      defaultChecked
+                      className="glow-checkbox"
+                    />
+                    <span className="checkbox-label">Glowing Checkbox</span>
+                  </label>
+                </div>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                  {`<!-- Default Checkbox -->
+          <label class="matrix-checkbox">
+            <input type="checkbox" />
+            <span class="checkbox-label">Default Checkbox</span>
+          </label>
+
+          <!-- Terminal Checkbox -->
+          <label class="matrix-checkbox checkbox-terminal">
+            <input type="checkbox" />
+            <span class="checkbox-label">TERMINAL CHECKBOX</span>
+          </label>
+
+          <!-- Cyber Style Checkbox -->
+          <label class="matrix-checkbox">
+            <input type="checkbox" class="cyber-checkbox" />
+            <span class="checkbox-label">Cyber Checkbox</span>
+          </label>
+
+          <!-- Glow Effect Checkbox -->
+          <label class="matrix-checkbox">
+            <input type="checkbox" class="glow-checkbox" />
+            <span class="checkbox-label">Glowing Checkbox</span>
+          </label>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Matrix Themed Example">
+              <div className="p-4 bg-black bg-opacity-70 border border-matrix-border rounded">
+                <h3 className="mb-4 text-lg font-matrix-hacker text-matrix-text-bright">
+                  MATRIX SYSTEM PREFERENCES
+                </h3>
+                <div className="space-y-2">
+                  {/* Use the new matrix-terminal-checkbox class for all checkboxes */}
+                  <label className="matrix-terminal-checkbox">
+                    <input 
+                      type="checkbox" 
+                      defaultChecked
+                    />
+                    <span className="checkbox-text">ENABLE CODE RAIN VISUALIZATION</span>
+                  </label>
+                  
+                  <label className="matrix-terminal-checkbox">
+                    <input 
+                      type="checkbox"
+                    />
+                    <span className="checkbox-text">CONNECT TO NEURAL NETWORK</span>
+                  </label>
+                  
+                  <label className="matrix-terminal-checkbox">
+                    <input 
+                      type="checkbox" 
+                      defaultChecked
+                    />
+                    <span className="checkbox-text">ALLOW SYSTEM TRACKING</span>
+                  </label>
+                  <p className="mt-1 text-xs text-matrix-danger ml-10">WARNING: ACTIVE TRACKING DETECTED</p>
+                  
+                  <label className="matrix-terminal-checkbox disabled">
+                    <input 
+                      type="checkbox" 
+                      disabled
+                    />
+                    <span className="checkbox-text">ADMIN CONTROL PANEL</span>
+                  </label>
+                  <p className="mt-1 text-xs text-matrix-text-dim ml-10">REQUIRES LEVEL 10 CLEARANCE</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                  {`<!-- Matrix Terminal Style Checkbox -->
+          <label class="matrix-terminal-checkbox">
+            <input type="checkbox" />
+            <span class="checkbox-text">MATRIX SYSTEM OPTION</span>
+          </label>
+          <!-- Disabled Matrix Terminal Checkbox -->
+          <label class="matrix-terminal-checkbox disabled">
+            <input type="checkbox" disabled />
+            <span class="checkbox-text">RESTRICTED OPTION</span>
+          </label>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Checkbox Sizes">
+              <div className="control-grid">
+                <div className="control-group">
+                  <h4 className="group-label">Small Size</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      className="w-3.5 h-3.5"
+                    />
+                    <span className="checkbox-label text-xs">Small Checkbox</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <h4 className="group-label">Medium Size (Default)</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      defaultChecked
+                    />
+                    <span className="checkbox-label">Medium Checkbox</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <h4 className="group-label">Large Size</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      className="w-5 h-5"
+                    />
+                    <span className="checkbox-label text-base">Large Checkbox</span>
+                  </label>
+                </div>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                  {`<Checkbox size="sm" label="Small Checkbox" />
+          <Checkbox size="md" label="Medium Checkbox" />
+          <Checkbox size="lg" label="Large Checkbox" />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Checkbox States">
+              <div className="control-grid">
+                <div className="control-group">
+                  <h4 className="group-label">Default State</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                    />
+                    <span className="checkbox-label">Unchecked by Default</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <h4 className="group-label">Checked State</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      defaultChecked
+                    />
+                    <span className="checkbox-label">Checked by Default</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <h4 className="group-label">Disabled States</h4>
+                  <label className="matrix-checkbox disabled">
+                    <input 
+                      type="checkbox" 
+                      disabled
+                    />
+                    <span className="checkbox-label">Disabled Unchecked</span>
+                  </label>
+                  <label className="matrix-checkbox disabled">
+                    <input 
+                      type="checkbox" 
+                      disabled
+                      defaultChecked
+                    />
+                    <span className="checkbox-label">Disabled Checked</span>
+                  </label>
+                </div>
+
+                <div className="control-group">
+                  <h4 className="group-label">Error State</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox"
+                      className="border-matrix-danger"
+                    />
+                    <span className="checkbox-label">Checkbox with Error</span>
+                  </label>
+                  <p className="mt-1 text-xs text-matrix-danger">This field is required</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                  {`<Checkbox label="Unchecked by Default" />
+          <Checkbox label="Checked by Default" defaultChecked />
+          <Checkbox label="Disabled Unchecked" disabled />
+          <Checkbox label="Disabled Checked" disabled defaultChecked />
+          <Checkbox label="Checkbox with Error" error="This field is required" />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Checkbox with Description">
+              <div className="control-grid vertical">
+                <div className="control-group">
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      defaultChecked
+                    />
+                    <span className="checkbox-label">Advanced Mode</span>
+                  </label>
+                  <p className="mt-1 text-xs text-matrix-text-dim">Enables advanced features for power users</p>
+
+                  <label className="matrix-checkbox mt-3">
+                    <input 
+                      type="checkbox" 
+                    />
+                    <span className="checkbox-label">Data Analytics</span>
+                  </label>
+                  <p className="mt-1 text-xs text-matrix-text-dim">Collect anonymous usage data to improve the system</p>
+
+                  <label className="matrix-checkbox checkbox-terminal mt-3">
+                    <input 
+                      type="checkbox"
+                      disabled
+                    />
+                    <span className="checkbox-label checkbox-terminal">SYSTEM ADMINISTRATION</span>
+                  </label>
+                  <p className="mt-1 text-xs text-matrix-text-dim">Grants elevated permissions (requires approval)</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                  {`<Checkbox 
+            label="Advanced Mode" 
+            description="Enables advanced features for power users" 
+            defaultChecked
+          />
+
+          <Checkbox 
+            label="Data Analytics" 
+            description="Collect anonymous usage data to improve the system" 
+          />
+
+          <Checkbox 
+            variant="terminal"
+            label="SYSTEM ADMINISTRATION" 
+            description="Grants elevated permissions (requires approval)" 
+            disabled
+          />`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Checkbox Group Example">
+              <div className="control-grid vertical">
+                <div className="control-group">
+                  <h4 className="group-label">Select System Features:</h4>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      name="features" 
+                      value="firewall" 
+                      defaultChecked
+                      className="animate-checkbox-glow border-matrix-text"
+                    />
+                    <span className="checkbox-label">Firewall Protection</span>
+                  </label>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      name="features" 
+                      value="encryption"
+                      className="animate-checkbox-glow border-matrix-text"
+                    />
+                    <span className="checkbox-label">Data Encryption</span>
+                  </label>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      name="features" 
+                      value="monitoring" 
+                      defaultChecked
+                      className="animate-checkbox-glow border-matrix-text"
+                    />
+                    <span className="checkbox-label">System Monitoring</span>
+                  </label>
+                  <label className="matrix-checkbox">
+                    <input 
+                      type="checkbox" 
+                      name="features" 
+                      value="backups"
+                      className="animate-checkbox-glow border-matrix-text"
+                    />
+                    <span className="checkbox-label">Automated Backups</span>
+                  </label>
+                </div>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                  {`<div className="checkbox-group">
+            <h4 className="checkbox-group-title">Select System Features:</h4>
+            <Checkbox variant="glow" label="Firewall Protection" name="features" value="firewall" defaultChecked />
+            <Checkbox variant="glow" label="Data Encryption" name="features" value="encryption" />
+            <Checkbox variant="glow" label="System Monitoring" name="features" value="monitoring" defaultChecked />
+            <Checkbox variant="glow" label="Automated Backups" name="features" value="backups" />
+          </div>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
           </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Terminal Style</h4>
-            <label className="matrix-checkbox checkbox-terminal">
-              <input type="checkbox" defaultChecked />
-              <span className="checkbox-label">TERMINAL CHECKBOX</span>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Cyber Style</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                className="cyber-checkbox"
-              />
-              <span className="checkbox-label">Cyber Checkbox</span>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Glow Effect</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                defaultChecked
-                className="glow-checkbox"
-              />
-              <span className="checkbox-label">Glowing Checkbox</span>
-            </label>
-          </div>
-        </div>
-        <div className="mt-4">
-          <pre className="bg-black p-2 rounded text-sm overflow-auto">
-            <code>
-{`<!-- Default Checkbox -->
-<label class="matrix-checkbox">
-  <input type="checkbox" />
-  <span class="checkbox-label">Default Checkbox</span>
-</label>
-
-<!-- Terminal Checkbox -->
-<label class="matrix-checkbox checkbox-terminal">
-  <input type="checkbox" />
-  <span class="checkbox-label">TERMINAL CHECKBOX</span>
-</label>
-
-<!-- Cyber Style Checkbox -->
-<label class="matrix-checkbox">
-  <input type="checkbox" class="cyber-checkbox" />
-  <span class="checkbox-label">Cyber Checkbox</span>
-</label>
-
-<!-- Glow Effect Checkbox -->
-<label class="matrix-checkbox">
-  <input type="checkbox" class="glow-checkbox" />
-  <span class="checkbox-label">Glowing Checkbox</span>
-</label>`}
-            </code>
-          </pre>
-        </div>
-      </ComponentSection>
-
-      <ComponentSection title="Matrix Themed Example">
-        <div className="p-4 bg-black bg-opacity-70 border border-matrix-border rounded">
-          <h3 className="mb-4 text-lg font-matrix-hacker text-matrix-text-bright">
-            MATRIX SYSTEM PREFERENCES
-          </h3>
-          <div className="space-y-2">
-            {/* Use the new matrix-terminal-checkbox class for all checkboxes */}
-            <label className="matrix-terminal-checkbox">
-              <input 
-                type="checkbox" 
-                defaultChecked
-              />
-              <span className="checkbox-text">ENABLE CODE RAIN VISUALIZATION</span>
-            </label>
-            
-            <label className="matrix-terminal-checkbox">
-              <input 
-                type="checkbox"
-              />
-              <span className="checkbox-text">CONNECT TO NEURAL NETWORK</span>
-            </label>
-            
-            <label className="matrix-terminal-checkbox">
-              <input 
-                type="checkbox" 
-                defaultChecked
-              />
-              <span className="checkbox-text">ALLOW SYSTEM TRACKING</span>
-            </label>
-            <p className="mt-1 text-xs text-matrix-danger ml-10">WARNING: ACTIVE TRACKING DETECTED</p>
-            
-            <label className="matrix-terminal-checkbox disabled">
-              <input 
-                type="checkbox" 
-                disabled
-              />
-              <span className="checkbox-text">ADMIN CONTROL PANEL</span>
-            </label>
-            <p className="mt-1 text-xs text-matrix-text-dim ml-10">REQUIRES LEVEL 10 CLEARANCE</p>
-          </div>
-        </div>
-        <div className="mt-4">
-          <pre className="bg-black p-2 rounded text-sm overflow-auto">
-            <code>
-{`<!-- Matrix Terminal Style Checkbox -->
-<label class="matrix-terminal-checkbox">
-  <input type="checkbox" />
-  <span class="checkbox-text">MATRIX SYSTEM OPTION</span>
-</label>
-<!-- Disabled Matrix Terminal Checkbox -->
-<label class="matrix-terminal-checkbox disabled">
-  <input type="checkbox" disabled />
-  <span class="checkbox-text">RESTRICTED OPTION</span>
-</label>`}
-            </code>
-          </pre>
-        </div>
-      </ComponentSection>
-
-      <ComponentSection title="Checkbox Sizes">
-        <div className="control-grid">
-          <div className="control-group">
-            <h4 className="group-label">Small Size</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                className="w-3.5 h-3.5"
-              />
-              <span className="checkbox-label text-xs">Small Checkbox</span>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Medium Size (Default)</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                defaultChecked
-              />
-              <span className="checkbox-label">Medium Checkbox</span>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Large Size</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                className="w-5 h-5"
-              />
-              <span className="checkbox-label text-base">Large Checkbox</span>
-            </label>
-          </div>
-        </div>
-        <div className="mt-4">
-          <pre className="bg-black p-2 rounded text-sm overflow-auto">
-            <code>
-{`<Checkbox size="sm" label="Small Checkbox" />
-<Checkbox size="md" label="Medium Checkbox" />
-<Checkbox size="lg" label="Large Checkbox" />`}
-            </code>
-          </pre>
-        </div>
-      </ComponentSection>
-
-      <ComponentSection title="Checkbox States">
-        <div className="control-grid">
-          <div className="control-group">
-            <h4 className="group-label">Default State</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-              />
-              <span className="checkbox-label">Unchecked by Default</span>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Checked State</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                defaultChecked
-              />
-              <span className="checkbox-label">Checked by Default</span>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Disabled States</h4>
-            <label className="matrix-checkbox disabled">
-              <input 
-                type="checkbox" 
-                disabled
-              />
-              <span className="checkbox-label">Disabled Unchecked</span>
-            </label>
-            <label className="matrix-checkbox disabled">
-              <input 
-                type="checkbox" 
-                disabled
-                defaultChecked
-              />
-              <span className="checkbox-label">Disabled Checked</span>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h4 className="group-label">Error State</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox"
-                className="border-matrix-danger"
-              />
-              <span className="checkbox-label">Checkbox with Error</span>
-            </label>
-            <p className="mt-1 text-xs text-matrix-danger">This field is required</p>
-          </div>
-        </div>
-        <div className="mt-4">
-          <pre className="bg-black p-2 rounded text-sm overflow-auto">
-            <code>
-{`<Checkbox label="Unchecked by Default" />
-<Checkbox label="Checked by Default" defaultChecked />
-<Checkbox label="Disabled Unchecked" disabled />
-<Checkbox label="Disabled Checked" disabled defaultChecked />
-<Checkbox label="Checkbox with Error" error="This field is required" />`}
-            </code>
-          </pre>
-        </div>
-      </ComponentSection>
-
-      <ComponentSection title="Checkbox with Description">
-        <div className="control-grid vertical">
-          <div className="control-group">
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                defaultChecked
-              />
-              <span className="checkbox-label">Advanced Mode</span>
-            </label>
-            <p className="mt-1 text-xs text-matrix-text-dim">Enables advanced features for power users</p>
-
-            <label className="matrix-checkbox mt-3">
-              <input 
-                type="checkbox" 
-              />
-              <span className="checkbox-label">Data Analytics</span>
-            </label>
-            <p className="mt-1 text-xs text-matrix-text-dim">Collect anonymous usage data to improve the system</p>
-
-            <label className="matrix-checkbox checkbox-terminal mt-3">
-              <input 
-                type="checkbox"
-                disabled
-              />
-              <span className="checkbox-label checkbox-terminal">SYSTEM ADMINISTRATION</span>
-            </label>
-            <p className="mt-1 text-xs text-matrix-text-dim">Grants elevated permissions (requires approval)</p>
-          </div>
-        </div>
-        <div className="mt-4">
-          <pre className="bg-black p-2 rounded text-sm overflow-auto">
-            <code>
-{`<Checkbox 
-  label="Advanced Mode" 
-  description="Enables advanced features for power users" 
-  defaultChecked
-/>
-
-<Checkbox 
-  label="Data Analytics" 
-  description="Collect anonymous usage data to improve the system" 
-/>
-
-<Checkbox 
-  variant="terminal"
-  label="SYSTEM ADMINISTRATION" 
-  description="Grants elevated permissions (requires approval)" 
-  disabled
-/>`}
-            </code>
-          </pre>
-        </div>
-      </ComponentSection>
-
-      <ComponentSection title="Checkbox Group Example">
-        <div className="control-grid vertical">
-          <div className="control-group">
-            <h4 className="group-label">Select System Features:</h4>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                name="features" 
-                value="firewall" 
-                defaultChecked
-                className="animate-checkbox-glow border-matrix-text"
-              />
-              <span className="checkbox-label">Firewall Protection</span>
-            </label>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                name="features" 
-                value="encryption"
-                className="animate-checkbox-glow border-matrix-text"
-              />
-              <span className="checkbox-label">Data Encryption</span>
-            </label>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                name="features" 
-                value="monitoring" 
-                defaultChecked
-                className="animate-checkbox-glow border-matrix-text"
-              />
-              <span className="checkbox-label">System Monitoring</span>
-            </label>
-            <label className="matrix-checkbox">
-              <input 
-                type="checkbox" 
-                name="features" 
-                value="backups"
-                className="animate-checkbox-glow border-matrix-text"
-              />
-              <span className="checkbox-label">Automated Backups</span>
-            </label>
-          </div>
-        </div>
-        <div className="mt-4">
-          <pre className="bg-black p-2 rounded text-sm overflow-auto">
-            <code>
-{`<div className="checkbox-group">
-  <h4 className="checkbox-group-title">Select System Features:</h4>
-  <Checkbox variant="glow" label="Firewall Protection" name="features" value="firewall" defaultChecked />
-  <Checkbox variant="glow" label="Data Encryption" name="features" value="encryption" />
-  <Checkbox variant="glow" label="System Monitoring" name="features" value="monitoring" defaultChecked />
-  <Checkbox variant="glow" label="Automated Backups" name="features" value="backups" />
-</div>`}
-            </code>
-          </pre>
-        </div>
-      </ComponentSection>
-    </div>
-  );
+        );
+        
       case 'radios':
         return (
           <div className="tab-content">
@@ -1793,54 +1873,391 @@ case 'checkboxes':
       case 'modals':
         return (
           <div className="tab-content">
-            <ComponentSection title="Modal Variations">
+            <ComponentSection title="Enhanced Modal System">
               <div className="space-y-4">
-                <MatrixButton onClick={() => setIsModalOpen(true)}>
-                  Open Demo Modal
-                </MatrixButton>
+                <p className="text-matrix-text mb-4">
+                  Our Matrix CSS framework includes advanced modal implementations with cyberpunk styling, terminal effects, 
+                  and interactive features. Choose a modal type to preview:
+                </p>
                 
-                {isModalOpen && (
-                  <div className="matrix-modal-backdrop">
-                    <div className="matrix-modal">
-                      <div className="modal-header">
-                        <h3 className="modal-title">Modal Title</h3>
-                        <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
-                      </div>
-                      <div className="modal-body">
-                        <p>This is a basic modal with header, body, and footer sections.</p>
-                        <p className="mt-2">Modals are useful for focused content that requires user attention or interaction.</p>
-                      </div>
-                      <div className="modal-footer">
-                        <MatrixButton variant="outline" size="sm" onClick={() => setIsModalOpen(false)}>
-                          Cancel
-                        </MatrixButton>
-                        <MatrixButton variant="primary" size="sm" onClick={() => setIsModalOpen(false)}>
-                          Confirm
-                        </MatrixButton>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <div className="grid grid-cols-2 gap-4">
+                  <MatrixButton onClick={() => openModal('default')}>
+                    Standard Modal
+                  </MatrixButton>
+                  
+                  <MatrixButton variant="terminal" onClick={() => openModal('terminal')}>
+                    Terminal Modal
+                  </MatrixButton>
+                  
+                  <MatrixButton variant="danger" onClick={() => openModal('access')}>
+                    Access Denied
+                  </MatrixButton>
+                  
+                  <MatrixButton variant="primary" onClick={() => openModal('neural')}>
+                    Neural Interface
+                  </MatrixButton>
+                </div>
               </div>
             </ComponentSection>
 
-            <ComponentSection title="Modal Types">
-              <div className="grid grid-cols-2 gap-4">
-                <MatrixButton>
-                  Standard Modal
-                </MatrixButton>
+            <ComponentSection title="Modal Features">
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-3">
+                  <span className="matrix-badge">Typewriter Effect</span>
+                  <span className="matrix-badge">Code Rain Background</span>
+                  <span className="matrix-badge">Glitch Animations</span>
+                  <span className="matrix-badge">Custom Positioning</span>
+                  <span className="matrix-badge">Sound Effects</span>
+                  <span className="matrix-badge">Interactive Terminal</span>
+                  <span className="matrix-badge">Digital Distortion</span>
+                  <span className="matrix-badge">Glow Effects</span>
+                </div>
                 
-                <MatrixButton variant="danger">
-                  Alert Modal
-                </MatrixButton>
-                
-                <MatrixButton variant="primary">
-                  Form Modal
-                </MatrixButton>
-                
-                <MatrixButton variant="terminal">
-                  Matrix Terminal Modal
-                </MatrixButton>
+                <div className="mt-4 bg-matrix-panel border border-matrix-border p-4 rounded">
+                  <h4 className="text-matrix-text-bright mb-2">Implementation Features:</h4>
+                  <ul className="list-disc pl-5 space-y-1 text-matrix-text">
+                    <li>Multiple animation variants (fade, slide, scale, glitch)</li>
+                    <li>Customizable backdrop blur and overlay effects</li>
+                    <li>Accessibility support with keyboard navigation</li>
+                    <li>Theme variants for different context (terminal, alert, matrix)</li>
+                    <li>Optional sound effects for open/close events</li>
+                    <li>Full-screen and responsive sizing options</li>
+                    <li>TypeWriter effect for authentic terminal feel</li>
+                  </ul>
+                </div>
+              </div>
+            </ComponentSection>
+            
+            {/* Modal Implementations */}
+            {isModalOpen && activeModalType === 'default' && (
+              <div className="matrix-modal-backdrop" onClick={() => setIsModalOpen(false)}>
+                <div className="matrix-modal" onClick={e => e.stopPropagation()}>
+                  <div className="modal-header">
+                    <h3 className="modal-title">Standard Modal</h3>
+                    <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
+                  </div>
+                  <div className="modal-body">
+                    <p>This is a standard modal with header, body, and footer sections.</p>
+                    <p className="mt-2">
+                      Modals are useful for focused content that requires user attention or interaction.
+                    </p>
+                    <p className="mt-2">
+                      This basic modal includes a semi-transparent backdrop, close button, and organized content sections.
+                    </p>
+                  </div>
+                  <div className="modal-footer">
+                    <MatrixButton variant="outline" size="sm" onClick={() => setIsModalOpen(false)}>
+                      Cancel
+                    </MatrixButton>
+                    <MatrixButton variant="primary" size="sm" onClick={() => setIsModalOpen(false)}>
+                      Confirm
+                    </MatrixButton>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Terminal Modal */}
+            {isModalOpen && activeModalType === 'terminal' && (
+              <div className="matrix-modal-backdrop" onClick={() => setIsModalOpen(false)}>
+                <div 
+                  className="bg-black border-2 border-matrix-text rounded w-full max-w-2xl shadow-lg shadow-matrix-glow"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <div className="border-b border-matrix-text p-3 flex justify-between items-center bg-black">
+                    <h2 className="text-lg text-matrix-text-bright font-bold tracking-wide font-matrix-hacker">MATRIX TERMINAL</h2>
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onClick={() => setIsModalOpen(false)}></div>
+                    </div>
+                  </div>
+                  
+                  <div 
+                    id="terminal-content"
+                    className="p-4 bg-black text-matrix-text font-mono text-sm h-80 overflow-y-auto relative"
+                  >
+                    {/* Code rain background effect */}
+                    <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none">
+                      <div className="matrix-code-bg"></div>
+                    </div>
+                    
+                    {terminalCommands.map((line, index) => (
+                      <div key={index} className="whitespace-pre-wrap mb-1">
+                        {line}
+                      </div>
+                    ))}
+                    
+                    <form onSubmit={handleTerminalCommand} className="flex mt-2 relative z-10">
+                      <span className="mr-2">{'>'}</span>
+                      <input
+                        type="text"
+                        value={terminalInput}
+                        onChange={(e) => setTerminalInput(e.target.value)}
+                        className="flex-1 bg-transparent border-none outline-none text-matrix-text"
+                        autoFocus
+                      />
+                    </form>
+                  </div>
+                  
+                  <div className="border-t border-matrix-text p-3 flex justify-end gap-2 bg-black">
+                    <MatrixButton 
+                      variant="outline" 
+                      size="sm" 
+                      className="border-matrix-text text-matrix-text"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      DISCONNECT
+                    </MatrixButton>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Neural Interface Modal */}
+            {isModalOpen && activeModalType === 'neural' && (
+              <div className="matrix-modal-backdrop" onClick={() => setIsModalOpen(false)}>
+                <div 
+                  className="bg-black border-2 border-cyan-500 rounded w-full max-w-2xl shadow-lg shadow-cyan-500/30 relative overflow-hidden"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <div className="absolute inset-0 bg-cyan-900/10 pointer-events-none"></div>
+                  
+                  <div className="absolute inset-0 opacity-10 pointer-events-none">
+                    <div className="absolute inset-0 opacity-20" style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300FFFF' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                    }}></div>
+                  </div>
+                  
+                  <div className="border-b border-cyan-500 p-3 flex justify-between items-center bg-black relative">
+                    <h2 className="text-lg text-cyan-400 font-bold tracking-wide">NEURAL INTERFACE</h2>
+                    <div className="flex items-center">
+                      <div className="text-cyan-500 text-xs mr-3 flex items-center">
+                        <span className="w-2 h-2 bg-cyan-500 rounded-full mr-1 animate-pulse"></span>
+                        MIND CONNECTED
+                      </div>
+                      <button 
+                        className="text-cyan-400 hover:text-cyan-200"
+                        onClick={() => setIsModalOpen(false)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-black">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div className="col-span-2 flex justify-center">
+                        <div className="relative">
+                          <div className="w-24 h-24 border-4 border-cyan-500/50 rounded-full flex items-center justify-center">
+                            <div className="w-16 h-16 border-2 border-cyan-400/70 rounded-full flex items-center justify-center animate-pulse">
+                              <div className="w-8 h-8 bg-cyan-400/90 rounded-full"></div>
+                            </div>
+                          </div>
+                          <div className="absolute top-0 left-0 w-full h-full border-t-4 border-r-4 border-cyan-400/30 rounded-full animate-spin"></div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="bg-black/70 border border-cyan-700 p-3 rounded">
+                          <div className="text-xs text-cyan-600 mb-1">COGNITIVE PROCESSING</div>
+                          <div className="flex justify-between mb-1">
+                            <span>Pattern Recognition</span>
+                            <span className="text-cyan-400">87%</span>
+                          </div>
+                          <div className="h-1 bg-black rounded overflow-hidden">
+                            <div className="h-full bg-cyan-400 w-[87%]"></div>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-black/70 border border-cyan-700 p-3 rounded">
+                          <div className="text-xs text-cyan-600 mb-1">MEMORY ACCESS</div>
+                          <div className="flex justify-between mb-1">
+                            <span>Neural Indexing</span>
+                            <span className="text-cyan-400">62%</span>
+                          </div>
+                          <div className="h-1 bg-black rounded overflow-hidden">
+                            <div className="h-full bg-cyan-400 w-[62%]"></div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="bg-black/70 border border-cyan-700 p-3 rounded">
+                          <div className="text-xs text-cyan-600 mb-1">SENSORY FEEDBACK</div>
+                          <div className="flex justify-between mb-1">
+                            <span>Visual Cortex</span>
+                            <span className="text-cyan-400">93%</span>
+                          </div>
+                          <div className="h-1 bg-black rounded overflow-hidden">
+                            <div className="h-full bg-cyan-400 w-[93%]"></div>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-black/70 border border-cyan-700 p-3 rounded">
+                          <div className="text-xs text-cyan-600 mb-1">NEURAL BANDWIDTH</div>
+                          <div className="flex justify-between mb-1">
+                            <span>Data Transfer</span>
+                            <span className="text-cyan-400">75%</span>
+                          </div>
+                          <div className="h-1 bg-black rounded overflow-hidden">
+                            <div className="h-full bg-cyan-400 w-[75%]"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-cyan-500 p-3 flex justify-between bg-black">
+                    <span className="text-cyan-400 text-sm">User: <span className="text-cyan-200">NEO_1</span></span>
+                    <div className="flex gap-2">
+                      <MatrixButton 
+                        variant="outline" 
+                        size="sm"
+                        className="border-cyan-500 text-cyan-400 hover:bg-cyan-900/30" 
+                        onClick={() => setIsModalOpen(false)}
+                      >
+                        Disconnect
+                      </MatrixButton>
+                      <MatrixButton 
+                        variant="primary"
+                        size="sm"
+                        className="bg-cyan-600/80 text-black hover:bg-cyan-500"
+                        onClick={() => setIsModalOpen(false)}
+                      >
+                        Explore Matrix
+                      </MatrixButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Access Denied Modal */}
+            {isModalOpen && activeModalType === 'access' && (
+              <div className="matrix-modal-backdrop" onClick={() => setIsModalOpen(false)}>
+                <div 
+                  className={`bg-black border-2 border-red-500 rounded w-full max-w-md shadow-lg shadow-red-500/30 ${glitching ? 'translate-x-[1px]' : '-translate-x-[1px]'} transition-transform duration-50`}
+                  onClick={e => e.stopPropagation()}
+                >
+                  <div className={`border-b border-red-500 p-3 flex items-center bg-black relative ${glitching ? 'translate-y-[1px]' : ''}`}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500 mr-2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="15" y1="9" x2="9" y2="15"></line>
+                      <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    <h2 className="text-lg text-red-500 font-bold tracking-wide">ACCESS DENIED</h2>
+                    <button 
+                      className="absolute right-3 top-3 text-red-400 hover:text-red-200"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  <div className="p-4 bg-black">
+                    <div className={`text-center mb-4 ${glitching ? 'opacity-90' : 'opacity-100'}`}>
+                      <div className="inline-block p-3 bg-red-500/10 rounded-full mb-2">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-red-500">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="2"></path>
+                        </svg>
+                      </div>
+                      <h3 className="text-xl text-red-500 font-bold animate-pulse">AUTHENTICATION FAILED</h3>
+                    </div>
+                    
+                    <div className={`bg-black border border-red-500/50 p-3 mb-4 rounded ${glitching ? 'translate-x-[2px]' : ''}`}>
+                      <p className="text-red-200 font-mono bg-black p-2 text-sm">
+                        <span className="text-red-400">ERROR CODE:</span> 403<br/>
+                        <span className="text-red-400">MESSAGE:</span> Insufficient permissions<br/>
+                        <span className="text-red-400">TIMESTAMP:</span> {new Date().toISOString()}<br/>
+                        <span className="text-red-400">ATTEMPTS:</span> 3/3
+                      </p>
+                    </div>
+                    
+                    <div className="text-red-400 text-sm bg-red-500/10 p-3 rounded border border-red-500/30">
+                      This security incident has been logged. Multiple failed attempts have resulted in temporary account lockout.
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-red-500 p-3 flex justify-end gap-2 bg-black">
+                    <MatrixButton 
+                      variant="outline" 
+                      size="sm"
+                      className="border-red-500 text-red-400 hover:bg-red-900/30"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      Back
+                    </MatrixButton>
+                    <MatrixButton 
+                      variant="danger"
+                      size="sm"
+                      className="bg-red-600/70 text-white hover:bg-red-500"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      Reset Credentials
+                    </MatrixButton>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <ComponentSection title="Implementation Code">
+              <div className="bg-black p-4 rounded text-xs overflow-auto max-h-80 border border-matrix-border">
+                <pre className="text-matrix-text">
+                {`// Import the enhanced Modal component
+import { 
+  Modal, 
+  ModalHeader, 
+  ModalBody, 
+  ModalFooter 
+} from './components/core/Modal';
+
+// Example usage
+function MyComponent() {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>
+        Open Modal
+      </Button>
+      
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        animation="slide"
+        theme="matrix"
+        hasGlowEffect
+        showCodeRain
+        typewriterEffect
+      >
+        <ModalHeader hasGlitchEffect>
+          <h2 className="text-lg font-bold text-matrix-text-bright">
+            SYSTEM ACCESS
+          </h2>
+        </ModalHeader>
+        <ModalBody>
+          <p>INITIATING CONNECTION TO THE MATRIX...</p>
+          <div className="mt-4 space-y-2">
+            <div className="flex justify-between">
+              <span>USER ID:</span>
+              <span className="text-matrix-text-bright">NEO_1</span>
+            </div>
+            <div className="flex justify-between">
+              <span>ACCESS LEVEL:</span>
+              <span className="text-matrix-text-bright">ADMINISTRATOR</span>
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="outline">Disconnect</Button>
+          <Button variant="terminal" hasGlow>Enter System</Button>
+        </ModalFooter>
+      </Modal>
+    </>
+  );
+}`}
+                </pre>
               </div>
             </ComponentSection>
           </div>
