@@ -1372,3 +1372,145 @@
     100% 90%, 90% 100%, 10% 100%, 0 90%
   );
 }
+
+/* Additional CSS for Matrix Card Component */
+
+/* Terminal effect with scan line */
+.card-terminal-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-terminal-effect::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 255, 65, 0.2),
+    transparent
+  );
+  opacity: 0.6;
+  animation: scanline 3s linear infinite;
+}
+
+/* Data Card with code rain background */
+.card-data-background {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-data-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='20' font-family='monospace' font-size='14' fill='rgba(0, 255, 65, 0.2)'%3E01%3C/text%3E%3Ctext x='40' y='50' font-family='monospace' font-size='14' fill='rgba(0, 255, 65, 0.15)'%3E10%3C/text%3E%3Ctext x='70' y='80' font-family='monospace' font-size='14' fill='rgba(0, 255, 65, 0.2)'%3E01%3C/text%3E%3Ctext x='20' y='90' font-family='monospace' font-size='14' fill='rgba(0, 255, 65, 0.15)'%3E10%3C/text%3E%3C/svg%3E");
+  opacity: 0.05;
+  z-index: -1;
+}
+
+/* Matrix code card header */
+.card-header-code {
+  position: relative;
+}
+
+.card-header-code::before {
+  content: "<MATRIX_SYS>";
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 0.6rem;
+  font-family: var(--m-font-hacker);
+  color: var(--m-text-dim);
+  opacity: 0.6;
+}
+
+/* Card corner notch for cyber card */
+.card-cyber-notch::before,
+.card-cyber-notch::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: var(--m-bg);
+  z-index: 1;
+}
+
+.card-cyber-notch::before {
+  top: -5px;
+  right: -5px;
+  transform: rotate(45deg);
+}
+
+.card-cyber-notch::after {
+  bottom: -5px;
+  left: -5px;
+  transform: rotate(45deg);
+}
+
+/* Card with flicker effect */
+.card-flicker {
+  animation: flicker 5s infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  3% { opacity: 0.8; }
+  6% { opacity: 1; }
+  7% { opacity: 0.9; }
+  9% { opacity: 1; }
+  65% { opacity: 1; }
+  66% { opacity: 0.8; }
+  69% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  95% { opacity: 1; }
+}
+
+/* Card with hexagonal grid pattern */
+.card-hex-grid {
+  position: relative;
+}
+
+.card-hex-grid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 2.5l12.5 7.5v15L15 32.5 2.5 25V10L15 2.5z' stroke='rgba(0, 255, 65, 0.1)' fill='none' stroke-width='0.5' transform='translate(15, 15)'/%3E%3C/svg%3E");
+  opacity: 0.15;
+  z-index: -1;
+}
+
+/* Custom scrollbar for cards with overflow */
+.card-scrollable {
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--m-text-dim) var(--m-bg);
+}
+
+.card-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card-scrollable::-webkit-scrollbar-track {
+  background: var(--m-bg);
+}
+
+.card-scrollable::-webkit-scrollbar-thumb {
+  background-color: var(--m-text-dim);
+  border-radius: 3px;
+}
