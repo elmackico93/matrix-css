@@ -1,15 +1,40 @@
 import { ButtonHTMLAttributes } from 'react';
 
+/**
+ * Available visual variants for the Button component
+ */
 export type ButtonVariant = 
+  // Standard variants
   | 'default'
   | 'primary'
   | 'outline'
   | 'ghost'
   | 'terminal'
-  | 'danger';
+  | 'danger'
+  // Enhanced variants
+  | 'neon'
+  | 'holographic'
+  | 'cyber'
+  | '3d'
+  | 'pill'
+  | 'bordered'
+  | 'data'
+  // Special effect variants
+  | 'glitch'
+  | 'pulse';
 
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
+/**
+ * Available size options for the Button component
+ */
+export type ButtonSize = 
+  | 'sm'    // Small
+  | 'md'    // Medium (default)
+  | 'lg'    // Large
+  | 'icon'; // Square button for icons
 
+/**
+ * Properties for the Button component
+ */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * The visual style of the button
@@ -30,7 +55,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   hasGlow?: boolean;
   
   /**
-   * Whether this button should be rendered as a child component
+   * Whether this button should be rendered as a child component.
+   * Used for advanced composition patterns.
    * @default false
    */
   asChild?: boolean;

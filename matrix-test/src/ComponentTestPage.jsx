@@ -50,7 +50,7 @@ function ComponentTestPage() {
   };
 
   // Custom Button component if actual component not yet implemented
-  const MatrixButton = ({ children, variant = 'default', size = 'md', className = '', ...props }) => (
+  const MatrixButton = ({ children, variant = '', size = '', className = '', ...props }) => (
     <button 
       className={`matrix-button ${variant} ${size} ${className}`}
       {...props}
@@ -58,6 +58,17 @@ function ComponentTestPage() {
       {children}
     </button>
   );
+  
+  // Function to copy code snippet to clipboard
+  const copyToClipboard = (code) => {
+    navigator.clipboard.writeText(code)
+      .then(() => {
+        alert('Code copied to clipboard!');
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+  };
 
   // Render appropriate tab content based on active tab
   const renderTabContent = () => {
@@ -65,13 +76,62 @@ function ComponentTestPage() {
       case 'buttons':
         return (
           <div className="tab-content">
-            <ComponentSection title="Button Variants">
+            <ComponentSection title="Standard Button Variants">
               <div className="flex-grid">
-                {/* Use the actual Button component if available, otherwise use the placeholder */}
                 <MatrixButton>Default Button</MatrixButton>
                 <MatrixButton variant="primary">Primary Button</MatrixButton>
                 <MatrixButton variant="danger">Danger Button</MatrixButton>
                 <MatrixButton variant="ghost">Ghost Button</MatrixButton>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`<button class="matrix-button">Default Button</button>
+<button class="matrix-button primary">Primary Button</button>
+<button class="matrix-button danger">Danger Button</button>
+<button class="matrix-button ghost">Ghost Button</button>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Special Button Variants">
+              <div className="flex-grid">
+                <MatrixButton variant="neon">Neon</MatrixButton>
+                <MatrixButton variant="holographic">Holographic</MatrixButton>
+                <MatrixButton variant="cyber">Cyber</MatrixButton>
+                <MatrixButton variant="three-d">3D</MatrixButton>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`<button class="matrix-button neon">Neon</button>
+<button class="matrix-button holographic">Holographic</button>
+<button class="matrix-button cyber">Cyber</button>
+<button class="matrix-button three-d">3D</button>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Advanced Button Variants">
+              <div className="flex-grid">
+                <MatrixButton variant="pill">Pill Button</MatrixButton>
+                <MatrixButton variant="bordered">Bordered</MatrixButton>
+                <MatrixButton variant="data">Data</MatrixButton>
+                <MatrixButton variant="glitch">Glitch</MatrixButton>
+                <MatrixButton variant="pulse">Pulse</MatrixButton>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`<button class="matrix-button pill">Pill Button</button>
+<button class="matrix-button bordered">Bordered</button>
+<button class="matrix-button data">Data</button>
+<button class="matrix-button glitch">Glitch</button>
+<button class="matrix-button pulse">Pulse</button>`}
+                  </code>
+                </pre>
               </div>
             </ComponentSection>
 
@@ -81,6 +141,15 @@ function ComponentTestPage() {
                 <MatrixButton size="md">Medium Button</MatrixButton>
                 <MatrixButton size="lg">Large Button</MatrixButton>
               </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`<button class="matrix-button sm">Small Button</button>
+<button class="matrix-button md">Medium Button</button>
+<button class="matrix-button lg">Large Button</button>`}
+                  </code>
+                </pre>
+              </div>
             </ComponentSection>
 
             <ComponentSection title="Button States">
@@ -89,6 +158,16 @@ function ComponentTestPage() {
                 <MatrixButton disabled>Disabled Button</MatrixButton>
                 <MatrixButton className="loading">Loading Button</MatrixButton>
                 <MatrixButton className="active">Active Button</MatrixButton>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`<button class="matrix-button">Normal Button</button>
+<button class="matrix-button" disabled>Disabled Button</button>
+<button class="matrix-button loading">Loading Button</button>
+<button class="matrix-button active">Active Button</button>`}
+                  </code>
+                </pre>
               </div>
             </ComponentSection>
 
@@ -103,6 +182,54 @@ function ComponentTestPage() {
                 <MatrixButton variant="primary">
                   <span className="icon">↻</span> Refresh
                 </MatrixButton>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`<button class="matrix-button">
+  <span class="icon">◉</span> Start
+</button>
+<button class="matrix-button">
+  Delete <span class="icon">✗</span>
+</button>
+<button class="matrix-button primary">
+  <span class="icon">↻</span> Refresh
+</button>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Combined Button Styles">
+              <div className="flex-grid">
+                <MatrixButton variant="neon" size="sm">Small Neon</MatrixButton>
+                <MatrixButton variant="primary" className="loading">Loading Primary</MatrixButton>
+                <MatrixButton variant="pulse" size="lg">Large Pulse</MatrixButton>
+                <MatrixButton variant="glitch" className="active">Active Glitch</MatrixButton>
+              </div>
+              <div className="mt-4">
+                <pre className="bg-black p-2 rounded text-sm overflow-auto">
+                  <code>
+                    {`<button class="matrix-button neon sm">Small Neon</button>
+<button class="matrix-button primary loading">Loading Primary</button>
+<button class="matrix-button pulse lg">Large Pulse</button>
+<button class="matrix-button glitch active">Active Glitch</button>`}
+                  </code>
+                </pre>
+              </div>
+            </ComponentSection>
+            
+            <ComponentSection title="Interactive Demo">
+              <div className="flex-grid">
+                <MatrixButton variant="neon" onClick={() => setIsModalOpen(true)}>Open Modal</MatrixButton>
+                <MatrixButton variant="glitch" onClick={() => setShowAlert(true)}>Trigger Alert</MatrixButton>
+                <MatrixButton variant="pulse" onClick={toggleProgress}>Update Progress</MatrixButton>
+              </div>
+              <div className="mt-4">
+                <div className="matrix-progress">
+                  <div className="progress-bar animated" style={{ width: `${progress}%` }}></div>
+                </div>
+                <p className="mt-2 text-sm">Current progress: {progress}%</p>
               </div>
             </ComponentSection>
           </div>
@@ -603,7 +730,7 @@ function ComponentTestPage() {
                 )}
 
                 {!showAlert && (
-                  <MatrixButton variant="primary" onClick={() => setShowAlert(true)}>
+                  <MatrixButton variant="glitch" onClick={() => setShowAlert(true)}>
                     Show Alert
                   </MatrixButton>
                 )}
@@ -617,7 +744,7 @@ function ComponentTestPage() {
           <div className="tab-content">
             <ComponentSection title="Modal Dialog">
               <div className="control-grid vertical">
-                <MatrixButton variant="primary" onClick={() => setIsModalOpen(true)}>
+                <MatrixButton variant="neon" onClick={() => setIsModalOpen(true)}>
                   Open Modal
                 </MatrixButton>
 
@@ -785,6 +912,7 @@ function ComponentTestPage() {
   return (
     <div className="matrix-component-test-page">
       <header className="test-page-header">
+        <div className="scanner-line"></div>
         <h1>Matrix CSS Components</h1>
         <p className="header-description">Comprehensive test page for all Matrix-themed components</p>
       </header>

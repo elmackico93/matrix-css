@@ -34,6 +34,10 @@ module.exports = {
       animation: {
         'cursor-blink': 'blink 1s step-end infinite',
         'progress-bar-stripes': 'progressBarStripes 1s linear infinite',
+        // Add these new animations
+        'glow-pulse': 'glowPulse 2s infinite',
+        'glitch': 'glitch 0.3s ease infinite',
+        'pulse': 'pulse 3s infinite',
       },
       keyframes: {
         blink: {
@@ -43,12 +47,28 @@ module.exports = {
         progressBarStripes: {
           '0%': { backgroundPosition: '1rem 0' },
           '100%': { backgroundPosition: '0 0' }
+        },
+        // Add these new keyframes
+        glowPulse: {
+          '0%, 100%': { boxShadow: '0 0 5px var(--m-glow)' },
+          '50%': { boxShadow: '0 0 20px var(--m-glow), 0 0 30px var(--m-glow)' }
+        },
+        glitch: {
+          '0%, 100%': { transform: 'translate(0)' },
+          '20%': { transform: 'translate(-2px, 2px)' },
+          '40%': { transform: 'translate(2px, -2px)' },
+          '60%': { transform: 'translate(-2px, -2px)' },
+          '80%': { transform: 'translate(2px, 2px)' }
+        },
+        pulse: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.03)' }
         }
       }
     },
   },
   plugins: [],
-  // Important: safelist crucial classes to ensure they're included in production builds
+  // Add the new animation and button classes to safelist
   safelist: [
     'bg-matrix-primary',
     'bg-matrix-secondary',
@@ -57,5 +77,10 @@ module.exports = {
     'text-matrix-text-bright',
     'border-matrix-border',
     'border-matrix-primary',
+    // Add these new classes
+    'animate-glow-pulse',
+    'animate-glitch',
+    'animate-pulse',
+    'clip-path-cyber'
   ]
 }
