@@ -5,18 +5,18 @@ import logo from './logo.svg';
 import ComponentTestPage from './ComponentTestPage';
 
 function App() {
-  const [showTestPage, setShowTestPage] = useState(false);
+  const [showTestPage, setShowTestPage] = useState(true);
   
   return (
     <div className="min-h-screen bg-matrix-bg">
       {/* Toggle button for switching views */}
       <div className="p-4 flex justify-center">
-        <button 
+        {/* <button 
           className="px-4 py-2 bg-matrix-secondary border border-matrix-primary text-matrix-text rounded hover:bg-matrix-primary hover:bg-opacity-20 transition-colors"
           onClick={() => setShowTestPage(!showTestPage)}
         >
           {showTestPage ? 'Show App Home' : 'Show Component Test Page'}
-        </button>
+        </button> */}
       </div>
       
       {showTestPage ? (
