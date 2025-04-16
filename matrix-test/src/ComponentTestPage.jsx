@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './ComponentTestPage.css';
+import { Sidebar } from './components/core/Sidebar';
 
 // Import components
 // Uncomment as you implement them
 // import { Button } from './components/core/Button';
 // import { Card } from './components/core/Card';
 // import { Input } from './components/core/Input';
-//import { Checkbox } from './components/core/Checkbox';
+// import { Checkbox } from './components/core/Checkbox';
 // import { Radio } from './components/core/Radio';
 // import { Select } from './components/core/Select';
 // import { Modal } from './components/core/Modal';
@@ -17,6 +18,7 @@ import './ComponentTestPage.css';
 // import { Tabs, TabPane } from './components/core/Tabs';
 // import { Switch } from './components/core/Switch';
 // import { Dropdown } from './components/core/Dropdown';
+   import { MatrixCode } from './components/core/MatrixCode'; 
 
 /**
  * Comprehensive test page for Matrix CSS components
@@ -34,6 +36,9 @@ function ComponentTestPage() {
   const [showAlert, setShowAlert] = useState(false);
   const [progress, setProgress] = useState(45);
   
+  // Sidebar state
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  
   // States for modal examples
   const [activeModalType, setActiveModalType] = useState('default');
   const [terminalCommands, setTerminalCommands] = useState([
@@ -47,6 +52,24 @@ function ComponentTestPage() {
   ]);
   const [terminalInput, setTerminalInput] = useState('');
   const [glitching, setGlitching] = useState(true);
+  
+  // Define sidebar tabs based on the navigation items
+  const sidebarTabs = [
+    { id: 'buttons', label: 'BUTTONS', icon: '▢' },
+    { id: 'cards', label: 'CARDS', icon: '◰' },
+    { id: 'inputs', label: 'INPUTS', icon: '◧' },
+    { id: 'checkboxes', label: 'CHECKBOXES', icon: '☑' },
+    { id: 'radios', label: 'RADIOS', icon: '◉' },
+    { id: 'selects', label: 'SELECTS', icon: '⊝' },
+    { id: 'switches', label: 'SWITCHES', icon: '⊜' },
+    { id: 'progress', label: 'PROGRESS', icon: '◫' },
+    { id: 'alerts', label: 'ALERTS', icon: '⚠' },
+    { id: 'modals', label: 'MODALS', icon: '⊞' },
+    { id: 'badges', label: 'BADGES', icon: '◈' },
+    { id: 'tooltips', label: 'TOOLTIPS', icon: '◍' },
+    { id: 'tabs', label: 'TABS', icon: '⊟' },
+    { id: 'matrix-code', label: 'MATRIX CODE', icon: '▣' }
+  ];
   
   // Glitch effect for access denied modal
   useEffect(() => {
@@ -266,8 +289,18 @@ function ComponentTestPage() {
         {helperText && !error && <p className="mt-1 text-xs text-matrix-text-dim">{helperText}</p>}
       </div>
     );
+
+    const [matrixCodeType, setMatrixCodeType] = useState('qr');
+const [matrixCodeData, setMatrixCodeData] = useState('https://example.com');
+const [matrixCodeEffects, setMatrixCodeEffects] = useState({
+  glow: true,
+  glitch: false,
+  scanline: false,
+  codeRain: false
+});
   };
 
+  
   // Render appropriate tab content based on active tab
   const renderTabContent = () => {
     switch (activeTab) {
@@ -2406,6 +2439,272 @@ function MyComponent() {
             </ComponentSection>
           </div>
         );
+
+        case 'matrix-code':
+  return (
+    <div className="tab-content">
+      <ComponentSection title="Matrix QR Codes">
+        <div className="flex-grid">
+          <MatrixCode
+            data="https://matrix.org"
+            type="qr"
+            size={180}
+            hasGlowEffect
+          />
+          <MatrixCode
+            data="https://example.com/matrix"
+            type="qr"
+            size={180}
+            hasScanlineEffect
+            hasCodeRain
+          />
+          <MatrixCode
+            data="MATRIX-QR-SECURE"
+            type="qr"
+            size={180}
+            hasGlitchEffect
+          />
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<MatrixCode
+  data="https://example.com"
+  type="qr"
+  size={180}
+  hasGlowEffect
+/>
+
+<MatrixCode
+  data="https://example.com/matrix"
+  type="qr"
+  size={180}
+  hasScanlineEffect
+  hasCodeRain
+/>`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Matrix Barcodes">
+        <div className="flex-grid">
+          <MatrixCode
+            data="1234567890"
+            type="barcode"
+            size={180}
+            hasGlowEffect
+          />
+          <MatrixCode
+            data="MATRIX-123456"
+            type="barcode"
+            size={180}
+            barcodeFormat="CODE39"
+            hasGlitchEffect
+          />
+          <MatrixCode
+            data="987654321"
+            type="barcode"
+            size={180}
+            barcodeFormat="EAN8"
+            hasPulseEffect
+          />
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<MatrixCode
+  data="1234567890"
+  type="barcode"
+  size={180}
+  hasGlowEffect
+/>
+
+<MatrixCode
+  data="MATRIX-123456"
+  type="barcode"
+  barcodeFormat="CODE39"
+  size={180}
+  hasGlitchEffect
+/>`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Matrix Data Matrix">
+        <div className="flex-grid">
+          <MatrixCode
+            data="DATA-MATRIX"
+            type="datamatrix"
+            size={180}
+            hasGlowEffect
+          />
+          <MatrixCode
+            data="SECURE-DATA-123"
+            type="datamatrix"
+            size={180}
+            hasCodeRain
+            hasScanlineEffect
+          />
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`<MatrixCode
+  data="DATA-MATRIX"
+  type="datamatrix"
+  size={180}
+  hasGlowEffect
+/>
+
+<MatrixCode
+  data="SECURE-DATA-123"
+  type="datamatrix"
+  size={180}
+  hasCodeRain
+  hasScanlineEffect
+/>`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Matrix Effects">
+        <div className="flex-grid">
+          <div className="matrix-card" style={{maxWidth: '300px'}}>
+            <div className="card-header">Glow Effect</div>
+            <div className="card-body flex justify-center p-4">
+              <MatrixCode
+                data="GLOW-EFFECT"
+                type="qr"
+                size={150}
+                hasGlowEffect
+              />
+            </div>
+          </div>
+          
+          <div className="matrix-card" style={{maxWidth: '300px'}}>
+            <div className="card-header">Scanline Effect</div>
+            <div className="card-body flex justify-center p-4">
+              <MatrixCode
+                data="SCAN-EFFECT"
+                type="qr"
+                size={150}
+                hasScanlineEffect
+              />
+            </div>
+          </div>
+          
+          <div className="matrix-card" style={{maxWidth: '300px'}}>
+            <div className="card-header">Glitch Effect</div>
+            <div className="card-body flex justify-center p-4">
+              <MatrixCode
+                data="GLITCH-EFFECT"
+                type="qr"
+                size={150}
+                hasGlitchEffect
+              />
+            </div>
+          </div>
+          
+          <div className="matrix-card" style={{maxWidth: '300px'}}>
+            <div className="card-header">Code Rain Effect</div>
+            <div className="card-body flex justify-center p-4">
+              <MatrixCode
+                data="RAIN-EFFECT"
+                type="qr"
+                size={150}
+                hasCodeRain
+              />
+            </div>
+          </div>
+        </div>
+        <div className="mt-4">
+          <pre className="bg-black p-2 rounded text-sm overflow-auto">
+            <code>
+{`// Effect props:
+// hasGlowEffect - Adds a green glow around the code
+// hasScanlineEffect - Adds a scanning line animation
+// hasGlitchEffect - Adds a glitching animation effect
+// hasPulseEffect - Adds a pulsing animation effect
+// hasCodeRain - Adds Matrix code rain in the background`}
+            </code>
+          </pre>
+        </div>
+      </ComponentSection>
+
+      <ComponentSection title="Interactive Demo">
+        <div className="bg-matrix-bg bg-opacity-20 border border-matrix-border p-4 rounded">
+          <h3 className="text-matrix-text-bright mb-4 font-matrix-hacker tracking-wide">MATRIX CODE GENERATOR</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-medium text-matrix-text">
+                  Code Type
+                </label>
+                <select className="matrix-select w-full">
+                  <option value="qr">QR Code</option>
+                  <option value="barcode">Barcode</option>
+                  <option value="datamatrix">Data Matrix</option>
+                </select>
+              </div>
+              
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-medium text-matrix-text">
+                  Data
+                </label>
+                <input
+                  type="text"
+                  className="matrix-input w-full"
+                  placeholder="Enter data to encode"
+                  defaultValue="https://example.com"
+                />
+              </div>
+              
+              <div className="space-y-2 mb-4">
+                <h4 className="text-sm font-medium text-matrix-text">Effects</h4>
+                
+                <label className="matrix-checkbox">
+                  <input type="checkbox" defaultChecked />
+                  <span className="checkbox-label">Glow Effect</span>
+                </label>
+                
+                <label className="matrix-checkbox">
+                  <input type="checkbox" />
+                  <span className="checkbox-label">Glitch Effect</span>
+                </label>
+                
+                <label className="matrix-checkbox">
+                  <input type="checkbox" />
+                  <span className="checkbox-label">Scanline Effect</span>
+                </label>
+                
+                <label className="matrix-checkbox">
+                  <input type="checkbox" />
+                  <span className="checkbox-label">Code Rain</span>
+                </label>
+              </div>
+              
+              <button className="matrix-button neon">
+                Generate Code
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-center p-4 bg-black border border-matrix-border">
+              <MatrixCode
+                data="https://example.com"
+                type="qr"
+                size={200}
+                hasGlowEffect
+              />
+            </div>
+          </div>
+        </div>
+      </ComponentSection>
+    </div>
+  );
       
       default:
         return <div>Select a component to view</div>;
@@ -2414,101 +2713,47 @@ function MyComponent() {
 
   return (
     <div className="matrix-component-test-page">
-      <header className="test-page-header">
-        <div className="scanner-line"></div>
-        <h1>Matrix CSS Components</h1>
-        <p className="header-description">Comprehensive test page for all Matrix-themed components</p>
-      </header>
+      {/* Add the sidebar component */}
+      <Sidebar 
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        tabs={sidebarTabs}
+        isExpanded={sidebarExpanded}
+        onToggleExpand={() => setSidebarExpanded(!sidebarExpanded)}
+      />
+      
+      <div className={`matrix-content-wrapper ${sidebarExpanded ? 'sidebar-expanded' : 'sidebar-collapsed'}`} 
+           style={{ 
+             marginLeft: sidebarExpanded ? '220px' : '60px',
+             transition: 'margin-left var(--matrix-time-med) ease-in-out'
+           }}>
+        <header className="test-page-header">
+          <div className="scanner-line"></div>
+          <h1>Matrix CSS Components</h1>
+          <p className="header-description">Comprehensive test page for all Matrix-themed components</p>
+        </header>
 
-      <div className="test-page-navigation">
-        <button 
-          className={`nav-item ${activeTab === 'buttons' ? 'active' : ''}`}
-          onClick={() => setActiveTab('buttons')}
-        >
-          Buttons
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'cards' ? 'active' : ''}`}
-          onClick={() => setActiveTab('cards')}
-        >
-          Cards
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'inputs' ? 'active' : ''}`}
-          onClick={() => setActiveTab('inputs')}
-        >
-          Inputs
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'checkboxes' ? 'active' : ''}`}
-          onClick={() => setActiveTab('checkboxes')}
-        >
-          Checkboxes
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'radios' ? 'active' : ''}`}
-          onClick={() => setActiveTab('radios')}
-        >
-          Radio Buttons
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'selects' ? 'active' : ''}`}
-          onClick={() => setActiveTab('selects')}
-        >
-          Selects
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'switches' ? 'active' : ''}`}
-          onClick={() => setActiveTab('switches')}
-        >
-          Switches
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'progress' ? 'active' : ''}`}
-          onClick={() => setActiveTab('progress')}
-        >
-          Progress
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'alerts' ? 'active' : ''}`}
-          onClick={() => setActiveTab('alerts')}
-        >
-          Alerts
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'modals' ? 'active' : ''}`}
-          onClick={() => setActiveTab('modals')}
-        >
-          Modals
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'badges' ? 'active' : ''}`}
-          onClick={() => setActiveTab('badges')}
-        >
-          Badges
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'tooltips' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tooltips')}
-        >
-          Tooltips
-        </button>
-        <button 
-          className={`nav-item ${activeTab === 'tabs' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tabs')}
-        >
-          Tabs
-        </button>
+        <div className="test-page-navigation">
+          {sidebarTabs.map(tab => (
+            <button 
+              key={tab.id}
+              className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <main className="test-page-content">
+          {renderTabContent()}
+        </main>
+
+        <footer className="test-page-footer">
+          <div className="scanner-line"></div>
+          <p>Matrix CSS Component Library v1.0</p>
+        </footer>
       </div>
-
-      <main className="test-page-content">
-        {renderTabContent()}
-      </main>
-
-      <footer className="test-page-footer">
-        <div className="scanner-line"></div>
-        <p>Matrix CSS Component Library v1.0</p>
-      </footer>
     </div>
   );
 }
