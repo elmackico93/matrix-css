@@ -7,7 +7,7 @@ import { Sidebar } from './components/core/Sidebar';
 // import { Button } from './components/core/Button';
 // import { Card } from './components/core/Card';
 // import { Input } from './components/core/Input';
-// import { Checkbox } from './components/core/Checkbox';
+//import { Checkbox } from './components/core/Checkbox';
 // import { Radio } from './components/core/Radio';
 // import { Select } from './components/core/Select';
 // import { Modal } from './components/core/Modal';
@@ -18,7 +18,6 @@ import { Sidebar } from './components/core/Sidebar';
 // import { Tabs, TabPane } from './components/core/Tabs';
 // import { Switch } from './components/core/Switch';
 // import { Dropdown } from './components/core/Dropdown';
-   import { MatrixCode } from './components/core/MatrixCode'; 
 
 /**
  * Comprehensive test page for Matrix CSS components
@@ -35,6 +34,14 @@ function ComponentTestPage() {
   const [selectValue, setSelectValue] = useState('default');
   const [showAlert, setShowAlert] = useState(false);
   const [progress, setProgress] = useState(45);
+  const [matrixCodeType, setMatrixCodeType] = useState('qr');
+  const [matrixCodeData, setMatrixCodeData] = useState('https://example.com');
+  const [matrixCodeEffects, setMatrixCodeEffects] = useState({
+      glow: true,
+      glitch: false,
+      scanline: false,
+      codeRain: false
+  });
   
   // Sidebar state
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -68,7 +75,7 @@ function ComponentTestPage() {
     { id: 'badges', label: 'BADGES', icon: '◈' },
     { id: 'tooltips', label: 'TOOLTIPS', icon: '◍' },
     { id: 'tabs', label: 'TABS', icon: '⊟' },
-    { id: 'matrix-code', label: 'MATRIX CODE', icon: '▣' }
+    { id: 'matrix-code', label: 'MATRIX CODE', icon: '⊟' },
   ];
   
   // Glitch effect for access denied modal
@@ -289,15 +296,6 @@ function ComponentTestPage() {
         {helperText && !error && <p className="mt-1 text-xs text-matrix-text-dim">{helperText}</p>}
       </div>
     );
-
-    const [matrixCodeType, setMatrixCodeType] = useState('qr');
-const [matrixCodeData, setMatrixCodeData] = useState('https://example.com');
-const [matrixCodeEffects, setMatrixCodeEffects] = useState({
-  glow: true,
-  glitch: false,
-  scanline: false,
-  codeRain: false
-});
   };
 
   
@@ -2384,62 +2382,6 @@ function MyComponent() {
           </div>
         );
 
-      case 'tabs':
-        return (
-          <div className="tab-content">
-            <ComponentSection title="Horizontal Tabs">
-              <div className="matrix-tabs">
-                <div className="tab-list" role="tablist">
-                  <button role="tab" className="tab-item active">Tab 1</button>
-                  <button role="tab" className="tab-item">Tab 2</button>
-                  <button role="tab" className="tab-item">Tab 3</button>
-                </div>
-                <div role="tabpanel" className="tab-panel">
-                  <h4 className="text-lg text-matrix-text-bright mb-2">Tab 1 Content</h4>
-                  <p>This is the content for the first tab panel. Only one tab panel is shown at a time.</p>
-                </div>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Vertical Tabs">
-              <div className="matrix-tabs vertical">
-                <div className="tab-list" role="tablist">
-                  <button role="tab" className="tab-item active">Tab 1</button>
-                  <button role="tab" className="tab-item">Tab 2</button>
-                  <button role="tab" className="tab-item">Tab 3</button>
-                </div>
-                <div role="tabpanel" className="tab-panel">
-                  <h4 className="text-lg text-matrix-text-bright mb-2">Tab 1 Content</h4>
-                  <p>Vertical tabs are useful for forms, settings pages, and dashboards with many sections.</p>
-                </div>
-              </div>
-            </ComponentSection>
-
-            <ComponentSection title="Matrix Themed Tabs">
-              <div className="matrix-tabs" style={{ borderColor: 'var(--m-text)' }}>
-                <div className="tab-list" role="tablist" style={{ borderColor: 'var(--m-text)' }}>
-                  <button role="tab" className="tab-item active font-matrix-hacker uppercase text-xs tracking-wider">SYSTEM</button>
-                  <button role="tab" className="tab-item font-matrix-hacker uppercase text-xs tracking-wider">NETWORK</button>
-                  <button role="tab" className="tab-item font-matrix-hacker uppercase text-xs tracking-wider">SECURITY</button>
-                </div>
-                <div role="tabpanel" className="tab-panel">
-                  <h4 className="text-lg text-matrix-text-bright mb-2 font-matrix-hacker">SYSTEM STATUS</h4>
-                  <div className="grid grid-cols-2 gap-4 font-matrix-hacker">
-                    <div className="flex justify-between">
-                      <span>VERSION:</span>
-                      <span className="text-matrix-text-bright">2.0.14</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>UPTIME:</span>
-                      <span className="text-matrix-text-bright">14:32:07</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ComponentSection>
-          </div>
-        );
-
         case 'matrix-code':
   return (
     <div className="tab-content">
@@ -2705,6 +2647,62 @@ function MyComponent() {
       </ComponentSection>
     </div>
   );
+
+      case 'tabs':
+        return (
+          <div className="tab-content">
+            <ComponentSection title="Horizontal Tabs">
+              <div className="matrix-tabs">
+                <div className="tab-list" role="tablist">
+                  <button role="tab" className="tab-item active">Tab 1</button>
+                  <button role="tab" className="tab-item">Tab 2</button>
+                  <button role="tab" className="tab-item">Tab 3</button>
+                </div>
+                <div role="tabpanel" className="tab-panel">
+                  <h4 className="text-lg text-matrix-text-bright mb-2">Tab 1 Content</h4>
+                  <p>This is the content for the first tab panel. Only one tab panel is shown at a time.</p>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Vertical Tabs">
+              <div className="matrix-tabs vertical">
+                <div className="tab-list" role="tablist">
+                  <button role="tab" className="tab-item active">Tab 1</button>
+                  <button role="tab" className="tab-item">Tab 2</button>
+                  <button role="tab" className="tab-item">Tab 3</button>
+                </div>
+                <div role="tabpanel" className="tab-panel">
+                  <h4 className="text-lg text-matrix-text-bright mb-2">Tab 1 Content</h4>
+                  <p>Vertical tabs are useful for forms, settings pages, and dashboards with many sections.</p>
+                </div>
+              </div>
+            </ComponentSection>
+
+            <ComponentSection title="Matrix Themed Tabs">
+              <div className="matrix-tabs" style={{ borderColor: 'var(--m-text)' }}>
+                <div className="tab-list" role="tablist" style={{ borderColor: 'var(--m-text)' }}>
+                  <button role="tab" className="tab-item active font-matrix-hacker uppercase text-xs tracking-wider">SYSTEM</button>
+                  <button role="tab" className="tab-item font-matrix-hacker uppercase text-xs tracking-wider">NETWORK</button>
+                  <button role="tab" className="tab-item font-matrix-hacker uppercase text-xs tracking-wider">SECURITY</button>
+                </div>
+                <div role="tabpanel" className="tab-panel">
+                  <h4 className="text-lg text-matrix-text-bright mb-2 font-matrix-hacker">SYSTEM STATUS</h4>
+                  <div className="grid grid-cols-2 gap-4 font-matrix-hacker">
+                    <div className="flex justify-between">
+                      <span>VERSION:</span>
+                      <span className="text-matrix-text-bright">2.0.14</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>UPTIME:</span>
+                      <span className="text-matrix-text-bright">14:32:07</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ComponentSection>
+          </div>
+        );
       
       default:
         return <div>Select a component to view</div>;
